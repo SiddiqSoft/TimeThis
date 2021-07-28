@@ -97,8 +97,8 @@ steps:
     repositoryName: '$(Build.Repository.Name)'
     action: 'create'
     target: '$(build.buildNumber)'
-    tagSource: 'gitTag'
-    tagPattern: 'v*.*.*'
+    tagSource: 'userSpecifiedTag'
+    tag: 'v*.*.*'
     releaseNotesSource: 'inline'
     releaseNotesInline: 'v$(build.buildNumber)'
     isDraft: true
