@@ -98,7 +98,8 @@ steps:
     action: 'create'
     target: '$(build.buildNumber)'
     tagSource: 'userSpecifiedTag'
-    tag: 'v*.*.*'
+    tag: '$(build.buildNumber)'
+    title: 'v$(build.buildNumber)'
     releaseNotesSource: 'inline'
     releaseNotesInline: 'v$(build.buildNumber)'
     isDraft: true
