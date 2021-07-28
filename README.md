@@ -1,4 +1,4 @@
-TimeThis : Run a lambda in destructor
+TimeThis : Simple stopwatch for scope
 -------------------------------------------
 
 [![CodeQL](https://github.com/SiddiqSoft/TimeThis/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/SiddiqSoft/TimeThis/actions/workflows/codeql-analysis.yml)
@@ -10,7 +10,43 @@ TimeThis : Run a lambda in destructor
 
 
 # Objective
-- A simpler "run on end" vs. the custom deletor available via `std::unique_ptr<>`. It is important to note that we do not provide an "owning" helper as this is better accomplished via the destructor code for `std::unique_ptr<>`. Avoid writing code that exists in std.
+Provide for a simple utility class where we can time the operation of a code block and allow
+the time to be updated in an optional lambda.
+
+```cpp
+auto handleHTTPMessage(auto req)
+{
+    if( req == HTTP_GET )
+    {
+        if( req == "/v1/something" )
+        {
+            // Consider the scenario where we would like to inform
+            // the client time taken.
+            auto     resp= createResponse();
+            // Declaration of the lambda takes the resp object
+            // and sets the header and logs to our global logger
+            TimeThis tt{ [&g_logger,&resp](const auto& delta) {
+                            auto ttx= std::chrono::duration_cast<milliseconds>(tt.elapsed());
+                            // Set the diagnostic header
+                            resp->addHeader("X-Diagnostic-Time", std::to_string(ttx.count()) );
+                            // Log this response
+                            g_logger->debug("Processing /v1/something took {}ms", ttx );
+                        }
+                     }; // notes the call function and starts the stopwatch
+            // Some other work..Perhaps lookup db, etc.
+            ..
+            ..
+            resp= ...; // set the body
+            return resp;
+        }
+    }
+}
+```
+
+
+
+# Usage
+
 - Use the nuget [SiddiqSoft.TimeThis](https://www.nuget.org/packages/SiddiqSoft.TimeThis/)
 - Copy paste..whatever works.
 
@@ -28,10 +64,12 @@ TEST(examples, Example1)
     {
         // Use initializer list-style instantiation; we do not allow move/assignment construction.
         // Note that the `()` is not required when the lambda/function takes no argument.
-        siddiqsoft::TimeThis roe {[&passTest] {
+        siddiqsoft::TimeThis tt {[&passTest] {
             // Runs when this scope ends
             passTest = true;
         }};
+
+        auto timeTaken= tt.elapsed();
     }
     catch (...) {
         EXPECT_TRUE(false); // if we throw then the test fails.

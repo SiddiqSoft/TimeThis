@@ -18,7 +18,7 @@ TEST(examples, Example1)
 		siddiqsoft::TimeThis tt;
 
 		std::this_thread::sleep_for(100ms);
-		auto ttx = tt.elapsed<std::chrono::milliseconds>();
+		auto ttx = std::chrono::duration_cast<milliseconds>(tt.elapsed()).count();
 		passTest = (ttx > 0);
 		// Check ostream operator
 		std::cerr << tt << std::endl;
@@ -47,7 +47,7 @@ TEST(examples, Example2)
 	{
 		// Use initializer list-style instantiation; we do not allow move/assignment construction.
 		// Note that the `()` is not required when the lambda/function takes no argument.
-		siddiqsoft::TimeThis tt {[&passTest]() { passTest = true; }};
+		siddiqsoft::TimeThis tt {[&passTest](const auto& delta) { passTest = true; }};
 
 		std::this_thread::sleep_for(100ms);
 	}

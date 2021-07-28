@@ -1,5 +1,5 @@
 /*
-	TimeThis : Class to collect time within execution scope
+	TimeThis : Simple stopwatch implementation with optional callback on destructor
 	Version 1.0.0
 
 	https://github.com/SiddiqSoft/TimeThis
@@ -57,21 +57,26 @@ namespace siddiqsoft
 	/// @brief A class to facilitate the execution of lambda when the object is destroyed.
 	struct TimeThis
 	{
+		/// @brief Calculates the duration since the creation of this object
+		/// @return Value representing the elapsed duration as timepoint
+		auto elapsed() const { return std::chrono::system_clock::now() - startTimestamp; }
+
 #if defined(__cpp_lib_source_location)
 		/// @brief When source_location is available, collect the calling location
 		explicit TimeThis(const std::source_location& sl = std::source_location::current())
 			: sourceLocation(sl)
-			, mStart(std::chrono::system_clock::now())
+			, startTimestamp(std::chrono::system_clock::now())
 		{
 		}
 
 		/// @brief Construct an object which holds the callback to be executed upon destruction
-		/// @param callback The callback takes nothing returns nothing
+		/// @param callback The callback takes timepoint representing the final calculation of the delta
 		/// @param context Reference to the context
-		explicit TimeThis(std::function<void()>&& callback, const std::source_location& sl = std::source_location::current())
+		explicit TimeThis(std::function<void(const std::chrono::system_clock::duration&)>&& callback,
+		                  const std::source_location&                                       sl = std::source_location::current())
 			: sourceLocation(sl)
 			, mCallback(std::move(callback))
-			, mStart(std::chrono::system_clock::now())
+			, startTimestamp(std::chrono::system_clock::now())
 		{
 		}
 
@@ -81,22 +86,22 @@ namespace siddiqsoft
 		/// @return
 		friend std::ostream& operator<<(std::ostream& os, const TimeThis& src)
 		{
-			os << src.sourceLocation.function_name() << " took " << src.elapsed<std::chrono::nanoseconds>() << "ns";
+			os << src.sourceLocation.function_name() << " took " << src.elapsed().count() << "ns";
 			return os;
 		}
 #else
 		/// @brief Default constructor notes the start time
 		TimeThis()
-			: mStart(std::chrono::system_clock::now())
+			: startTimestamp(std::chrono::system_clock::now())
 		{
 		}
 
 		/// @brief Construct an object which holds the callback to be executed upon destruction
-		/// @param callback The callback takes nothing returns nothing
+		/// @param callback The callback takes timepoint representing the final calculation of the delta
 		/// @param context Reference to the context
-		explicit TimeThis(std::function<void()>&& callback) noexcept
+		explicit TimeThis(std::function<void(const std::chrono::system_clock::duration&)>&& callback) noexcept
 			: mCallback(std::move(callback))
-			, mStart(std::chrono::system_clock::now())
+			, startTimestamp(std::chrono::system_clock::now())
 		{
 		}
 
@@ -106,18 +111,10 @@ namespace siddiqsoft
 		/// @return
 		friend std::ostream& operator<<(std::ostream& os, const TimeThis& src)
 		{
-			os << "execution took " << src.elapsed<std::chrono::nanoseconds>() << "ns";
+			os << "execution took " << std::chrono::duration_cast<std::chrono::milliseconds>(src.elapsed()).count() << "ms";
 			return os;
 		}
 #endif
-
-		/// @brief Calculates the duration since the creation of this object
-		/// @tparam D Specify any std::chrono::duration type
-		/// @return Value representing the elapsed duration in integral unit
-		template <typename D = std::chrono::nanoseconds> auto elapsed() const
-		{
-			return std::chrono::duration_cast<D>(std::chrono::system_clock::now() - mStart).count();
-		}
 
 		/// @brief Not supported. Makes no sense to copy another instance as the use-case should allow for a single task per callback.
 		/// @param  ignored
@@ -140,17 +137,18 @@ namespace siddiqsoft
 		/// @brief Invoke the callback if present.
 		~TimeThis() noexcept
 		{
-			if (mCallback) mCallback();
+			if (mCallback) mCallback(elapsed());
 		}
 
 	private:
-		std::chrono::system_clock::time_point mStart;
-
 		/// @brief The callback
-		std::function<void()> mCallback {};
+		std::function<void(const std::chrono::system_clock::duration&)> mCallback {};
+
+	public:
+		/// @brief The start timestamp
+		std::chrono::system_clock::time_point startTimestamp;
 
 #if defined(__cpp_lib_source_location)
-	public:
 		std::source_location sourceLocation;
 #endif
 	}; // struct TimeThis
@@ -166,9 +164,17 @@ template <> struct std::formatter<siddiqsoft::TimeThis> : std::formatter<std::st
 	{
 #if defined __cpp_lib_source_location
 		return std::formatter<std::string>::format(
-				std::format("{} took {}ns", sv.sourceLocation.function_name(), sv.elapsed<std::chrono::nanoseconds>()), ctx);
+				std::format("{} started on {:%FT%T}Z took {}us",
+		                    sv.sourceLocation.function_name(),
+		                    sv.startTimestamp,
+		                    std::chrono::duration_cast<std::chrono::microseconds>(sv.elapsed()).count()),
+				ctx);
 #else
-		return std::formatter<std::string>::format(std::format("took {}ns", sv.elapsed<std::chrono::nanoseconds>()), ctx);
+		return std::formatter<std::string>::format(
+				std::format("scope started on {:%FT%T}Z took {}us",
+		                    std::chrono::duration_cast<std::chrono::microseconds>(sv.elapsed()).count(),
+		                    sv.startTimestamp),
+				ctx);
 #endif
 	}
 };
