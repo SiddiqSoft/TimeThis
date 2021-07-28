@@ -152,7 +152,6 @@ namespace siddiqsoft
 		std::source_location sourceLocation;
 #endif
 	}; // struct TimeThis
-
 } // namespace siddiqsoft
 
 

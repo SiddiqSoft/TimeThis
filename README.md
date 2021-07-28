@@ -43,7 +43,9 @@ auto handleHTTPMessage(auto req)
 }
 ```
 
-
+- Support formatter for `std::format` when available
+- Support use of `std::source_location` when available
+- Simple "api" where all of your work is in your lambda
 
 # Usage
 
