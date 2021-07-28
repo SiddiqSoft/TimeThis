@@ -92,7 +92,7 @@ steps:
 
 - task: GitHubRelease@1
   inputs:
-    gitHubConnection: 'azure-github-as'
+    gitHubConnection: 'azure-github-sqs'
     repositoryName: '$(Build.Repository.Name)'
     action: 'create'
     target: '$(build.buildNumber)'
