@@ -98,6 +98,5 @@ steps:
     target: '$(build.buildNumber)'
     tagSource: 'userSpecifiedTag'
     tag: '$(build.buildNumber)'
-    changeLogCompareToRelease: 'lastFullRelease'
-    changeLogType: 'commitBased'
+    addChangeLog: false
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
