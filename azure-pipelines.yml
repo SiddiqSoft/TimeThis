@@ -99,5 +99,8 @@ steps:
     target: '$(build.buildNumber)'
     tagSource: 'userSpecifiedTag'
     tag: '$(build.buildNumber)'
+    releaseNotesSource: 'inline'
+    releaseNotesInline: 'v$(build.buildNumber)'
+    isDraft: true
     addChangeLog: false
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
