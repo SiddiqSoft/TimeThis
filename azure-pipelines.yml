@@ -97,5 +97,5 @@ steps:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg;build/*.nupkg;!build/*symbols.nupkg'
     nuGetFeedType: 'external'
-    publishFeedCredentials: 'github-nuget-sqs'
+    publishFeedCredentials: 'github-nuget-package-sqs'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
