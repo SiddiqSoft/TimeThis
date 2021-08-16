@@ -99,3 +99,19 @@ steps:
     nuGetFeedType: 'external'
     publishFeedCredentials: 'github-nuget-package-sqs'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+- task: GitHubRelease@1
+  inputs:
+    gitHubConnection: 'github-packages-sqs'
+    repositoryName: 'SiddiqSoft/TimeThis'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'userSpecifiedTag'
+    tag: '$(build.buildNumber)'
+    title: 'v$(build.buildNumber)'
+    releaseNotesSource: 'inline'
+    isPreRelease: true
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    
