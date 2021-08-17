@@ -42,8 +42,8 @@ steps:
   inputs:
     command: 'restore'
     restoreSolution: '**/*.sln'
-    feedsToUse: 'select'
-    vstsFeed: 'ec2759e0-0587-4306-8a8d-8695f15e2336'
+    feedsToUse: 'config'
+    externalFeedCredentials: 'github-nuget-package-sqs'
   continueOnError: false
 
 - task: VSBuild@1
