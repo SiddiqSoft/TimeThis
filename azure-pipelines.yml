@@ -38,6 +38,11 @@ steps:
     BuildVersion: $(GitVersion.NugetVersionV2)
 
 - task: NuGetCommand@2
+  inputs:
+    command: 'custom'
+    arguments: 'nuget.exe source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/abdulkareem-siddiq/index.json" -UserName abdulkareem-siddiq -Password $(githubnuget)'
+
+- task: NuGetCommand@2
   displayName: 'NuGet restore'
   inputs:
     command: 'restore'
