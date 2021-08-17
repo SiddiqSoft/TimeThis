@@ -113,5 +113,5 @@ steps:
     isPreRelease: true
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+#  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     
