@@ -40,7 +40,7 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'custom'
-    arguments: 'nuget.exe source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/abdulkareem-siddiq/index.json" -UserName abdulkareem-siddiq -Password $(githubnuget)'
+    arguments: 'Source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/abdulkareem-siddiq/index.json" -UserName abdulkareem-siddiq -Password $(githubnuget)'
 
 - task: NuGetCommand@2
   displayName: 'NuGet restore'
