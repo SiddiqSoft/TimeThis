@@ -38,11 +38,6 @@ steps:
     BuildVersion: $(GitVersion.NugetVersionV2)
 
 - task: NuGetCommand@2
-  inputs:
-    command: 'custom'
-    arguments: 'Source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/abdulkareem-siddiq/index.json" -UserName abdulkareem-siddiq -Password $(githubnuget)'
-
-- task: NuGetCommand@2
   displayName: 'NuGet restore'
   inputs:
     command: 'restore'
@@ -104,6 +99,12 @@ steps:
     nuGetFeedType: 'external'
     publishFeedCredentials: 'GitHubNuget'
 #  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'custom'
+    arguments: 'push "$(Build.ArtifactStagingDirectory)/**/*.nupkg" -Source "https://nuget.pkg.github.com/abdulkareem-siddiq/index.json" -UserName abdulkareem-siddiq -Password $(githubnuget)'
+
 
 - task: GitHubRelease@1
   inputs:
