@@ -79,7 +79,7 @@ steps:
     packagesToPack: 'nuget/siddiqsoft.TimeThis.nuspec;!nuget/siddiqsoft.TimeThis.symbols.nuspec'
     versioningScheme: 'off'
     buildProperties: 'VERSION=$(build.buildNumber)'
-#  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
@@ -90,21 +90,6 @@ steps:
     publishFeedCredentials: 'sqs-nuget'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   continueOnError: true
-
-- task: NuGetCommand@2
-  displayName: 'NuGet push'
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg;build/*.nupkg;!build/*symbols.nupkg'
-    nuGetFeedType: 'external'
-    publishFeedCredentials: 'GitHubNuget'
-#  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-
-- task: NuGetCommand@2
-  inputs:
-    command: 'custom'
-    arguments: 'push "$(Build.ArtifactStagingDirectory)/**/*.nupkg" -Source "https://nuget.pkg.github.com/abdulkareem-siddiq/index.json" -UserName abdulkareem-siddiq -Password $(githubnuget)'
-
 
 - task: GitHubRelease@1
   inputs:
@@ -119,5 +104,5 @@ steps:
     isPreRelease: true
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
-#  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     
