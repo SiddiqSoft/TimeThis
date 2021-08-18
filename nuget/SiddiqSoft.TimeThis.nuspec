@@ -14,6 +14,7 @@
     <description>Simple stopwatch implementation with optional callback on destructor</description>
     <tags>lambda destructor onexit time stopwatch timer cpp20 source_location scoped native nativepackage cpp</tags>
     <projectUrl>https://github.com/SiddiqSoft/TimeThis</projectUrl>
+    <repository type="git" url="https://github.com/SiddiqSoft/TimeThis" />
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <license type="expression">BSD-3-Clause</license>
     <icon>docs\Siddiq-Software-Avatar.png</icon>
