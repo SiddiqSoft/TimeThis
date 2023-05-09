@@ -43,12 +43,16 @@
 #include <chrono>
 #include <ostream>
 
-#if defined(__cpp_lib_source_location)
+#if __has_include(<source_location>)
 #include <source_location>
+#else
+#warning "__cpp_lib_source_location not available!"
 #endif
 
-#if defined(__cpp_lib_format)
+#if __has_include(<format>)
 #include <format>
+#else
+#warning "__cpp_lib_format not available!"
 #endif
 
 
@@ -64,7 +68,7 @@ namespace siddiqsoft
 			return std::chrono::system_clock::now() - startTimestamp;
 		}
 
-#if defined(__cpp_lib_source_location)
+#if __has_include(<source_location>)
 		/// @brief When source_location is available, collect the calling location
 		explicit TimeThis(const std::source_location& sl = std::source_location::current())
 		    : sourceLocation(sl)
@@ -153,21 +157,21 @@ namespace siddiqsoft
 		/// @brief The start timestamp
 		std::chrono::system_clock::time_point startTimestamp;
 
-#if defined(__cpp_lib_source_location)
+#if __has_include(<source_location>)
 		std::source_location sourceLocation;
 #endif
 	}; // struct TimeThis
 } // namespace siddiqsoft
 
 
-#if defined __cpp_lib_format
+#if __has_include(<format>)
 /// @brief Formatter for std::format
 template <>
 struct std::formatter<siddiqsoft::TimeThis> : std::formatter<std::string>
 {
 	auto format(const siddiqsoft::TimeThis& sv, std::format_context& ctx)
 	{
-#if defined __cpp_lib_source_location
+#if __has_include(<source_location>)
 		return std::formatter<std::string>::format(
 		        std::format("{} started on {:%FT%T}Z took {}us",
 		                    sv.sourceLocation.function_name(),

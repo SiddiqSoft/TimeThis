@@ -1,9 +1,13 @@
-#include "gtest/gtest.h"
+/*
+ * TimeThis tests
+ */
+#include "../include/TimeThis.hpp"
 
 #include <thread>
 #include <chrono>
 
-#include "../include/TimeThis.hpp"
+
+#include "gtest/gtest.h"
 
 
 TEST(examples, Example1)
@@ -23,7 +27,7 @@ TEST(examples, Example1)
 		// Check ostream operator
 		std::cerr << tt << std::endl;
 
-#if defined __cpp_lib_source_location
+#if __has_include(<source_location>)
 		// Check the std::formattmer
 		std::cerr << std::format("{}\n", tt);
 #endif
