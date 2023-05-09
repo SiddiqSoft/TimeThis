@@ -1,6 +1,10 @@
 /*
  * TimeThis tests
  */
+
+#include <format>
+#include <source_location>
+
 #include "../include/TimeThis.hpp"
 
 #include <thread>
@@ -27,10 +31,8 @@ TEST(examples, Example1)
 		// Check ostream operator
 		std::cerr << tt << std::endl;
 
-#if __has_include(<source_location>)
 		// Check the std::formattmer
 		std::cerr << std::format("{}\n", tt);
-#endif
 	}
 	catch (...)
 	{

@@ -42,18 +42,8 @@
 #include <functional>
 #include <chrono>
 #include <ostream>
-
-#if __has_include(<source_location>)
 #include <source_location>
-#else
-#warning "__cpp_lib_source_location not available!"
-#endif
-
-#if __has_include(<format>)
 #include <format>
-#else
-#warning "__cpp_lib_format not available!"
-#endif
 
 
 namespace siddiqsoft
@@ -68,7 +58,7 @@ namespace siddiqsoft
 			return std::chrono::system_clock::now() - startTimestamp;
 		}
 
-#if __has_include(<source_location>)
+
 		/// @brief When source_location is available, collect the calling location
 		explicit TimeThis(const std::source_location& sl = std::source_location::current())
 		    : sourceLocation(sl)
@@ -96,32 +86,6 @@ namespace siddiqsoft
 			os << src.sourceLocation.function_name() << " took " << src.elapsed().count() << "ns";
 			return os;
 		}
-#else
-		/// @brief Default constructor notes the start time
-		TimeThis()
-		    : startTimestamp(std::chrono::system_clock::now())
-		{
-		}
-
-		/// @brief Construct an object which holds the callback to be executed upon destruction
-		/// @param callback The callback takes timepoint representing the final calculation of the delta
-		/// @param context Reference to the context
-		explicit TimeThis(std::function<void(const std::chrono::system_clock::duration&)>&& callback) noexcept
-		    : mCallback(std::move(callback))
-		    , startTimestamp(std::chrono::system_clock::now())
-		{
-		}
-
-		/// @brief Operator for ostream without source_location support
-		/// @param os
-		/// @param src
-		/// @return
-		friend std::ostream& operator<<(std::ostream& os, const TimeThis& src)
-		{
-			os << "execution took " << std::chrono::duration_cast<std::chrono::milliseconds>(src.elapsed()).count() << "ms";
-			return os;
-		}
-#endif
 
 		/// @brief Not supported. Makes no sense to copy another instance as the use-case should allow for a single task per
 		/// callback.
@@ -156,38 +120,23 @@ namespace siddiqsoft
 	public:
 		/// @brief The start timestamp
 		std::chrono::system_clock::time_point startTimestamp;
-
-#if __has_include(<source_location>)
 		std::source_location sourceLocation;
-#endif
 	}; // struct TimeThis
 } // namespace siddiqsoft
 
 
-#if __has_include(<format>)
 /// @brief Formatter for std::format
 template <>
 struct std::formatter<siddiqsoft::TimeThis> : std::formatter<std::string>
 {
 	auto format(const siddiqsoft::TimeThis& sv, std::format_context& ctx)
 	{
-#if __has_include(<source_location>)
 		return std::formatter<std::string>::format(
 		        std::format("{} started on {:%FT%T}Z took {}us",
 		                    sv.sourceLocation.function_name(),
 		                    sv.startTimestamp,
 		                    std::chrono::duration_cast<std::chrono::microseconds>(sv.elapsed()).count()),
 		        ctx);
-#else
-		return std::formatter<std::string>::format(
-		        std::format("scope started on {:%FT%T}Z took {}us",
-		                    std::chrono::duration_cast<std::chrono::microseconds>(sv.elapsed()).count(),
-		                    sv.startTimestamp),
-		        ctx);
-#endif
 	}
 };
-#endif
-
-
 #endif
