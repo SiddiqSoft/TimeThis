@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.25.0)
-project(TimeThis LANGUAGES	CXX
+project(TimeThis DESCRIPTION "Simple stopwatch implementation with optional callback on destructor"
+				 HOMEPAGE_URL "https://github.com/SiddiqSoft/TimeThis"
+				 LANGUAGES	CXX
 				 VERSION	1.2.0)
 
 # Require C++23

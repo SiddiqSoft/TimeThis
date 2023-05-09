@@ -4,13 +4,11 @@
 
 #include <format>
 #include <source_location>
-
-#include "../include/TimeThis.hpp"
-
 #include <thread>
 #include <chrono>
 
-
+//#include "../include/TimeThis.hpp"
+#include "TimeThis.hpp"
 #include "gtest/gtest.h"
 
 
@@ -19,8 +17,7 @@ TEST(examples, Example1)
 	using namespace std::chrono;
 	bool passTest {false};
 
-	try
-	{
+	try {
 		// Use initializer list-style instantiation; we do not allow move/assignment construction.
 		// Note that the `()` is not required when the lambda/function takes no argument.
 		siddiqsoft::TimeThis tt;
@@ -34,8 +31,7 @@ TEST(examples, Example1)
 		// Check the std::formattmer
 		std::cerr << std::format("{}\n", tt);
 	}
-	catch (...)
-	{
+	catch (...) {
 		EXPECT_TRUE(false); // if we throw then the test fails.
 	}
 
@@ -49,16 +45,16 @@ TEST(examples, Example2)
 	using namespace std::chrono;
 	bool passTest {false};
 
-	try
-	{
+	try {
 		// Use initializer list-style instantiation; we do not allow move/assignment construction.
 		// Note that the `()` is not required when the lambda/function takes no argument.
-		siddiqsoft::TimeThis tt {[&passTest](const auto& delta) { passTest = true; }};
+		siddiqsoft::TimeThis tt {[&passTest](const auto& delta) {
+			passTest = true;
+		}};
 
 		std::this_thread::sleep_for(100ms);
 	}
-	catch (...)
-	{
+	catch (...) {
 		EXPECT_TRUE(false); // if we throw then the test fails.
 	}
 

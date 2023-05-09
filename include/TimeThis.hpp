@@ -53,10 +53,7 @@ namespace siddiqsoft
 	{
 		/// @brief Calculates the duration since the creation of this object
 		/// @return Value representing the elapsed duration as timepoint
-		[[nodiscard]] auto elapsed() const
-		{
-			return std::chrono::system_clock::now() - startTimestamp;
-		}
+		[[nodiscard]] auto elapsed() const { return std::chrono::system_clock::now() - startTimestamp; }
 
 
 		/// @brief When source_location is available, collect the calling location
@@ -120,7 +117,7 @@ namespace siddiqsoft
 	public:
 		/// @brief The start timestamp
 		std::chrono::system_clock::time_point startTimestamp;
-		std::source_location sourceLocation;
+		std::source_location                  sourceLocation;
 	}; // struct TimeThis
 } // namespace siddiqsoft
 
