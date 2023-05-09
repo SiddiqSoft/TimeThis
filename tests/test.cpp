@@ -3,7 +3,7 @@
 #include <thread>
 #include <chrono>
 
-#include "../src/TimeThis.hpp"
+#include "../include/TimeThis.hpp"
 
 
 TEST(examples, Example1)

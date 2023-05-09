@@ -59,7 +59,7 @@ namespace siddiqsoft
 	{
 		/// @brief Calculates the duration since the creation of this object
 		/// @return Value representing the elapsed duration as timepoint
-		auto elapsed() const
+		[[nodiscard]] auto elapsed() const
 		{
 			return std::chrono::system_clock::now() - startTimestamp;
 		}
