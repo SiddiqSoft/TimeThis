@@ -39,6 +39,8 @@
 #ifndef TIMETHIS_HPP
 #define TIMETHIS_HPP 1
 
+#pragma message "Include of TimeThis requirements.."
+
 #include <functional>
 #include <chrono>
 #include <ostream>
@@ -136,4 +138,22 @@ struct std::formatter<siddiqsoft::TimeThis> : std::formatter<std::string>
 		        ctx);
 	}
 };
+
+template <class charT>
+struct std::formatter<siddiqsoft::TimeThis, charT> : std::formatter<charT>
+{
+	template <class FormatContext>
+	auto format(siddiqsoft::TimeThis t, FormatContext& fc) const
+	{
+		return std::formatter<charT>::format(
+		        std::format("{} started on {:%FT%T}Z took {}us",
+		                    t.sourceLocation.function_name(),
+		                    t.startTimestamp,
+		                    std::chrono::duration_cast<std::chrono::microseconds>(t.elapsed()).count()),
+		        fc);
+	}
+};
+
+#else
+#pragma message "Already included TimeThis.hpp"
 #endif
