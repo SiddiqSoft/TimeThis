@@ -1,6 +1,11 @@
 ﻿{
   "version": "1",
   "environments": [
+    {
+      "name": "lba1.local",
+      "type": "ssh",
+      "remoteUri": "ssh://kei@lba1.local:22"
+    }
     // See https://aka.ms/remotetesting for more details
     // about how to configure remote environments.
     //{
