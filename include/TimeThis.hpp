@@ -36,10 +36,12 @@
 */
 
 #pragma once
+#include <iterator>
+#include <string>
+#include <string_view>
+
 #ifndef TIMETHIS_HPP
 #define TIMETHIS_HPP 1
-
-#pragma message "Include of TimeThis requirements.."
 
 #include <functional>
 #include <chrono>
@@ -112,11 +114,19 @@ namespace siddiqsoft
 			if (mCallback) mCallback(elapsed());
 		}
 
+		std::string to_string() const
+		{
+			return std::format("{} started on {:%FT%T}Z took {}us",
+			                   sourceLocation.function_name(),
+			                   startTimestamp,
+			                   std::chrono::duration_cast<std::chrono::microseconds>(elapsed()).count());
+		}
+
 	private:
 		/// @brief The callback
 		std::function<void(const std::chrono::system_clock::duration&)> mCallback {};
 
-	public:
+	
 		/// @brief The start timestamp
 		std::chrono::system_clock::time_point startTimestamp;
 		std::source_location                  sourceLocation;
@@ -124,33 +134,21 @@ namespace siddiqsoft
 } // namespace siddiqsoft
 
 
-/// @brief Formatter for std::format
 template <>
 struct std::formatter<siddiqsoft::TimeThis> : std::formatter<std::string>
 {
+	// constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+
 	auto format(const siddiqsoft::TimeThis& sv, std::format_context& ctx)
 	{
-		return std::formatter<std::string>::format(
-		        std::format("{} started on {:%FT%T}Z took {}us",
-		                    sv.sourceLocation.function_name(),
-		                    sv.startTimestamp,
-		                    std::chrono::duration_cast<std::chrono::microseconds>(sv.elapsed()).count()),
-		        ctx);
-	}
-};
-
-template <class charT>
-struct std::formatter<siddiqsoft::TimeThis, charT> : std::formatter<charT>
-{
-	template <class FormatContext>
-	auto format(siddiqsoft::TimeThis t, FormatContext& fc) const
-	{
-		return std::formatter<charT>::format(
-		        std::format("{} started on {:%FT%T}Z took {}us",
-		                    t.sourceLocation.function_name(),
-		                    t.startTimestamp,
-		                    std::chrono::duration_cast<std::chrono::microseconds>(t.elapsed()).count()),
-		        fc);
+		return std::formatter<std::string>::format(sv.to_string(), ctx);
+		/*
+		return std::format_to(ctx.out(),
+		                      "{} started on {:%FT%T}Z took {}us",
+		                      sv.sourceLocation.function_name(),
+		                      sv.startTimestamp,
+		                      std::chrono::duration_cast<std::chrono::microseconds>(sv.elapsed()).count());
+		*/
 	}
 };
 

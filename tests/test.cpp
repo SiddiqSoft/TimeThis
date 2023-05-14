@@ -2,14 +2,8 @@
  * TimeThis tests
  */
 
-//#include <format>
-//#include <source_location>
-//#include <thread>
-//#include <chrono>
 
-#pragma message "Including the testing header.."
 #include "TimeThis.hpp"
-#pragma message "Include gtest.."
 #include "gtest/gtest.h"
 
 
@@ -29,6 +23,8 @@ TEST(examples, Example1)
 		// Check ostream operator
 		std::cerr << tt << std::endl;
 
+		std::cerr << tt.to_string() << std::endl;
+		
 		// Check the std::formattmer
 		std::cerr << std::format("{}\n", tt);
 	}

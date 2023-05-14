@@ -5,6 +5,7 @@ message(STATUS "Require C++20 (tests)..")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 set(CMAKE_CXX_EXTENSIONS Off)
+set(CMAKE_CXX_FLAGS "-fconcepts-diagnostics-depth=2" )
 
 include(FetchContent)
 FetchContent_Declare(googletest
