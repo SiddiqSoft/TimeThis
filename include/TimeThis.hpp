@@ -137,18 +137,9 @@ namespace siddiqsoft
 template <>
 struct std::formatter<siddiqsoft::TimeThis> : std::formatter<std::string>
 {
-	// constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
-
 	auto format(const siddiqsoft::TimeThis& sv, std::format_context& ctx)
 	{
 		return std::formatter<std::string>::format(sv.to_string(), ctx);
-		/*
-		return std::format_to(ctx.out(),
-		                      "{} started on {:%FT%T}Z took {}us",
-		                      sv.sourceLocation.function_name(),
-		                      sv.startTimestamp,
-		                      std::chrono::duration_cast<std::chrono::microseconds>(sv.elapsed()).count());
-		*/
 	}
 };
 
