@@ -1,3 +1,0 @@
-TimeThis_gtests 0 0
----
-TimeThis_gtests
