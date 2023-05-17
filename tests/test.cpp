@@ -1,9 +1,10 @@
+/*
+ * TimeThis tests
+ */
+
+
+#include "TimeThis.hpp"
 #include "gtest/gtest.h"
-
-#include <thread>
-#include <chrono>
-
-#include "../src/TimeThis.hpp"
 
 
 TEST(examples, Example1)
@@ -11,8 +12,7 @@ TEST(examples, Example1)
 	using namespace std::chrono;
 	bool passTest {false};
 
-	try
-	{
+	try {
 		// Use initializer list-style instantiation; we do not allow move/assignment construction.
 		// Note that the `()` is not required when the lambda/function takes no argument.
 		siddiqsoft::TimeThis tt;
@@ -23,13 +23,12 @@ TEST(examples, Example1)
 		// Check ostream operator
 		std::cerr << tt << std::endl;
 
-#if defined __cpp_lib_source_location
+		std::cerr << tt.to_string() << std::endl;
+		
 		// Check the std::formattmer
 		std::cerr << std::format("{}\n", tt);
-#endif
 	}
-	catch (...)
-	{
+	catch (...) {
 		EXPECT_TRUE(false); // if we throw then the test fails.
 	}
 
@@ -43,16 +42,16 @@ TEST(examples, Example2)
 	using namespace std::chrono;
 	bool passTest {false};
 
-	try
-	{
+	try {
 		// Use initializer list-style instantiation; we do not allow move/assignment construction.
 		// Note that the `()` is not required when the lambda/function takes no argument.
-		siddiqsoft::TimeThis tt {[&passTest](const auto& delta) { passTest = true; }};
+		siddiqsoft::TimeThis tt {[&passTest](const auto& delta) {
+			passTest = true;
+		}};
 
 		std::this_thread::sleep_for(100ms);
 	}
-	catch (...)
-	{
+	catch (...) {
 		EXPECT_TRUE(false); // if we throw then the test fails.
 	}
 
