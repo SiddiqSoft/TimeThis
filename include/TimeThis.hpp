@@ -36,9 +36,13 @@
 */
 
 #pragma once
+#include <exception>
 #include <iterator>
+#include <stdexcept>
 #include <string>
 #include <string_view>
+#include <type_traits>
+#include <exception>
 
 #ifndef TIMETHIS_HPP
 #define TIMETHIS_HPP 1
@@ -114,19 +118,25 @@ namespace siddiqsoft
 			if (mCallback) mCallback(elapsed());
 		}
 
-		std::string to_string() const
+		template <typename charT = char>
+		[[nodiscard]] auto to_string() const
 		{
-			return std::format("{} started on {:%FT%T}Z took {}us",
-			                   sourceLocation.function_name(),
-			                   startTimestamp,
-			                   std::chrono::duration_cast<std::chrono::microseconds>(elapsed()).count());
+			if constexpr (std::is_same<charT, char>()) {
+				return std::format<const char*>("{} started on {:%FT%T}Z took {}us",
+				                                sourceLocation.function_name(),
+				                                startTimestamp,
+				                                std::chrono::duration_cast<std::chrono::microseconds>(elapsed()).count());
+			}
+			else if constexpr (std::is_same<charT, wchar_t>()) {
+				throw std::invalid_argument("wchar_t Not implemented");
+			}
 		}
 
 	private:
 		/// @brief The callback
 		std::function<void(const std::chrono::system_clock::duration&)> mCallback {};
 
-	
+
 		/// @brief The start timestamp
 		std::chrono::system_clock::time_point startTimestamp;
 		std::source_location                  sourceLocation;
@@ -134,12 +144,13 @@ namespace siddiqsoft
 } // namespace siddiqsoft
 
 
-template <>
-struct std::formatter<siddiqsoft::TimeThis> : std::formatter<std::string>
+template <class charT>
+struct std::formatter<siddiqsoft::TimeThis, charT> : std::formatter<charT>
 {
-	auto format(const siddiqsoft::TimeThis& sv, std::format_context& ctx)
+	template <class FC>
+	auto format(const siddiqsoft::TimeThis& sv, FC& ctx) const
 	{
-		return std::formatter<std::string>::format(sv.to_string(), ctx);
+		return std::format_to(ctx.out(), "{}", sv.to_string<charT>());
 	}
 };
 
