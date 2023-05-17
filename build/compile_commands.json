@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/Users/kei/projects/TimeThis/build",
+  "command": "/usr/bin/g++ -Dcxx_std_20 -I/Users/kei/projects/TimeThis/include -isystem /Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest/include -isystem /Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest -g -std=c++20 -o tests/CMakeFiles/tests.dir/test.cpp.o -c /Users/kei/projects/TimeThis/tests/test.cpp",
+  "file": "/Users/kei/projects/TimeThis/tests/test.cpp",
+  "output": "tests/CMakeFiles/tests.dir/test.cpp.o"
+},
+{
+  "directory": "/Users/kei/projects/TimeThis/build",
+  "command": "/usr/bin/g++ -I/Users/kei/projects/TimeThis/build/_deps/googletest-src/googlemock/include -I/Users/kei/projects/TimeThis/build/_deps/googletest-src/googlemock -isystem /Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest/include -isystem /Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest -g -std=c++20 -Wall -Wshadow -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o _deps/googletest-build/googlemock/CMakeFiles/gmock.dir/src/gmock-all.cc.o -c /Users/kei/projects/TimeThis/build/_deps/googletest-src/googlemock/src/gmock-all.cc",
+  "file": "/Users/kei/projects/TimeThis/build/_deps/googletest-src/googlemock/src/gmock-all.cc",
+  "output": "_deps/googletest-build/googlemock/CMakeFiles/gmock.dir/src/gmock-all.cc.o"
+},
+{
+  "directory": "/Users/kei/projects/TimeThis/build",
+  "command": "/usr/bin/g++ -isystem /Users/kei/projects/TimeThis/build/_deps/googletest-src/googlemock/include -isystem /Users/kei/projects/TimeThis/build/_deps/googletest-src/googlemock -isystem /Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest/include -isystem /Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest -g -std=c++20 -Wall -Wshadow -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o _deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/src/gmock_main.cc.o -c /Users/kei/projects/TimeThis/build/_deps/googletest-src/googlemock/src/gmock_main.cc",
+  "file": "/Users/kei/projects/TimeThis/build/_deps/googletest-src/googlemock/src/gmock_main.cc",
+  "output": "_deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/src/gmock_main.cc.o"
+},
+{
+  "directory": "/Users/kei/projects/TimeThis/build",
+  "command": "/usr/bin/g++ -I/Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest/include -I/Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest -g -std=c++20 -Wall -Wshadow -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o _deps/googletest-build/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o -c /Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest/src/gtest-all.cc",
+  "file": "/Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest/src/gtest-all.cc",
+  "output": "_deps/googletest-build/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o"
+},
+{
+  "directory": "/Users/kei/projects/TimeThis/build",
+  "command": "/usr/bin/g++ -isystem /Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest/include -isystem /Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest -g -std=c++20 -Wall -Wshadow -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o -c /Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest/src/gtest_main.cc",
+  "file": "/Users/kei/projects/TimeThis/build/_deps/googletest-src/googletest/src/gtest_main.cc",
+  "output": "_deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o"
+}
+]

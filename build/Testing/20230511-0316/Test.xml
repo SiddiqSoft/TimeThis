@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20230511-0316-Experimental"
+	Name="(empty)"
+	Generator="ctest-3.26.3"
+	CompilerName=""
+	CompilerVersion=""
+	OSName="Linux"
+	Hostname="lba1.sfn.siddiq.org"
+	OSRelease="6.2.14-300.fc38.x86_64"
+	OSVersion="#1 SMP PREEMPT_DYNAMIC Mon May  1 00:55:28 UTC 2023"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="62"
+	ProcessorCacheSize="10240"
+	NumberOfLogicalCPU="2"
+	NumberOfPhysicalCPU="2"
+	TotalVirtualMemory="1945"
+	TotalPhysicalMemory="1946"
+	LogicalProcessorsPerPhysical="1"
+	ProcessorClockFrequency="3700"
+	>
+	<Testing>
+		<StartDateTime>May 10 20:16 PDT</StartDateTime>
+		<StartTestTime>1683775014</StartTestTime>
+		<TestList>
+			<Test>./tests/TimeThis_gtests</Test>
+		</TestList>
+		<Test Status="notrun">
+			<Name>TimeThis_gtests</Name>
+			<Path>./tests</Path>
+			<FullName>./tests/TimeThis_gtests</FullName>
+			<FullCommandLine></FullCommandLine>
+			<Results>
+				<NamedMeasurement type="numeric/double" name="Processors">
+					<Value>1</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Completion Status">
+					<Value>Unable to find executable</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Command Line">
+					<Value></Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Environment">
+					<Value></Value>
+				</NamedMeasurement>
+				<Measurement>
+					<Value>Unable to find executable: tests</Value>
+				</Measurement>
+			</Results>
+		</Test>
+		<EndDateTime>May 10 20:16 PDT</EndDateTime>
+		<EndTestTime>1683775014</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>
