@@ -1,1 +1,0 @@
-/usr/bin/c++ -fconcepts-diagnostics-depth=2 CMakeFiles/tests.dir/test.cpp.o -o tests  ../lib/libgtest_main.a ../lib/libgtest.a 
