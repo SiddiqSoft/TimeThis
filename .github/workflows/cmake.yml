@@ -21,32 +21,46 @@ jobs:
             - macOS
             - linux
           compiler:
-            - gcc
-            - clang
-            - msvc
-          generator:
-            - "Ninja Multi-Config"
+            - g++
+            - clang++
+            - cl
           build_type:
             - Release
             - Debug
           language:
-            - C++23
-
+            - c++23
+          generator:
+            - "Ninja Multi-Config"
+          
           exclude:
             - os: Windows
-              compiler: gcc
+              compiler: g++
             - os: Windows
-              compiler: clang
+              compiler: clang++
             - os: Linux
-              compiler: msvc
+              compiler: cl
             - os: macOS
-              compiler: gcc
+              compiler: g++
             - os: macOS
-              compiler: msvc
+              compiler: cl
+              
+          include:
+            - os: Windows
+              language: c++23
+            - os: Linux
+              language: c++23
+            - os: macOS
+              language: c++23
     steps:
+      - uses: actions/checkout@v3
+        
       - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -S ${{github.workspace}}
+        env:
+          CXX: ${{matrix.compiler}}
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_COMPILER=${{matrix.compiler}}  -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -S ${{github.workspace}} -G "${{matrix.generator}}"
       - name: Build
+        env:
+          CXX: ${{matrix.compiler}}
         run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}} --target all --
       - name: Test
         working-directory: ${{github.workspace}}/build
