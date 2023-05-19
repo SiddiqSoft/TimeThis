@@ -21,8 +21,8 @@ jobs:
             - macOS
             - linux
           compiler:
-            - g++
-            - clang++
+            - g++-13
+            - clang++-16
             - cl
           build_type:
             - Release
@@ -56,10 +56,12 @@ jobs:
         
       - name: Configure CMake
         env:
+          CC: ${{matrix.compiler}}
           CXX: ${{matrix.compiler}}
         run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_COMPILER=${{matrix.compiler}}  -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -S ${{github.workspace}} -G "${{matrix.generator}}"
       - name: Build
         env:
+          CC: ${{matrix.compiler}}
           CXX: ${{matrix.compiler}}
         run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}} --target all --
       - name: Test
