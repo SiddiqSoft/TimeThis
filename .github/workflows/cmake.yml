@@ -35,6 +35,12 @@ jobs:
             - os: Windows
               compiler: msvc
               langver: c++23
+            - os: linux
+              compiler: g++
+              langver: c++23
+            - os: linux
+              compiler: clang++
+              langver: c++23
 
     steps:
       - uses: actions/checkout@v3
