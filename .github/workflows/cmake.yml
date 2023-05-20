@@ -13,7 +13,7 @@ jobs:
   build-all:
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: true
+      fail-fast: false
 
       matrix:
           os: [Windows,macOS,linux]
@@ -33,10 +33,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Clean files
-        run: |
-          echo "CC: ${CC} and CXX:${CXX} and langver:${langver}"
-          git clean -d -f -q -x
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_COMPILER=${{matrix.compiler}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -S ${{github.workspace}} -G "${{matrix.generator}}"
       - name: Build
