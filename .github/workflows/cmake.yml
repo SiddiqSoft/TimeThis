@@ -27,7 +27,7 @@ jobs:
           build_type:
             - Release
             - Debug
-          language:
+          langver:
             - c++23
           generator:
             - "Ninja"
@@ -49,26 +49,23 @@ jobs:
               env:
                 CC: cl
                 CXX: cl
-              language: c++23
+              langver: c++23
             - os: Linux
               env:
                 CC: gcc
                 CXX: g++
-              language: c++23
+              langver: c++23
             - os: macOS
               env:
                 CC: clang
                 CXX: clang
-              language: c++23
+              langver: c++23
     steps:
       - uses: actions/checkout@v3
-      - name: Detect Compiler Info (clean files)
+      - name: Clean files
         run: |
-          echo "CC: ${CC} and CXX:${CXX}"
+          echo "CC: ${CC} and CXX:${CXX} and langver:${langver}"
           git clean -d -f -q -x
-          mkdir ${{github.workspace}}/build
-          cd ${{github.workspace}}/build
-          cmake .. -G "${{matrix.generator}}"
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_COMPILER=${{matrix.compiler}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -S ${{github.workspace}} -G "${{matrix.generator}}"
       - name: Build
