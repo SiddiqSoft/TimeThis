@@ -25,6 +25,7 @@ jobs:
           exclude:
             - os: macOS
               compiler: g++
+              langver: c++23
             - os: Windows
               compiler: g++
             - os: Windows
