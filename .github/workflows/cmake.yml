@@ -62,8 +62,9 @@ jobs:
               language: c++23
     steps:
       - uses: actions/checkout@v3
-      - name: Detect Compiler Info
+      - name: Detect Compiler Info (clean files)
         run: |
+          git clean -d -f -q -x
           mkdir ${{github.workspace}}/build
           cd ${{github.workspace}}/build
           cmake ..
