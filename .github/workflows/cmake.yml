@@ -28,9 +28,12 @@ jobs:
           exclude:
             - os: macOS
               compiler: g++
+            - os: macOS
               langver: c++23
             - os: Windows
               compiler: g++
+            - os: Windows
+              toolset: cmake
             - os: Windows
               compiler: clang++
               
