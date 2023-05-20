@@ -13,53 +13,24 @@ jobs:
   build-all:
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
+      fail-fast: true
 
       matrix:
-          os:
-            - Windows
-            - macOS
-            - linux
-          compiler:
-            - gcc
-            - clang
-            - cl
-          build_type:
-            - Release
-            - Debug
-          langver:
-            - c++23
-          generator:
-            - "Ninja"
+          os: [Windows,macOS,linux]
+          compiler: [g++-13,clang++]
+          build_type: [Debug,Release]
+          langver: [c++23]
+          generator: ["Ninja"]
           
           exclude:
-            - os: Windows
-              compiler: gcc
-            - os: Windows
-              compiler: clang
-            - os: Linux
-              compiler: cl
             - os: macOS
               compiler: gcc
-            - os: macOS
-              compiler: cl
               
           include:
             - os: Windows
-              env:
-                CC: cl
-                CXX: cl
+              compiler: msvc
               langver: c++23
-            - os: Linux
-              env:
-                CC: gcc
-                CXX: g++
-              langver: c++23
-            - os: macOS
-              env:
-                CC: clang
-                CXX: clang
-              langver: c++23
+
     steps:
       - uses: actions/checkout@v3
       - name: Clean files
