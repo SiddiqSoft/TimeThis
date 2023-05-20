@@ -21,8 +21,8 @@ jobs:
             - macOS
             - linux
           compiler:
-            - g++
-            - clang++
+            - gcc
+            - clang
             - cl
           build_type:
             - Release
@@ -34,13 +34,13 @@ jobs:
           
           exclude:
             - os: Windows
-              compiler: g++
+              compiler: gcc
             - os: Windows
-              compiler: clang++
+              compiler: clang
             - os: Linux
               compiler: cl
             - os: macOS
-              compiler: g++
+              compiler: gcc
             - os: macOS
               compiler: cl
               
