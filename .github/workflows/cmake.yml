@@ -26,7 +26,9 @@ jobs:
             - os: macOS
               compiler: g++
             - os: Windows
-              compiler: [g++,clang++]
+              compiler: g++
+            - os: Windows
+              compiler: clang++
               
           include:
             - os: Windows
@@ -36,6 +38,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Configure CMake
+        env:
+          CXX: ${{matrix.compiler}}
         run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_COMPILER=${{matrix.compiler}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -S ${{github.workspace}} -G "${{matrix.generator}}"
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}} --target all --
