@@ -30,7 +30,7 @@ jobs:
           language:
             - c++23
           generator:
-            - "Ninja Multi-Config"
+            - "Ninja"
           
           exclude:
             - os: Windows
