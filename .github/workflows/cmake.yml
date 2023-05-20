@@ -35,7 +35,7 @@ jobs:
               
           include:
             - os: Windows
-              compiler: msvc
+              compiler: cl
               langver: c++23
               generator: "Ninja"
             - os: Linux
