@@ -17,14 +17,16 @@ jobs:
 
       matrix:
           os: [Windows,macOS,linux]
-          compiler: [g++-13,clang++]
+          compiler: [g++,clang++]
           build_type: [Debug,Release]
           langver: [c++23]
           generator: ["Ninja"]
           
           exclude:
             - os: macOS
-              compiler: gcc
+              compiler: g++
+            - os: Windows
+              compiler: [g++,clang++]
               
           include:
             - os: Windows
