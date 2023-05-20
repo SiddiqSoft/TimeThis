@@ -23,6 +23,7 @@ jobs:
           compiler: [g++,clang++]
           build_type: [Debug,Release]
           langver: [c++23]
+          toolset: [cmake]
           
           exclude:
             - os: macOS
@@ -35,7 +36,7 @@ jobs:
               
           include:
             - os: Windows
-              compiler: cl
+              compiler: msbuild
               langver: c++23
               generator: "Ninja"
             - os: Linux
