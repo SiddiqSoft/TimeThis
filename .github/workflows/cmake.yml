@@ -67,7 +67,7 @@ jobs:
           git clean -d -f -q -x
           mkdir ${{github.workspace}}/build
           cd ${{github.workspace}}/build
-          cmake ..
+          cmake .. -G "${{matrix.generator}}"
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_COMPILER=${{matrix.compiler}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -S ${{github.workspace}} -G "${{matrix.generator}}"
       - name: Build
