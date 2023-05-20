@@ -23,7 +23,6 @@ jobs:
           compiler: [g++,clang++]
           build_type: [Debug,Release]
           langver: [c++23]
-          generator: ["Ninja"]
           
           exclude:
             - os: macOS
@@ -38,12 +37,15 @@ jobs:
             - os: Windows
               compiler: msvc
               langver: c++23
+              generator: "Ninja"
             - os: Linux
               compiler: g++
               langver: c++23
+              generator: "Ninja"
             - os: Linux
               compiler: clang++
               langver: c++23
+              generator: "Ninja"
 
     steps:
       - uses: actions/checkout@v3
