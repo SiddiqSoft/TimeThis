@@ -46,23 +46,26 @@ jobs:
               
           include:
             - os: Windows
+              env:
+                CC: cl
+                CXX: cl
               language: c++23
             - os: Linux
+              env:
+                CC: gcc
+                CXX: g++
               language: c++23
             - os: macOS
+              env:
+                CC: clang
+                CXX: clang
               language: c++23
     steps:
       - uses: actions/checkout@v3
         
       - name: Configure CMake
-        env:
-          CC: ${{matrix.compiler}}
-          CXX: ${{matrix.compiler}}
         run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_COMPILER=${{matrix.compiler}}  -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -S ${{github.workspace}} -G "${{matrix.generator}}"
       - name: Build
-        env:
-          CC: ${{matrix.compiler}}
-          CXX: ${{matrix.compiler}}
         run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}} --target all --
       - name: Test
         working-directory: ${{github.workspace}}/build
