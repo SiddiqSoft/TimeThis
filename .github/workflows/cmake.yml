@@ -11,12 +11,15 @@ env:
 
 jobs:
   build-all:
-    runs-on: ${{ matrix.os }}
+    runs-on:
+      - ${{ matrix.os }}
+      - ${{ matrix.compiler }}
+      - ${{ matrix.langver }}
     strategy:
       fail-fast: false
 
       matrix:
-          os: [Windows,macOS,linux]
+          os: [Windows,macOS,Linux]
           compiler: [g++,clang++]
           build_type: [Debug,Release]
           langver: [c++23]
@@ -35,10 +38,10 @@ jobs:
             - os: Windows
               compiler: msvc
               langver: c++23
-            - os: linux
+            - os: Linux
               compiler: g++
               langver: c++23
-            - os: linux
+            - os: Linux
               compiler: clang++
               langver: c++23
 
