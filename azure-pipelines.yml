@@ -23,7 +23,9 @@ parameters:
   displayName: 'buildPlatform'
   type: string
   default: 'x64'
-  values: 'x64'
+  values: 
+  - 'x64'
+  - 'ARM64'
 - name: buildConfiguration
   displayName: 'buildConfiguration'
   type: string
