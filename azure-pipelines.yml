@@ -3,106 +3,83 @@ trigger:
   branches:
     include:
     - main
+    - master
     - develop
     - release/*
   paths:
     exclude:
     - README.md
 
-pool:
-  name: Default
-  demands:
-  - msbuild
-  - visualstudio
-  - vstest
+parameters:
+- name: image
+  displayName: Pool Image
+  type: string
+  default: ubuntu-latest
+  values:
+  - windows-latest
+  - ubuntu-latest
+  - macOS-latest
+- platform: 'x64'
+- configuration: 'Release'
 
-variables:
-  buildPlatform: 'x64'
-  
-steps:
-- task: NuGetToolInstaller@1
-  displayName: 'Use NuGet 6.0.0'
-  inputs:
-    versionSpec: '6.0.0'
-    checkLatest: true
+jobs:
+- job: build
+  displayName: build
+  pool: 
+    vmImage: ${{ parameters.image }}
+  steps:
+  - script: echo building $(Build.BuildNumber) with ${{ parameters.image }}
+  - script: echo %Action%%BuildVersion%
+    displayName: 'Set build version'
+    env:
+      Action: '##vso[build.updatebuildnumber]'
+      BuildVersion: $(GitVersion.MajorMinorPatch)
 
-- task: GitVersion@5
-  inputs:
-    runtime: 'core'
-    configFilePath: 'GitVersion.yml'
+  - task: CMake@1
+    displayName: Cmake build..
+    
 
-- script: echo %Action%%BuildVersion%
-  displayName: 'Set build version'
-  env:
-    Action: '##vso[build.updatebuildnumber]'
-    BuildVersion: $(GitVersion.NugetVersionV2)
+# - task: PublishTestResults@2
+#   displayName: 'Publish Release Test Results **/TEST-*.xml'
+#   inputs:
+#     testResultsFormat: 'JUnit'
+#     testResultsFiles: '**/TestResults/basic_tests.xml'
+#     mergeTestResults: true
+#     buildPlatform: 'x64'
+#     buildConfiguration: 'Release'
+#   continueOnError: true
 
-- task: NuGetCommand@2
-  displayName: 'NuGet restore'
-  inputs:
-    command: 'restore'
-    restoreSolution: '**/*.sln'
-    feedsToUse: 'config'
-    externalFeedCredentials: 'github-nuget-package-sqs'
-  continueOnError: false
+# - task: NuGetCommand@2
+#   displayName: 'NuGet pack'
+#   inputs:
+#     command: 'pack'
+#     packagesToPack: 'nuget/siddiqsoft.TimeThis.nuspec;!nuget/siddiqsoft.TimeThis.symbols.nuspec'
+#     versioningScheme: 'off'
+#     buildProperties: 'VERSION=$(build.buildNumber)'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
-- task: VSBuild@1
-  displayName: 'Build solution TimeThis.sln RELEASE'
-  inputs:
-    solution: 'TimeThis.sln'
-    platform: 'x64'
-    configuration: 'Release'
-    maximumCpuCount: true
-    msbuildArchitecture: 'x64'
+# - task: NuGetCommand@2
+#   displayName: 'NuGet push'
+#   inputs:
+#     command: 'push'
+#     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg;build/*.nupkg;!build/*symbols.nupkg'
+#     nuGetFeedType: 'external'
+#     publishFeedCredentials: 'sqs-nuget'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+#   continueOnError: true
 
-- task: CmdLine@2
-  inputs:
-    script: |
-      echo Running googletest
-      cd output\Release
-      basic_tests.exe --gtest_output=xml:..\..\TestResults\
-
-- task: PublishTestResults@2
-  displayName: 'Publish Release Test Results **/TEST-*.xml'
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '**/TestResults/basic_tests.xml'
-    mergeTestResults: true
-    buildPlatform: 'x64'
-    buildConfiguration: 'Release'
-  continueOnError: true
-
-- task: NuGetCommand@2
-  displayName: 'NuGet pack'
-  inputs:
-    command: 'pack'
-    packagesToPack: 'nuget/siddiqsoft.TimeThis.nuspec;!nuget/siddiqsoft.TimeThis.symbols.nuspec'
-    versioningScheme: 'off'
-    buildProperties: 'VERSION=$(build.buildNumber)'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-
-- task: NuGetCommand@2
-  displayName: 'NuGet push'
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg;build/*.nupkg;!build/*symbols.nupkg'
-    nuGetFeedType: 'external'
-    publishFeedCredentials: 'sqs-nuget'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-  continueOnError: true
-
-- task: GitHubRelease@1
-  inputs:
-    gitHubConnection: 'github-packages-sqs'
-    repositoryName: 'SiddiqSoft/TimeThis'
-    action: 'create'
-    target: '$(Build.SourceVersion)'
-    tagSource: 'userSpecifiedTag'
-    tag: '$(build.buildNumber)'
-    title: 'v$(build.buildNumber)'
-    releaseNotesSource: 'inline'
-    isPreRelease: true
-    changeLogCompareToRelease: 'lastFullRelease'
-    changeLogType: 'commitBased'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+# - task: GitHubRelease@1
+#   inputs:
+#     gitHubConnection: 'github-packages-sqs'
+#     repositoryName: 'SiddiqSoft/TimeThis'
+#     action: 'create'
+#     target: '$(Build.SourceVersion)'
+#     tagSource: 'userSpecifiedTag'
+#     tag: '$(build.buildNumber)'
+#     title: 'v$(build.buildNumber)'
+#     releaseNotesSource: 'inline'
+#     isPreRelease: true
+#     changeLogCompareToRelease: 'lastFullRelease'
+#     changeLogType: 'commitBased'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     
