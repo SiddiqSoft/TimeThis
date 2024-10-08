@@ -22,15 +22,15 @@ parameters:
 - name: buildPlatform
   displayName: 'buildPlatform'
   type: string
-  default: x64
-  values: x64
+  default: 'x64'
+  values: 'x64'
 - name: buildConfiguration
   displayName: 'buildConfiguration'
   type: string
-  default: Release
+  default: 'Release'
   values:
-  - Debug
-  - Release
+  - 'Debug'
+  - 'Release'
 
 jobs:
 - job: build
