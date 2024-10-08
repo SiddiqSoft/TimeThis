@@ -19,14 +19,26 @@ parameters:
   - windows-latest
   - ubuntu-latest
   - macOS-latest
-- platform: 'x64'
-- configuration: 'Release'
+- name: buildPlatform
+  displayName: 'buildPlatform'
+  type: string
+  default: x64
+  values: x64
+- name: buildConfiguration
+  displayName: 'buildConfiguration'
+  type: string
+  default: Release
+  values:
+  - Debug
+  - Release
 
 jobs:
 - job: build
   displayName: build
   pool: 
     vmImage: ${{ parameters.image }}
+    demands: 
+      - cmake
   steps:
   - script: echo building $(Build.BuildNumber) with ${{ parameters.image }}
   - script: echo %Action%%BuildVersion%
@@ -34,10 +46,14 @@ jobs:
     env:
       Action: '##vso[build.updatebuildnumber]'
       BuildVersion: $(GitVersion.MajorMinorPatch)
-
   - task: CMake@1
-    displayName: Cmake build..
-    
+    displayName: 'Cmake ..'
+    inputs:
+      cmakeArgs: '..'
+  - task: CMake@1
+    displayName: ''Cmake --build . --config ${{ parameters.buildConfiguration }}'
+    inputs:
+      cmakeArgs: '--build . --config ${{ parameters.buildConfiguration }}'
 
 # - task: PublishTestResults@2
 #   displayName: 'Publish Release Test Results **/TEST-*.xml'
