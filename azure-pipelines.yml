@@ -14,7 +14,7 @@ parameters:
 - name: image
   displayName: Pool Image
   type: string
-  default: macOS-latest
+  default: ubuntu-latest
   values:
   - windows-latest
   - ubuntu-latest
