@@ -14,7 +14,7 @@ parameters:
 - name: image
   displayName: Pool Image
   type: string
-  default: ubuntu-latest
+  default: macOS-latest
   values:
   - windows-latest
   - ubuntu-latest
@@ -23,7 +23,7 @@ parameters:
   displayName: 'buildPlatform'
   type: string
   default: 'x64'
-  values: 
+  values:
   - 'x64'
   - 'ARM64'
 - name: buildConfiguration
