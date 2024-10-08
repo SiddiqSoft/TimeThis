@@ -51,7 +51,7 @@ jobs:
     inputs:
       cmakeArgs: '..'
   - task: CMake@1
-    displayName: ''Cmake --build . --config ${{ parameters.buildConfiguration }}'
+    displayName: 'Cmake --build . --config ${{ parameters.buildConfiguration }}'
     inputs:
       cmakeArgs: '--build . --config ${{ parameters.buildConfiguration }}'
 
