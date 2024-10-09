@@ -378,3 +378,5 @@ build/.ninja_deps
 build/.ninja_log
 build/build.ninja
 build/compile_commands.json
+
+.vscode/**
