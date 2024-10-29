@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 6,
   "cmakeMinimumRequired": {
     "major": 3,
     "minor": 25
@@ -57,14 +57,16 @@
       }
     },
     {
-      "name": "linux-debug",
+      "name": "Linux-Debug",
       "displayName": "Linux Debug",
-      "description": "Target the Windows Subsystem for Linux (WSL) or a remote Linux system.",
+      "description": "Target Linux (Debug)",
       "generator": "UNIX Makefiles",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "installDir": "${sourceDir}/out/install/${presetName}",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "/usr/bin/clang",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
       },
       "condition": {
         "type": "equals",
@@ -78,10 +80,33 @@
       }
     },
     {
-      "name": "windows-base",
+      "name": "Linux-Release",
+      "displayName": "Linux Release",
+      "description": "Target Linux (Release)",
+      "generator": "UNIX Makefiles",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "/usr/bin/clang",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioRemoteSettings/CMake/2.0": {
+          "remoteSourceRootDir": "$env{HOME}/.vs/$ms{projectDirName}"
+        }
+      }
+    },
+    {
+      "name": "Windows-base",
       "description": "Target Windows with the Visual Studio development environment.",
       "hidden": true,
-      "generator": "Visual Studion 17 2022",
+      "generator": "Visual Studio 17 2022",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "installDir": "${sourceDir}/out/install/${presetName}",
       "cacheVariables": {
@@ -95,10 +120,10 @@
       }
     },
     {
-      "name": "x64-debug",
-      "displayName": "x64 Debug",
+      "name": "Windows-Debug",
+      "displayName": "Windows x64 Debug",
       "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
-      "inherits": "windows-base",
+      "inherits": "Windows-base",
       "architecture": {
         "value": "x64",
         "strategy": "external"
@@ -108,10 +133,10 @@
       }
     },
     {
-      "name": "x64-release",
-      "displayName": "x64 Release",
+      "name": "Windows-Release",
+      "displayName": "Windows x64 Release",
       "description": "Target Windows (64-bit) with the Visual Studio development environment. (RelWithDebInfo)",
-      "inherits": "x64-debug",
+      "inherits": "Windows-Debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
