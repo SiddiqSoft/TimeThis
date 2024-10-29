@@ -13,6 +13,19 @@ message(STATUS "Require C++20")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+#if (WIN32)
+message(STATUS "Select the generators for Windows..")
+#endif(WIN32)
+
+#if (UNIX)
+message(STATUS "Select the generators for Linux..")
+#endif(UNIX)
+
+#if (UNIX)
+message(STATUS "Select the generators for MacOS..")
+#endif(UNIX)
+
+
 message(STATUS "-- Importing git, gnuinstalldirs..")
 find_package(Git REQUIRED)
 include(FetchContent)
