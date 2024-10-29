@@ -18,6 +18,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
     # Set the C and C++ compilers to Clang
     # set(CMAKE_C_COMPILER clang)
     # set(CMAKE_CXX_COMPILER clang++)
+    set(CMAKE_GENERATOR_PLATFORM x64)
 #elseif (UNIX)
     message(STATUS "Select the generators for UNIX/Linux..")
     # Set the C and C++ compilers to Clang
