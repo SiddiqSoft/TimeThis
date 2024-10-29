@@ -45,7 +45,6 @@ stages:
     steps:
     - checkout: self
       fetchDepth: 0
-      clean: true
 
     - task: NuGetToolInstaller@1
       displayName: 'Install Nuget'
