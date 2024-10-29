@@ -14,16 +14,17 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #if (WIN32)
-message(STATUS "Select the generators for Windows..")
-#endif(WIN32)
+    # message(STATUS "Select the generators for Windows..")
+    # Set the C and C++ compilers to Clang
+    # set(CMAKE_C_COMPILER clang)
+    # set(CMAKE_CXX_COMPILER clang++)
+#elseif (UNIX)
+    message(STATUS "Select the generators for UNIX/Linux..")
+    # Set the C and C++ compilers to Clang
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang++)
+#endif()
 
-#if (UNIX)
-message(STATUS "Select the generators for Linux..")
-#endif(UNIX)
-
-#if (UNIX)
-message(STATUS "Select the generators for MacOS..")
-#endif(UNIX)
 
 
 message(STATUS "-- Importing git, gnuinstalldirs..")
