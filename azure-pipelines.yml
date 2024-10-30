@@ -81,8 +81,7 @@ stages:
     - task: CMake@1
       displayName: 'CMake Configure $(cmake.preset).. $(System.DefaultWorkingDirectory)/..'
       inputs:
-        preset: $(cmake.preset)
-        workingDirectory: '..'
+        cmakeArgs: '--preset $(cmake.preset)'
 
     - task: CMake@1
       displayName: 'CMake --build . --config $(buildConfiguration)'
