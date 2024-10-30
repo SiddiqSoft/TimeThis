@@ -71,7 +71,7 @@
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
-        "rhs": "Linux"
+        "rhs": "linux"
       },
       "vendor": {
         "microsoft.com/VisualStudioRemoteSettings/CMake/2.0": {
@@ -94,7 +94,7 @@
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
-        "rhs": "Linux"
+        "rhs": "linux"
       },
       "vendor": {
         "microsoft.com/VisualStudioRemoteSettings/CMake/2.0": {
