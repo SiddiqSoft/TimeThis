@@ -60,7 +60,7 @@
       "name": "Linux-Debug",
       "displayName": "Linux Debug",
       "description": "Target Linux (Debug)",
-      "generator": "UNIX Makefiles",
+      "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "installDir": "${sourceDir}/install/${presetName}",
       "cacheVariables": {
@@ -83,7 +83,7 @@
       "name": "Linux-Release",
       "displayName": "Linux Release",
       "description": "Target Linux (Release)",
-      "generator": "UNIX Makefiles",
+      "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "installDir": "${sourceDir}/install/${presetName}",
       "cacheVariables": {
