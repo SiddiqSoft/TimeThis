@@ -72,14 +72,14 @@ stages:
         Action: '##vso[build.updatebuildnumber]'
         BuildVersion: $(GitVersion.MajorMinorPatch)
 
-    - task: CMake@2
+    - task: CMake@1
       displayName: 'CMake Configure $(cmake.preset).. '
       inputs:
         preset: '$(cmake.preset)'
         cmakeArgs: '..'
         workingDirectory: "."
 
-    - task: CMake@2
+    - task: CMake@1
       displayName: 'CMake --build . --config $(buildConfiguration)'
       inputs:
         cmakeArgs: '--build . --config $(buildConfiguration)'
