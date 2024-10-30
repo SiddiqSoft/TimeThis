@@ -2,8 +2,11 @@
  * TimeThis tests
  */
 
+#include <thread>
+#include <format>
+#include <chrono>
 
-#include "TimeThis.hpp"
+#include "../src/TimeThis.hpp"
 #include "gtest/gtest.h"
 
 

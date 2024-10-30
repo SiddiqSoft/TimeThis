@@ -1,13 +1,10 @@
 TimeThis : Simple stopwatch for scope
 -------------------------------------------
 
-[![CodeQL](https://github.com/SiddiqSoft/TimeThis/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/SiddiqSoft/TimeThis/actions/workflows/codeql-analysis.yml)
-[![CMake](https://github.com/SiddiqSoft/TimeThis/actions/workflows/cmake.yml/badge.svg)](https://github.com/SiddiqSoft/TimeThis/actions/workflows/cmake.yml)
 [![Build Status](https://dev.azure.com/siddiqsoft/siddiqsoft/_apis/build/status/SiddiqSoft.TimeThis?branchName=main)](https://dev.azure.com/siddiqsoft/siddiqsoft/_build/latest?definitionId=11&branchName=main)
 ![](https://img.shields.io/nuget/v/SiddiqSoft.TimeThis)
 ![](https://img.shields.io/github/v/tag/SiddiqSoft/TimeThis)
 ![](https://img.shields.io/azure-devops/tests/siddiqsoft/siddiqsoft/11)
-![](https://img.shields.io/azure-devops/coverage/siddiqsoft/siddiqsoft/11)
 
 
 # Objective
@@ -27,6 +24,7 @@ auto handleHTTPMessage(auto req)
             // Declaration of the lambda takes the resp object
             // and sets the header and logs to our global logger
             TimeThis tt{ [&g_logger,&resp](const auto& delta) {
+                // Get the time in milliseconds..
                             auto ttx= std::chrono::duration_cast<milliseconds>(tt.elapsed());
                             // Set the diagnostic header
                             resp->addHeader("X-Diagnostic-Time", std::to_string(ttx.count()) );
@@ -83,6 +81,13 @@ TEST(examples, Example1)
 }
 ```
 
+
+## Notes
+
+- Supported prefix:
+    - `Darwin`
+    - `Linux`
+    - `Windows`
 
 <small align="right">
 

@@ -1,108 +1,142 @@
 trigger:
-  batch: true
+  batch: 'true'
   branches:
     include:
+    - master
     - main
-    - develop
+    - bufix/*
     - release/*
+    - hotfix/*
+    - feature/*
   paths:
     exclude:
     - README.md
 
-pool:
-  name: Default
-  demands:
-  - msbuild
-  - visualstudio
-  - vstest
+stages:
+- stage: Build
+  displayName: Building Multiple OS, Testing, Publishing
+  jobs:
+  - job: build
+    displayName: Build
+    workspace:
+      clean: all
 
-variables:
-  buildPlatform: 'x64'
-  
-steps:
-- task: NuGetToolInstaller@1
-  displayName: 'Use NuGet 6.0.0'
-  inputs:
-    versionSpec: '6.0.0'
-    checkLatest: true
+    strategy:
+      matrix:
+        Windows:
+          osName: Windows_NT
+          poolName: Default
+          poolImageName:
+          cmake.preset: Windows-Release
+        Linux:
+          osName: Linux
+          poolName: Default
+          poolImageName:
+          cmake.preset: Linux-Release
 
-- task: GitVersion@5
-  inputs:
-    runtime: 'core'
-    configFilePath: 'GitVersion.yml'
+    variables:
+      buildConfiguration: 'Release'
+      buildLatestTag: '0.0.0'
 
-- script: echo %Action%%BuildVersion%
-  displayName: 'Set build version'
-  env:
-    Action: '##vso[build.updatebuildnumber]'
-    BuildVersion: $(GitVersion.NugetVersionV2)
+    pool:
+      name: $(poolName)
+      vmImage: $(poolImageName)
+      demands:
+        - Agent.OS -equals $(osName)
 
-- task: NuGetCommand@2
-  displayName: 'NuGet restore'
-  inputs:
-    command: 'restore'
-    restoreSolution: '**/*.sln'
-    feedsToUse: 'config'
-    externalFeedCredentials: 'github-nuget-package-sqs'
-  continueOnError: false
+    steps:
+    - checkout: self
+      fetchDepth: 0
 
-- task: VSBuild@1
-  displayName: 'Build solution TimeThis.sln RELEASE'
-  inputs:
-    solution: 'TimeThis.sln'
-    platform: 'x64'
-    configuration: 'Release'
-    maximumCpuCount: true
-    msbuildArchitecture: 'x64'
+    - task: NuGetToolInstaller@1
+      displayName: 'Install Nuget'
+      inputs:
+        versionSpec: '>=5.0.0-0'
+        checkLatest: true
 
-- task: CmdLine@2
-  inputs:
-    script: |
-      echo Running googletest
-      cd output\Release
-      basic_tests.exe --gtest_output=xml:..\..\TestResults\
+    - task: gitversion/setup@3.0.0
+      displayName: 'Install GitVersion..'
+      inputs:
+        versionSpec: '6.x'
+        preferLatestVersion: true
 
-- task: PublishTestResults@2
-  displayName: 'Publish Release Test Results **/TEST-*.xml'
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '**/TestResults/basic_tests.xml'
-    mergeTestResults: true
-    buildPlatform: 'x64'
-    buildConfiguration: 'Release'
-  continueOnError: true
+    - task: gitversion/execute@3.0.0
+      displayName: 'Determine Version..'
+      inputs:
+        useConfigFile: true
+        configFilePath: 'GitVersion.yml'
 
-- task: NuGetCommand@2
-  displayName: 'NuGet pack'
-  inputs:
-    command: 'pack'
-    packagesToPack: 'nuget/siddiqsoft.TimeThis.nuspec;!nuget/siddiqsoft.TimeThis.symbols.nuspec'
-    versioningScheme: 'off'
-    buildProperties: 'VERSION=$(build.buildNumber)'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    - script: echo %Action%%BuildVersion%
+      displayName: 'Set build version to $(GitVersion.MajorMinorPatch)'
+      env:
+        Action: '##vso[build.updatebuildnumber]'
+        BuildVersion: $(GitVersion.MajorMinorPatch)
 
-- task: NuGetCommand@2
-  displayName: 'NuGet push'
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg;build/*.nupkg;!build/*symbols.nupkg'
-    nuGetFeedType: 'external'
-    publishFeedCredentials: 'sqs-nuget'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-  continueOnError: true
+    - task: CMake@1
+      displayName: 'CMake Show Presets.. working at $(System.DefaultWorkingDirectory)/.. '
+      inputs:
+        cmakeArgs: '--list-presets=all'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
 
-- task: GitHubRelease@1
-  inputs:
-    gitHubConnection: 'github-packages-sqs'
-    repositoryName: 'SiddiqSoft/TimeThis'
-    action: 'create'
-    target: '$(Build.SourceVersion)'
-    tagSource: 'userSpecifiedTag'
-    tag: '$(build.buildNumber)'
-    title: 'v$(build.buildNumber)'
-    releaseNotesSource: 'inline'
-    isPreRelease: true
-    changeLogCompareToRelease: 'lastFullRelease'
-    changeLogType: 'commitBased'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-    
+    - task: CMake@1
+      displayName: 'CMake Configure $(cmake.preset).. $(System.DefaultWorkingDirectory)/..'
+      inputs:
+        cmakeArgs: '--preset $(cmake.preset)'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+    - task: CMake@1
+      displayName: 'CMake --build . --config $(buildConfiguration)'
+      inputs:
+        cmakeArgs: '--build $(System.DefaultWorkingDirectory)/build/$(cmake.preset)'
+      condition: succeeded()
+
+    - task: CMake@1
+      displayName: 'CMake -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests ctest'
+      inputs:
+        cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests ctest $(System.DefaultWorkingDirectory)/build/$(cmake.preset) --output-junit $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml --output-on-failure'
+      condition: succeeded()
+      continueOnError: true
+
+    - task: PublishTestResults@2
+      displayName: 'Publish $(buildConfiguration) Test Results test_detail.xml'
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml'
+        mergeTestResults: true
+        buildConfiguration: '$(buildConfiguration)'
+      continueOnError: false
+      condition: succeeded()
+
+    - task: NuGetCommand@2
+      displayName: 'NuGet pack'
+      inputs:
+        command: 'pack'
+        packagesToPack: 'nuget/*.nuspec'
+        versioningScheme: 'off'
+        buildProperties: 'VERSION=$(GitVersion.MajorMinorPatch)'
+      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
+
+    - task: NuGetCommand@2
+      displayName: 'NuGet push'
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;build/*.nupkg'
+        nuGetFeedType: 'external'
+        publishFeedCredentials: 'sqs-nuget'
+      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Windows'))
+
+    - task: GitHubRelease@1
+      inputs:
+        gitHubConnection: 'github-packages-sqs'
+        repositoryName: 'siddiqsoft/TimeThis'
+        action: 'create'
+        target: '$(Build.SourceVersion)'
+        tagSource: 'userSpecifiedTag'
+        tag: '$(build.buildNumber)'
+        title: 'v$(build.buildNumber)'
+        releaseNotesSource: 'inline'
+        releaseNotesInline: 'Documentation https://siddiqsoft.github.io/TimeThis'
+        isPreRelease: true
+        changeLogCompareToRelease: 'lastFullRelease'
+        changeLogType: 'commitBased'
+      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Windows'))

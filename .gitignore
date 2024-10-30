@@ -9,7 +9,23 @@
 *.user
 *.userosscache
 *.sln.docstates
-**/out
+*.tcl
+_deps/
+CMakeFiles/
+out/
+Testing/
+CMakeCache.txt
+**/*.cmake
+**/*.vcxproj
+**/*.sln
+**/Makefile
+*.cmake
+Makefile
+lib/
+tests/results/*.xml
+**/*.vcxproj
+**/*.filters
+*.tcl
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -24,27 +40,13 @@ mono_crash.*
 [Rr]eleases/
 x64/
 x86/
-[Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
 [Oo]bj/
-[Oo]ut/
 [Ll]og/
 [Ll]ogs/
-_deps/
-bin/
-**/Makefile
-Makefile
-**/*.cmake
-**/CMakeCache.txt
-**/CMakeFiles/**
-**/lib/
-build/
-tests/CMakeFiles
-tests/*.cmake
-tests/Makefile
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -75,9 +77,6 @@ BenchmarkDotNet.Artifacts/
 project.lock.json
 project.fragment.lock.json
 artifacts/
-
-# ASP.NET Scaffolding
-ScaffoldingReadMe.txt
 
 # StyleCop
 StyleCopReport.xml
@@ -154,11 +153,6 @@ _TeamCity*
 # AxoCover is a Code Coverage Tool
 .axoCover/*
 !.axoCover/settings.json
-
-# Coverlet is a free, cross platform Code Coverage Tool
-coverage*.json
-coverage*.xml
-coverage*.info
 
 # Visual Studio code coverage results
 *.coverage
@@ -371,10 +365,17 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-
-# Fody - auto-generated XML schema
-FodyWeavers.xsd
-build/.ninja_deps
-build/.ninja_log
-build/build.ninja
-build/compile_commands.json
+*.out
+/out/*
+/src/version.h
+out/**
+build/**
+/src/version.h
+/test/validation_tests/validation_tests.tlog
+/test/validation_tests/vc.nativecodeanalysis.all.xml
+*.recipe
+*.sarif
+*.tlog
+/test/validation_tests/CodeAnalysisResultManifest.txt
+/test/validation_tests/test.nativecodeanalysis.xml
+*.filters

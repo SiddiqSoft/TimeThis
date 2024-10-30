@@ -1,25 +1,27 @@
-cmake_minimum_required(VERSION 3.25.0)
+cmake_minimum_required(VERSION 3.25)
 
-# Require C++23
-message(STATUS "Require C++20 (tests)..")
+# Require C++20
+message(STATUS "Require C++20..")
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED On)
-set(CMAKE_CXX_EXTENSIONS Off)
-#set(CMAKE_CXX_FLAGS "-fconcepts-diagnostics-depth=2" )
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+find_package(Git REQUIRED)
 include(FetchContent)
 FetchContent_Declare(googletest
 					GIT_REPOSITORY https://github.com/google/googletest.git
-					GIT_TAG	v1.13.0
+					GIT_TAG	v1.15.2
+					FIND_PACKAGE_ARGS NAMES GTest
 )
-include(GoogleTest)
 FetchContent_MakeAvailable(googletest)
-add_library(GTest::GTest INTERFACE IMPORTED)
-target_link_libraries(GTest::GTest INTERFACE gtest_main)
 
-add_executable(tests test.cpp)
+# Declare our test source files.
+file(GLOB testSRC "./test.cpp")
 
-target_link_libraries(tests PRIVATE GTest::GTest TimeThis)
+add_executable(TimeThis_test ${testSRC})
 
-add_test(TimeThis_gtests tests)
-gtest_discover_tests(tests)
+target_link_libraries(TimeThis_test PRIVATE GTest::gtest_main)
+
+include(GoogleTest)
+gtest_discover_tests(TimeThis_test
+                     XML_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/tests/results"
+)
