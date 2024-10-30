@@ -91,9 +91,9 @@ stages:
       condition: succeeded()
 
     - task: CMake@1
-      displayName: 'CMake -E chdir $(System.DefaultWorkingDirectory)/build/tests ctest'
+      displayName: 'CMake -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests ctest'
       inputs:
-        cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/tests ctest $(System.DefaultWorkingDirectory)/build/$(cmake.preset) --output-junit $(System.DefaultWorkingDirectory)/build/tests/results/test_detail.xml --output-on-failure'
+        cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset)tests ctest $(System.DefaultWorkingDirectory)/build/$(cmake.preset) --output-junit $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml --output-on-failure'
       condition: succeeded()
       continueOnError: true
 
@@ -101,7 +101,7 @@ stages:
       displayName: 'Publish $(buildConfiguration) Test Results test_detail.xml'
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/build/tests/results/test_detail.xml'
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml'
         mergeTestResults: true
         buildConfiguration: '$(buildConfiguration)'
       continueOnError: false
