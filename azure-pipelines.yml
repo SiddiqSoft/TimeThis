@@ -73,12 +73,12 @@ stages:
         BuildVersion: $(GitVersion.MajorMinorPatch)
 
     - task: CMake@1
-      displayName: 'CMake Show Presets.. '
+      displayName: 'CMake Show Presets.. working at $(System.DefaultWorkingDirectory) '
       inputs:
         cmakeArgs: '--list-presets'
 
     - task: CMake@1
-      displayName: 'CMake Configure $(cmake.preset).. '
+      displayName: 'CMake Configure $(cmake.preset).. $(System.DefaultWorkingDirectory)'
       inputs:
         preset: '$(cmake.preset)'
 
