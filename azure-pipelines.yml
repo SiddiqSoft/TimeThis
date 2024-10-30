@@ -87,13 +87,13 @@ stages:
     - task: CMake@1
       displayName: 'CMake --build . --config $(buildConfiguration)'
       inputs:
-        cmakeArgs: '--build . --config $(buildConfiguration)'
+        cmakeArgs: '--build $(System.DefaultWorkingDirectory)/build/$(cmake.preset)'
       condition: succeeded()
 
     - task: CMake@1
       displayName: 'CMake -E chdir $(System.DefaultWorkingDirectory)/build/tests ctest'
       inputs:
-        cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/tests ctest . --output-junit $(System.DefaultWorkingDirectory)/build/tests/results/test_detail.xml --output-on-failure'
+        cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/tests ctest $(System.DefaultWorkingDirectory)/build/$(cmake.preset) --output-junit $(System.DefaultWorkingDirectory)/build/tests/results/test_detail.xml --output-on-failure'
       condition: succeeded()
       continueOnError: true
 
