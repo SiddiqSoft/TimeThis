@@ -6,7 +6,7 @@
   },
   "configurePresets": [
     {
-      "name": "Apple-Clang-19",
+      "name": "Apple-Debug",
       "displayName": "Clang 19.1.2 arm64-apple-darwin24.1.0",
       "description": "Using compilers: C = /opt/homebrew/opt/llvm/bin/clang, CXX = /opt/homebrew/opt/llvm/bin/clang++",
       "binaryDir": "${sourceDir}/build/${presetName}",
@@ -23,32 +23,15 @@
       }
     },
     {
-      "name": "Apple-Clang-19-Windows",
-      "displayName": "Clang-cl 19.1.2 arm64-pc-windows-msvc",
-      "description": "Using compilers: C = /opt/homebrew/opt/llvm/bin/clang-cl, CXX = /opt/homebrew/opt/llvm/bin/clang-cl",
+      "name": "Apple-Release",
+      "displayName": "Clang 19.1.2 arm64-apple-darwin24.1.0",
+      "description": "Using compilers: C = /opt/homebrew/opt/llvm/bin/clang, CXX = /opt/homebrew/opt/llvm/bin/clang++",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}",
-        "CMAKE_C_COMPILER": "/opt/homebrew/opt/llvm/bin/clang-cl",
-        "CMAKE_CXX_COMPILER": "/opt/homebrew/opt/llvm/bin/clang-cl",
-        "CMAKE_BUILD_TYPE": "Debug"
-      },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Darwin"
-      }
-    },
-    {
-      "name": "Apple-GCC-14",
-      "displayName": "GCC 14.2.0 aarch64-apple-darwin24",
-      "description": "Using compilers: C = /opt/homebrew/bin/aarch64-apple-darwin24-gcc-14, CXX = /opt/homebrew/bin/aarch64-apple-darwin24-g++-14",
-      "binaryDir": "${sourceDir}/build/${presetName}",
-      "cacheVariables": {
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}",
-        "CMAKE_C_COMPILER": "/opt/homebrew/bin/aarch64-apple-darwin24-gcc-14",
-        "CMAKE_CXX_COMPILER": "/opt/homebrew/bin/aarch64-apple-darwin24-g++-14",
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_C_COMPILER": "/opt/homebrew/opt/llvm/bin/clang",
+        "CMAKE_CXX_COMPILER": "/opt/homebrew/opt/llvm/bin/clang++",
+        "CMAKE_BUILD_TYPE": "Release"
       },
       "condition": {
         "type": "equals",
