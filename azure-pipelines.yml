@@ -75,7 +75,7 @@ stages:
     - task: CMake@1
       displayName: 'CMake Show Presets.. working at $(System.DefaultWorkingDirectory)/.. '
       inputs:
-        cmakeArgs: '--list-presets'
+        cmakeArgs: '--list-presets=all'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
