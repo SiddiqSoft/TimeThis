@@ -82,6 +82,13 @@ TEST(examples, Example1)
 ```
 
 
+## Notes
+
+- Supported prefix:
+    - `Darwin`
+    - `Linux`
+    - `Windows`
+
 <small align="right">
 
 &copy; 2021 Siddiq Software LLC. All rights reserved.
