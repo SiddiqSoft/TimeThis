@@ -27,10 +27,12 @@ stages:
           osName: Windows_NT
           poolName: Default
           poolImageName:
+          cmake.preset: Windows-Release
         Linux:
           osName: Linux
           poolName: Default
           poolImageName:
+          cmake.preset: Linux-Release
 
     variables:
       buildConfiguration: 'Release'
@@ -70,12 +72,14 @@ stages:
         Action: '##vso[build.updatebuildnumber]'
         BuildVersion: $(GitVersion.MajorMinorPatch)
 
-    - task: CMake@1
-      displayName: 'CMake ..'
+    - task: CMake@2
+      displayName: 'CMake Configure $(cmake.preset).. '
       inputs:
+        preset: '$(cmake.preset)'
         cmakeArgs: '..'
+        workingDirectory: "."
 
-    - task: CMake@1
+    - task: CMake@2
       displayName: 'CMake --build . --config $(buildConfiguration)'
       inputs:
         cmakeArgs: '--build . --config $(buildConfiguration)'
