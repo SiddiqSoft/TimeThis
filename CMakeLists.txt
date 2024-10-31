@@ -9,26 +9,33 @@ project(TimeThis
         DESCRIPTION "A header-only library to measure time elapsed for a given scope."
 )
 
-message(STATUS "Require C++20")
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-
-message(STATUS "-- Importing git, gnuinstalldirs..")
-find_package(Git REQUIRED)
 include(FetchContent)
 include(GNUInstallDirs)
 
-message(STATUS "-- Going for the src..")
-add_subdirectory("src")
+# ----------------------------------------
+# -- Declarations for our library --------
+# https://github.com/friendlyanon/cmake-init-header-only/tree/master
+#
 
-message(STATUS "-- The project source directory............: ${PROJECT_SOURCE_DIR}")
-message(STATUS "-- The PROJECT_BINARY_DIR directory........: ${PROJECT_BINARY_DIR}")
-message(STATUS "-- The CMAKE_CURRENT_BINARY_DIR directory..: ${CMAKE_CURRENT_BINARY_DIR}")
-message(STATUS "-- The CMAKE_BINARY_DIR directory..........: ${CMAKE_BINARY_DIR}")
-message(STATUS "-- The CMAKE_RUNTIME_OUTPUT_DIRECTORY......: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-message(STATUS "-- The tests..")
-include(CTest)
-enable_testing()
-add_subdirectory("tests")
+add_library(${PROJECT_NAME}_${PROJECT_NAME} INTERFACE .)
+add_library(siddiqsoft_${PROJECT_NAME} ALIAS ${PROJECT_NAME}_${PROJECT_NAME})
 
+set_property(
+        TARGET ${PROJECT_NAME}_${PROJECT_NAME}
+        PROPERTY
+        EXPORT_NAME ${PROJECT_NAME}
+        )
+
+
+target_include_directories(
+    ${PROJECT_NAME}_${PROJECT_NAME}
+    INTERFACE
+    "\$<BUILD_INTERFACE:${$PROJECT_SOURCE_DIR}/src>"
+    "\$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
+
+target_compile_features(${PROJECT_NAME}_${PROJECT_NAME} INTERFACE cxx_std_20)
+
+# ---------------------------------------------
+# -- Installtion rules for our library --------
+# https://github.com/friendlyanon/cmake-init-header-only/blob/master/cmake/install-rules.cmake
