@@ -1,10 +1,21 @@
 cmake_minimum_required(VERSION 3.25)
 
-# The project version is updated below with the tag from git
+#   SiddiqSoft CMakeLists for header only libraries
+#   Copyright 2024 Abdulkareem Siddiq. All rights reserved.
+#   See LICENSE file
+
+#   ________________________________________________
+# - Set the Name of the project.
+# - The namespace is set to "siddiqsoft"
+# - The options are all prefixed opt_siddiqsoft_XXX
+# - The option opt_siddiqsoft_btp is set to OFF and used by our CI to build, test and package
+
+##########################################################################
+
 #   We need to support "C" language in order for the googletest to build.
 project(siddiqsoft_timethis
         VERSION 1.5.0
-        LANGUAGES CXX
+        LANGUAGES CXX C
         HOMEPAGE_URL "https://github.com/siddiqsoft/TimeThis"
         DESCRIPTION "A header-only library to measure time elapsed for a given scope."
 )
@@ -12,10 +23,7 @@ project(siddiqsoft_timethis
 # ----------------------------------------
 # -- Options for our library -------------
 # This is valid for our local builds when we're building, testing and packing.
-set(OPT_${PROJECT_NAME}_BTP OFF)
-
-option(OPT_${PROJECT_NAME}_testing OFF)
-option(OPT_${PROJECT_NAME}_ci OFF)
+option(opt_siddiqsoft_btp OFF)
 
 # ----------------------------------------
 # Include some common stuff
@@ -39,16 +47,29 @@ set(${PROJECT_NAME}_PKGCONFIG_INSTALL_DIR      "${CMAKE_INSTALL_DATADIR}/pkgconf
 # https://github.com/friendlyanon/cmake-init-header-only/tree/master
 #
 
+# Name of the library (same as name of project)
 set(${PROJECT_NAME}_TARGET_NAME ${PROJECT_NAME})
 
-add_library(${PROJECT_NAME}_TARGET_NAME INTERFACE)
-add_library(${PROJECT_NAME}::${PROJECT_NAME}_TARGET_NAME ALIAS ${PROJECT_NAME}_TARGET_NAME)
+# Declare the library interface
+add_library(${${PROJECT_NAME}_TARGET_NAME} INTERFACE)
+add_library(siddiqsoft::${${PROJECT_NAME}_TARGET_NAME} ALIAS ${${PROJECT_NAME}_TARGET_NAME})
+
+set_property(
+        TARGET ${${PROJECT_NAME}_TARGET_NAME}
+        PROPERTY EXPORT_NAME ${PROJECT_NAME}
+        )
+        
+# Emit status ..
+message(STATUS "....set(${PROJECT_NAME}_TARGET_NAME ${PROJECT_NAME})")
+message(STATUS "....add_library(${${PROJECT_NAME}_TARGET_NAME} INTERFACE)")
+message(STATUS "....add_library(siddiqsoft::${${PROJECT_NAME}_TARGET_NAME} ALIAS ${${PROJECT_NAME}_TARGET_NAME})")
+
 
 # Compiler/SDK requirements..
-target_compile_features(${PROJECT_NAME}_TARGET_NAME INTERFACE cxx_std_20)
+target_compile_features(${${PROJECT_NAME}_TARGET_NAME} INTERFACE cxx_std_20)
 
 target_include_directories(
-    ${PROJECT_NAME}_TARGET_NAME
+    ${${PROJECT_NAME}_TARGET_NAME}
     INTERFACE
     "\$<BUILD_INTERFACE:${$PROJECT_SOURCE_DIR}/include>"
     "\$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
@@ -57,7 +78,8 @@ target_include_directories(
 
 # ---------------------------------------------
 # -- Testing rules for our library ------------
-if (OPT_${PROJECT_NAME}_testing)
+if (opt_${PROJECT_NAME}_btp)
+        message(STATUS "....We're building, testing and packing")
         include(CTest)
         enable_testing()
         add_subdirectory(tests)

@@ -79,15 +79,15 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
-      displayName: 'CMake Configure $(cmake.preset).. $(System.DefaultWorkingDirectory)/..'
+      displayName: 'CMake Configure $(cmake.preset).. $(System.DefaultWorkingDirectory)/..  -Dopt_siddiqsoft_btp=ON'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset)'
+        cmakeArgs: '--preset $(cmake.preset) -Dopt_siddiqsoft_btp=ON'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
-      displayName: 'CMake --build . --config $(buildConfiguration)'
+      displayName: 'CMake --build . --config $(buildConfiguration)  -Dopt_siddiqsoft_btp=ON'
       inputs:
-        cmakeArgs: '--build $(System.DefaultWorkingDirectory)/build/$(cmake.preset)'
+        cmakeArgs: '--build $(System.DefaultWorkingDirectory)/build/$(cmake.preset)  -Dopt_siddiqsoft_btp=ON'
       condition: succeeded()
 
     - task: CMake@1
