@@ -58,7 +58,7 @@ set_property(
         TARGET ${${PROJECT_NAME}_TARGET_NAME}
         PROPERTY EXPORT_NAME ${PROJECT_NAME}
         )
-        
+
 # Emit status ..
 message(STATUS "....set(${PROJECT_NAME}_TARGET_NAME ${PROJECT_NAME})")
 message(STATUS "....add_library(${${PROJECT_NAME}_TARGET_NAME} INTERFACE)")
@@ -78,7 +78,7 @@ target_include_directories(
 
 # ---------------------------------------------
 # -- Testing rules for our library ------------
-if (opt_${PROJECT_NAME}_btp)
+if (opt_siddiqsoft_btp)
         message(STATUS "....We're building, testing and packing")
         include(CTest)
         enable_testing()

@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.25)
 
+project(${PROJECT_NAME}tests
+		LANGUAGES CXX C
+		)
 # Require C++20
-message(STATUS "Require C++20..")
+message(STATUS "Require C++20..${${PROJECT_NAME}tests}")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -14,14 +17,17 @@ FetchContent_Declare(googletest
 )
 FetchContent_MakeAvailable(googletest)
 
+#find_package(${PROJECT_NAME}_TARGET_NAME)
+enable_testing()
+
 # Declare our test source files.
-file(GLOB testSRC "./test.cpp")
+file(GLOB siddiqsoft_ho_tests "*.cpp")
 
-add_executable(TimeThis_test ${testSRC})
+add_executable(${${PROJECT_NAME}tests} siddiqsoft_ho_tests)
 
-target_link_libraries(TimeThis_test PRIVATE GTest::gtest_main)
+target_link_libraries(${${PROJECT_NAME}tests} PRIVATE GTest::gtest_main)
 
 include(GoogleTest)
-gtest_discover_tests(TimeThis_test
+gtest_discover_tests(${${PROJECT_NAME}tests}
                      XML_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/tests/results"
 )
