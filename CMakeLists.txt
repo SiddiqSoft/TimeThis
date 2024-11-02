@@ -66,12 +66,24 @@ endif()
 # -- 
 # Install the library
 if(opt_siddiqsoft_install)
-    install(
-        TARGETS ${PROJECT_NAME}
-        EXPORT  ${PROJECT_NAME}_Targets
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers}")
+    message(STATUS "set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER \"${public_headers}\")")
+
+    install(    TARGETS ${PROJECT_NAME}
+                EXPORT  "${PROJECT_NAME}_Targets"
+                ARCHIVE         DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                LIBRARY         DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                RUNTIME         DESTINATION ${CMAKE_INSTALL_BINDIR}
+                PUBLIC_HEADER   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/siddiqsoft
+                INCLUDES        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+
+    message(STATUS  ".    install(    TARGETS ${PROJECT_NAME}\n"
+                    "   .                EXPORT  ${PROJECT_NAME}_Targets\n"
+                    "   .                ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}\n"
+                    "   .                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}\n"
+                    "   .                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}\n"
+                    "   .                PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/siddiqsoft)\n"
     )
 
     include(CMakePackageConfigHelpers)
@@ -79,30 +91,81 @@ if(opt_siddiqsoft_install)
                                         VERSION ${PROJECT_VERSION}
                                         COMPATIBILITY SameMajorVersion
     )
+
+    message(STATUS  ".    write_basic_package_version_file(   \"${PROJECT_NAME}Version.cmake\"\n"
+                    "   .                                        VERSION ${PROJECT_VERSION}\n"
+                    "   .                                        COMPATIBILITY SameMajorVersion)\n"
+    )
+
     configure_package_config_file(
         "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
         "${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake"
-        INSTALL_DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
+        #INSTALL_DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
+        INSTALL_DESTINATION cmake
     )
 
-    install(
-        EXPORT  ${PROJECT_NAME}_Targets
-        FILE    ${PROJECT_NAME}Targets.cmake
-        NAMESPACE   siddiqsoft::
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
+    message(STATUS ".    configure_package_config_file(\n"
+                   "   .         \"${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in\n"
+                   "   .         \"${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake\n"
+                   "   .         INSTALL_DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake\n"
+                   "   .         INSTALL_DESTINATION cmake)\n"
     )
 
-    install(
-        FILES       "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-                    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
+    install(    EXPORT  ${PROJECT_NAME}_Targets
+                FILE    ${PROJECT_NAME}Targets.cmake
+                NAMESPACE   siddiqsoft::
+                DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
     )
 
-    install(DIRECTORY   ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    message(STATUS  ".    install(    EXPORT  ${PROJECT_NAME}_Targets\n"
+                    "   .                FILE    ${PROJECT_NAME}Targets.cmake\n"
+                    "   .                NAMESPACE   siddiqsoft::\n"
+                    "   .                DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)\n"
+    )
+
+    # Install the config files 
+    install(FILES
+                "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+                "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+            DESTINATION
+                ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
+    )
+    message(STATUS ".     install(FILES\n"
+                   "   .                 \"${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake\"\n"
+                   "   .                 \"${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake\"\n"
+                   "   .             DESTINATION\n"
+                   "   .                 ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)\n"
+    )
+
+    # All of our libraries will be in the siddiqsoft folder
+    install(DIRECTORY
+                ${PROJECT_SOURCE_DIR}/include/siddiqsoft
+            DESTINATION
+                ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+
+    message(STATUS ".    install(DIRECTORY   ${PROJECT_SOURCE_DIR}/include/siddiqsoft\n"
+                   "   .             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})\n"
     )
 endif()
 
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
+set(CPACK_PACKAGE_DIRECTORY     ${PROJECT_BINARY_DIR}/packages)
+set(CPACK_SOURCE_IGNORE_FILES   .git/
+                                .github/
+                                .vscode/
+                                .mypy_cache/
+                                _CPack_Packages/
+                                ${CMAKE_BINARY_DIR}/
+                                ${PROJECT_BINARY_DIR}/
+)
+set(CPACK_PACKAGE_DESCRIPTION       ${PROJECT_DESCRIPTION})
+set(CPACK_PACKAGE_VERSION           ${PROJECT_VERSION})
+#set(CPACK_PACKAGE_VERSION_MAJOR    "${VERSION_MAJOR}")
+#set(CPACK_PACKAGE_VERSION_MINOR    "${VERSION_MINOR}")
+#set(CPACK_PACKAGE_VERSION_PATCH    "${VERSION_PATCH}")
+set(CPACK_PACKAGE_VENDOR            "SiddiqSoft")
+set(CPACK_PACKAGE_CONTACT           "github@siddiqsoft.org")
+set(CPACK_PACKAGE_FILE_NAME         "${CMAKE_PROJECT_NAME}-${PROJECT_VERSION}")
 
 include(CPack)

@@ -70,8 +70,8 @@ namespace siddiqsoft
 		/// @param context Reference to the context
 		explicit timethis(std::function<void(const std::chrono::system_clock::duration&)>&& callback,
 		                  const std::source_location&                                       sl = std::source_location::current())
-		    : sourceLocation(sl)
-		    , mCallback(std::move(callback))
+		    : mCallback(std::move(callback))
+		    , sourceLocation(sl)
 		    , startTimestamp(std::chrono::system_clock::now())
 		{
 		}
@@ -130,16 +130,16 @@ namespace siddiqsoft
 		/// @brief The callback
 		std::function<void(const std::chrono::system_clock::duration&)> mCallback {};
 
-
+		/// @brief The location for this scope (saved when instanced.)
+		std::source_location sourceLocation;
 		/// @brief The start timestamp
 		std::chrono::system_clock::time_point startTimestamp;
-		std::source_location                  sourceLocation;
 	}; // struct TimeThis
 } // namespace siddiqsoft
 
 
 template <class charT>
-struct std::formatter<siddiqsoft::TimeThis, charT> : std::formatter<charT>
+struct std::formatter<siddiqsoft::timethis, charT> : std::formatter<charT>
 {
 	template <class FC>
 	auto format(const siddiqsoft::timethis& sv, FC& ctx) const
