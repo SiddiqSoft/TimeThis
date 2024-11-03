@@ -19,7 +19,20 @@ project(timethis
         DESCRIPTION "A header-only library to measure time elapsed for a given scope."
 )
 
-# Based on the instructions: https://www.foonathan.net/2016/03/cmake-install/
+# Based on the guide https://ryandeangraham.medium.com/building-a-header-only-library-hello-world-f9dd05ac1066
 
-add_subdirectory(src)
-add_subdirectory(tests)
+include(GNUInstallDirs)
+
+add_library(${PROJECT_NAME} INTERFACE)
+
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
+
+target_include_directories( ${PROJECT_NAME}
+                            INTERFACE
+                            $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}>
+                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+if(opt_siddiqsoft_btp)
+    include(tests)
+endif()
