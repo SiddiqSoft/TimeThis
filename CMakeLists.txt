@@ -68,3 +68,9 @@ install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+
+# Usage
+# > mkdir build
+# > cd build
+# > cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/your/installation/path
+# > cmake --build . --config Release --target install -- -j $(nproc)
