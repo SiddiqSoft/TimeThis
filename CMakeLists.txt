@@ -29,8 +29,8 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
 target_include_directories( ${PROJECT_NAME}
                             INTERFACE
-                            $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}>
-                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include/*>
+                            $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>
+                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 
@@ -46,7 +46,14 @@ install(TARGETS ${PROJECT_NAME}
         EXPORT ${PROJECT_NAME}_Targets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+message(STATUS  ". install(TARGETS ${PROJECT_NAME}\n"
+                "   .        EXPORT ${PROJECT_NAME}_Targets\n"
+                "   .        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}\n"
+                "   .        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}\n"
+                "   .        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}\n"
+                "   .        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})\n")
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file("${PROJECT_NAME}ConfigVersion.cmake"
                                  VERSION ${PROJECT_VERSION}
