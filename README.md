@@ -48,13 +48,31 @@ auto handleHTTPMessage(auto req)
 
 # Usage
 
-- Use the nuget [SiddiqSoft.TimeThis](https://www.nuget.org/packages/SiddiqSoft.TimeThis/)
-- Copy paste..whatever works.
+## Options
 
+### Nuget
+- Use the nuget [SiddiqSoft.TimeThis](https://www.nuget.org/packages/SiddiqSoft.TimeThis/)
+
+### Cmake
+```cmake
+    .
+    # Fetch the latest or specify the tag..
+    FetchContent_Declare(   timethis
+                            GIT_REPOSITORY https://github.com/siddiqsoft/TimeThis.git
+                            GIT_SHALLOW 1)
+    FetchContent_MakeAvailable(timethis)
+    .
+    .
+    target_link_libraries(${PROJECT_NAME} timethis)
+```
+
+You may then use `timethis` by adding `#include "siddiqsoft/timethis.hpp` in your client code.
+
+## Source Examples
 
 ```cpp
 #include "gtest/gtest.h"
-#include "siddiqsoft/TimeThis.hpp"
+#include "siddiqsoft/timethis.hpp"
 
 
 TEST(examples, Example1)
@@ -80,7 +98,6 @@ TEST(examples, Example1)
     EXPECT_TRUE(passTest);
 }
 ```
-
 
 ## Notes
 
