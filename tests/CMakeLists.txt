@@ -28,12 +28,12 @@ target_compile_features(    ${TESTPROJ} PRIVATE
                             cxx_std_20)
 
 target_compile_options(     ${TESTPROJ} PRIVATE
-                                $<$<CXX_COMPILER_ID:MSVC>:/std:c++20>
-                                $<$<CXX_COMPILER_ID:MSVC>:/W4>
-                                $<$<CXX_COMPILER_ID:MSVC>:/WX>
-                                $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:-Wall>
-                                $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:-Werror>
-                                $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:-pedantic> )
+                            $<$<CXX_COMPILER_ID:MSVC>:/std:c++20>
+                            $<$<CXX_COMPILER_ID:MSVC>:/W4>
+                            $<$<CXX_COMPILER_ID:MSVC>:/WX>
+                            $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:-Wall>
+                            $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:-Werror>
+                            $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:-pedantic> )
 
 include(GoogleTest)
 

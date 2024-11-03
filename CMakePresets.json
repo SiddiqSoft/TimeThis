@@ -210,8 +210,8 @@
         },
         {
             "name": "Linux-Release",
-            "description": "",
-            "displayName": "",
+            "description": "Package for Linux",
+            "displayName": "Linux-Package",
             "configurePreset": "Linux-Release",
             "generators": [
                 "ZIP"
