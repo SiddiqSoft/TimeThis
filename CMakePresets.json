@@ -193,6 +193,28 @@
                 "noTestsAction": "error",
                 "stopOnFailure": true
             }
+        },
+        {
+            "name": "Linux-Debug",
+            "configurePreset": "Linux-Debug",
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "error",
+                "stopOnFailure": true
+            }
+        },
+        {
+            "name": "Linux-Release",
+            "configurePreset": "Linux-Release",
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "error",
+                "stopOnFailure": true
+            }
         }
     ],
     "packagePresets": [
@@ -211,13 +233,25 @@
         {
             "name": "Linux-Release",
             "description": "Package for Linux",
-            "displayName": "Linux-Package",
+            "displayName": "Linux-Package (Release)",
             "configurePreset": "Linux-Release",
             "generators": [
                 "ZIP"
             ],
             "configurations": [
                 "Linux-Release"
+            ]
+        },
+        {
+            "name": "Linux-Debug",
+            "description": "Package for Linux",
+            "displayName": "Linux-Package (Debug)",
+            "configurePreset": "Linux-Debug",
+            "generators": [
+                "ZIP"
+            ],
+            "configurations": [
+                "Linux-Debug"
             ]
         },
         {
