@@ -119,14 +119,6 @@ stages:
           Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/lib -ErrorAction SilentlyContinue
           Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin -ErrorAction SilentlyContinue
 
-    - task: DeleteFiles@1
-      displayName: 'Remove unneeded files'
-      inputs:
-        contents: |
-          $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/*
-          $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps/*
-          $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing/*
-
     - task: CmdLine@2
       displayName: 'List the outputs'
       inputs:
@@ -137,14 +129,6 @@ stages:
       displayName: 'CPack -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
       inputs:
         cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
-      condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
-      continueOnError: false
-
-    - task: CMake@1
-      displayName: 'CPack -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G NuGet'
-      inputs:
-        cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
-      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
       continueOnError: false
 
     - task: CopyFiles@2
@@ -155,14 +139,6 @@ stages:
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
       condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
 
-    - task: CopyFiles@2
-      displayName: 'Copy nuget CPack Files to: $(Build.ArtifactStagingDirectory)'
-      inputs:
-        SourceFolder: $(System.DefaultWorkingDirectory)/build/$(cmake.preset)
-        Contents: '*.nuget'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
-      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
-      continueOnError: false
       
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
