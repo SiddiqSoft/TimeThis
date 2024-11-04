@@ -107,7 +107,7 @@ stages:
       continueOnError: false
       condition: succeeded()
 
-    - task: CmdLine@2
+    - task: PowerShell@2
       displayName: 'List the outputs'
       inputs:
         script: |
