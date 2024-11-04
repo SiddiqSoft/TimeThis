@@ -111,6 +111,7 @@ stages:
       displayName: 'List the outputs'
       inputs:
         script: |
+          echo "Removing the folders before we pack stuff.."
           rm -R -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests
           rm -R -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps
           rm -R -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing
