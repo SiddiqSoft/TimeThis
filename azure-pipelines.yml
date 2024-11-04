@@ -118,6 +118,20 @@ stages:
           Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing -ErrorAction SilentlyContinue
           Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/lib -ErrorAction SilentlyContinue
           Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin -ErrorAction SilentlyContinue
+        condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
+
+    # Powershell is not supported on Pi aarch64 yet so we have to use this method for Linux
+    - task: CmdLine@2
+      displayName: 'Clean up folders on Linux machines'
+      inputs:
+        script: |
+          echo "Removing the folders before we pack stuff.."
+          rm -rdf $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests
+          rm -rdf $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps
+          rm -rdf $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing
+          rm -rdf $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/lib
+          rm -rdf $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin
+        condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
 
     - task: CMake@1
       displayName: 'CPack -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
