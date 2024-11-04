@@ -111,19 +111,21 @@ stages:
       displayName: 'List the outputs'
       inputs:
         script: |
-          dir .
-          dir $(System.DefaultWorkingDirectory)/build/$(cmake.preset)
           tree $(System.DefaultWorkingDirectory)/build/$(cmake.preset)
 
     - task: DeleteFiles@1
       displayName: 'Remove unneeded files'
       inputs:
         contents: |
-          **/_deps/*
-          **/tests/*
           $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/*
           $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps/*
+          $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing/*
 
+    - task: CmdLine@2
+      displayName: 'List the outputs'
+      inputs:
+        script: |
+          tree $(System.DefaultWorkingDirectory)/build/$(cmake.preset)
 
     - task: CMake@1
       displayName: 'CPack -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
