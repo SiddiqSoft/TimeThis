@@ -34,7 +34,7 @@ endif()
 # - Set the Name of the project and the details
 # - The namespace is set to "siddiqsoft"
 # - The options are all prefixed opt_siddiqsoft_XXX
-# - The option opt_siddiqsoft_btp is set to OFF and used by our CI to build, test and package
+# - The option opt_siddiqsoft_testing is set to OFF and used by our CI to build, test and package
 
 # -[]-------------------------------------
 # We need to support "C" language in order for the googletest to build.
@@ -46,6 +46,7 @@ project(timethis
 )
 
 # Based on the guide https://ryandeangraham.medium.com/building-a-header-only-library-hello-world-f9dd05ac1066
+# With addition info https://cmake.org/cmake/help/v3.18/guide/tutorial/#adding-a-version-number-and-configured-header-file
 
 include(GNUInstallDirs)
 find_package(Git REQUIRED)
@@ -108,7 +109,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCL
 # > cd build
 # > cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/your/installation/path
 # > cmake --build . --config Release --target install -- -j $(nproc)
-
+include(InstallRequiredSystemLibraries)
 # Packaging Configuration
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})

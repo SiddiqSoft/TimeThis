@@ -97,6 +97,20 @@ stages:
       condition: succeeded()
       continueOnError: true
 
+    - task: CMake@1
+      displayName: 'CPack -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
+      inputs:
+        cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
+      condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
+      continueOnError: false
+
+    - task: CMake@1
+      displayName: 'CPack -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G NuGet'
+      inputs:
+        cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
+      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
+      continueOnError: false
+
     - task: PublishTestResults@2
       displayName: 'Publish $(buildConfiguration) Test Results test_detail.xml'
       inputs:
