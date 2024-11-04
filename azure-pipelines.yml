@@ -108,7 +108,7 @@ stages:
       condition: succeeded()
 
     - task: PowerShell@2
-      displayName: 'List the outputs'
+      displayName: 'List the outputs and remove directories'
       inputs:
         targetType: 'inline'
         script: |
