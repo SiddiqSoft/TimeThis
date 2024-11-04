@@ -111,6 +111,12 @@ stages:
       displayName: 'List the outputs'
       inputs:
         script: |
+          rm -rdf $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests
+          rm -rdf $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps
+          rm -rdf $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing
+          rm -rdf $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/lib
+          rm -rdf $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin
+
           tree $(System.DefaultWorkingDirectory)/build/$(cmake.preset)
 
     - task: DeleteFiles@1
@@ -120,9 +126,6 @@ stages:
           $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/*
           $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps/*
           $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing/*
-          $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests
-          $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps
-          $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing
 
     - task: CmdLine@2
       displayName: 'List the outputs'
