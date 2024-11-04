@@ -110,6 +110,7 @@ stages:
     - task: PowerShell@2
       displayName: 'List the outputs'
       inputs:
+        targetType: 'inline'
         script: |
           echo "Removing the folders before we pack stuff.."
           rm -R -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests
