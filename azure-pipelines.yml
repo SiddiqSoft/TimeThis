@@ -97,6 +97,24 @@ stages:
       condition: succeeded()
       continueOnError: true
 
+    - task: PublishTestResults@2
+      displayName: 'Publish $(buildConfiguration) Test Results test_detail.xml'
+      inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml'
+          mergeTestResults: true
+          buildConfiguration: '$(buildConfiguration)'
+      continueOnError: false
+      condition: succeeded()
+
+    - task: DeleteFiles@1
+      displayName: 'Remove unneeded files'
+      inputs:
+        contents: |
+          **/_deps/*
+          **/lib/*
+          **/lib64/*
+
     - task: CMake@1
       displayName: 'CPack -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
       inputs:
@@ -131,16 +149,6 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
 
-    - task: PublishTestResults@2
-      displayName: 'Publish $(buildConfiguration) Test Results test_detail.xml'
-      inputs:
-          testResultsFormat: 'JUnit'
-          testResultsFiles: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml'
-          mergeTestResults: true
-          buildConfiguration: '$(buildConfiguration)'
-      continueOnError: false
-      condition: succeeded()
-
     - task: NuGetCommand@2
       displayName: 'NuGet pack'
       inputs:
@@ -173,4 +181,5 @@ stages:
         isPreRelease: true
         changeLogCompareToRelease: 'lastFullRelease'
         changeLogType: 'commitBased'
+        artifactsDirectory: $(Build.ArtifactStagingDirectory)
       condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Windows'))
