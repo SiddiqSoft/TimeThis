@@ -113,11 +113,11 @@ stages:
         targetType: 'inline'
         script: |
           echo "Removing the folders before we pack stuff.."
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/lib
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin
+          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/lib -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin -ErrorAction SilentlyContinue
 
     - task: DeleteFiles@1
       displayName: 'Remove unneeded files'
