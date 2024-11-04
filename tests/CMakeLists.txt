@@ -44,5 +44,6 @@ if(opt_siddiqsoft_testing)
     gtest_discover_tests(${TESTPROJ} XML_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/tests/results")
     message(STATUS "....gtest_discover_tests(${TESTPROJ}    XML_OUTPUT_DIR \"${PROJECT_SOURCE_DIR}/tests/results\")")
 
+    set_target_properties(${TESTPROJ} PROPERTIES EXCLUDE_FROM_ALL True)
     message(STATUS "....Completed the setup/configuration for testing.")
 endif()
