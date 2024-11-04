@@ -120,6 +120,9 @@ stages:
           $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/*
           $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps/*
           $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing/*
+          $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests
+          $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps
+          $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing
 
     - task: CmdLine@2
       displayName: 'List the outputs'
