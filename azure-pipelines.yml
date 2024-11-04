@@ -119,12 +119,6 @@ stages:
           Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/lib -ErrorAction SilentlyContinue
           Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin -ErrorAction SilentlyContinue
 
-    - task: CmdLine@2
-      displayName: 'List the outputs'
-      inputs:
-        script: |
-          tree $(System.DefaultWorkingDirectory)/build/$(cmake.preset)
-
     - task: CMake@1
       displayName: 'CPack -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
       inputs:
