@@ -111,13 +111,33 @@ stages:
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
       continueOnError: false
 
+    - task: CopyFiles@2
+      displayName: 'Copy ZIP CPack Files to: $(Build.ArtifactStagingDirectory)'
+      inputs:
+        SourceFolder: $(System.DefaultWorkingDirectory)/build/$(cmake.preset)
+        Contents: '*.zip'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
+
+    - task: CopyFiles@2
+      displayName: 'Copy nuget CPack Files to: $(Build.ArtifactStagingDirectory)'
+      inputs:
+        SourceFolder: $(System.DefaultWorkingDirectory)/build/$(cmake.preset)
+        Contents: '*.nuget'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
+      continueOnError: false
+      
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: drop'
+
     - task: PublishTestResults@2
       displayName: 'Publish $(buildConfiguration) Test Results test_detail.xml'
       inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml'
-        mergeTestResults: true
-        buildConfiguration: '$(buildConfiguration)'
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml'
+          mergeTestResults: true
+          buildConfiguration: '$(buildConfiguration)'
       continueOnError: false
       condition: succeeded()
 
