@@ -113,11 +113,11 @@ stages:
         targetType: 'inline'
         script: |
           echo "Removing the folders before we pack stuff.."
-          rm -R -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests
-          rm -R -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps
-          rm -R -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing
-          rm -R -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/lib
-          rm -R -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin
+          Remove-Item -LiteralPath -Recurse -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests
+          Remove-Item -LiteralPath -Recurse -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps
+          Remove-Item -LiteralPath -Recurse -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing
+          Remove-Item -LiteralPath -Recurse -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/lib
+          Remove-Item -LiteralPath -Recurse -Force $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin
 
     - task: DeleteFiles@1
       displayName: 'Remove unneeded files'
