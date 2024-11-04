@@ -1,26 +1,33 @@
-cmake_minimum_required(VERSION 3.25)
-
-execute_process(
-    COMMAND git describe --tags --always --dirty
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_DESCRIBE_OUTPUT
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-if(GIT_DESCRIBE_OUTPUT)
-    string(REGEX REPLACE "^v([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-g([0-9a-f]+)(-dirty)?$" "\\1" PROJECT_VERSION_MAJOR "${GIT_DESCRIBE_OUTPUT}")
-    string(REGEX REPLACE "^v([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-g([0-9a-f]+)(-dirty)?$" "\\2" PROJECT_VERSION_MINOR "${GIT_DESCRIBE_OUTPUT}")
-    string(REGEX REPLACE "^v([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-g([0-9a-f]+)(-dirty)?$" "\\3" PROJECT_VERSION_PATCH "${GIT_DESCRIBE_OUTPUT}")
-    set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
-
-    if(GIT_DESCRIBE_OUTPUT MATCHES "-dirty$")
-        set(PROJECT_VERSION "${PROJECT_VERSION}-dirty")
-    endif()
-endif()
-
 #   SiddiqSoft CMakeLists for header only libraries
 #   Copyright 2024 Abdulkareem Siddiq. All rights reserved.
 #   See LICENSE file
+
+cmake_minimum_required(VERSION 3.25)
+
+# -[]-------------------------------------
+# Gather the git version
+if( DEFINED CI_BUILDID)
+    set(CURRENT_PROJECT_VERSION ${CI_BUILDID})
+else()
+    execute_process(
+        COMMAND git describe --tags --always 
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_DESCRIBE_OUTPUT
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS "Git version of this code: ${GIT_DESCRIBE_OUTPUT}")
+    if(GIT_DESCRIBE_OUTPUT)
+        string(REGEX MATCH "([0-9]+)\\.([0-9]+)\\.([0-9]+)" PV_MMP "${GIT_DESCRIBE_OUTPUT}")
+        set(PV_MAJOR ${CMAKE_MATCH_1})
+        set(PV_MINOR ${CMAKE_MATCH_2})
+        set(PV_PATCH ${CMAKE_MATCH_3})
+        set(CURRENT_PROJECT_VERSION "${PV_MAJOR}.${PV_MINOR}.${PV_PATCH}")
+        message(STATUS "Git version of this code derived: ${CURRENT_PROJECT_VERSION}")
+    else()
+        set(CURRENT_PROJECT_VERSION "0.0.0")
+        message(WARNING "Unable to set the project; using ${CURRENT_PROJECT_VERSION}")
+    endif()
+endif()
 
 #   ________________________________________________
 # - Set the Name of the project and the details
@@ -31,7 +38,7 @@ endif()
 # -[]-------------------------------------
 # We need to support "C" language in order for the googletest to build.
 project(timethis
-        VERSION "${PROJECT_VERSION}"
+        VERSION "${CURRENT_PROJECT_VERSION}"
         LANGUAGES CXX C
         HOMEPAGE_URL "https://github.com/siddiqsoft/TimeThis"
         DESCRIPTION "A header-only library to measure time elapsed for a given scope."

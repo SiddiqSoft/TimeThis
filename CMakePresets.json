@@ -123,29 +123,6 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
-        },
-        {
-            "name": "Custom configure preset",
-            "displayName": "Custom configure preset",
-            "description": "Sets Ninja generator, build and install directory",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
-            }
-        },
-        {
-            "name": "Clang 19.1.2 arm64-apple-darwin24.1.0",
-            "displayName": "Clang 19.1.2 arm64-apple-darwin24.1.0",
-            "description": "Using compilers: C = /opt/homebrew/opt/llvm/bin/clang, CXX = /opt/homebrew/opt/llvm/bin/clang++",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_C_COMPILER": "/opt/homebrew/opt/llvm/bin/clang",
-                "CMAKE_CXX_COMPILER": "/opt/homebrew/opt/llvm/bin/clang++",
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
         }
     ],
     "buildPresets": [
@@ -222,6 +199,18 @@
     ],
     "packagePresets": [
         {
+            "name": "Apple-Debug",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "Apple-Debug",
+            "generators": [
+                "ZIP"
+            ],
+            "configurations": [
+                "Apple-Debug"
+            ]
+        },
+        {
             "name": "Apple-Release",
             "description": "",
             "displayName": "",
@@ -232,8 +221,7 @@
             "configurations": [
                 "Apple-Release"
             ]
-        },
-        {
+        },        {
             "name": "Linux-Release",
             "description": "Package for Linux",
             "displayName": "Linux-Package (Release)",
@@ -258,15 +246,15 @@
             ]
         },
         {
-            "name": "Windows-Release",
+            "name": "Windows-Debug",
             "description": "",
             "displayName": "",
-            "configurePreset": "Windows-Release",
+            "configurePreset": "Windows-Debug",
             "generators": [
                 "NuGet"
             ],
             "configurations": [
-                "Windows-Release"
+                "Windows-Debug"
             ]
         },
         {

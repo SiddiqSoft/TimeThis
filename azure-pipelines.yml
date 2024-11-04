@@ -79,15 +79,15 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
-      displayName: 'CMake Configure $(cmake.preset).. $(System.DefaultWorkingDirectory)/..  -Dopt_siddiqsoft_btp=ON'
+      displayName: 'CMake Configure $(cmake.preset).. $(System.DefaultWorkingDirectory)/..  -Dopt_siddiqsoft_testing=ON  -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -Dopt_siddiqsoft_btp=ON'
+        cmakeArgs: '--preset $(cmake.preset) -Dopt_siddiqsoft_testing=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
-      displayName: 'CMake --build . --config $(buildConfiguration)  -Dopt_siddiqsoft_btp=ON'
+      displayName: 'CMake --build . --config $(buildConfiguration)  -Dopt_siddiqsoft_testing=ON  -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
       inputs:
-        cmakeArgs: '--build $(System.DefaultWorkingDirectory)/build/$(cmake.preset)  -Dopt_siddiqsoft_btp=ON'
+        cmakeArgs: '--build $(System.DefaultWorkingDirectory)/build/$(cmake.preset) -Dopt_siddiqsoft_testing=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
       condition: succeeded()
 
     - task: CMake@1
