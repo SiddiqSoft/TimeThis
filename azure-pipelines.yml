@@ -130,6 +130,7 @@ stages:
       inputs:
         cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
       continueOnError: false
+      condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
 
     - task: CopyFiles@2
       displayName: 'Copy ZIP CPack Files to: $(Build.ArtifactStagingDirectory)'
