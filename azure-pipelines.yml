@@ -85,9 +85,9 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
-      displayName: 'CMake --build . --config $(buildConfiguration)  -Dopt_siddiqsoft_testing=ON  -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
+      displayName: 'CMake --build . --config $(buildConfiguration)'
       inputs:
-        cmakeArgs: '--build $(System.DefaultWorkingDirectory)/build/$(cmake.preset) -Dopt_siddiqsoft_testing=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
+        cmakeArgs: '--build $(System.DefaultWorkingDirectory)/build/$(cmake.preset)'
       condition: succeeded()
 
     - task: CMake@1

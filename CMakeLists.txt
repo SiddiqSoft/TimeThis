@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.25)
 # -[]-------------------------------------
 # Gather the git version
 if( DEFINED CI_BUILDID)
+    message(STATUS "Using the CI supplied buildid: CURRENT_PROJECT_VERSION --> ${CI_BUILDID}")
     set(CURRENT_PROJECT_VERSION ${CI_BUILDID})
 else()
     execute_process(
@@ -117,5 +118,6 @@ set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_SOURCE_IGNORE_FILES "/gmock/.*;/gtest/.*;/lib64/.*")
+
 message(STATUS "Writing the package for `` --> CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}")
 include(CPack)
