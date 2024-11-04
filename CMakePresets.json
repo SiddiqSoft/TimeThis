@@ -14,11 +14,7 @@
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}",
                 "CMAKE_C_COMPILER": "/opt/homebrew/opt/llvm/bin/clang",
                 "CMAKE_CXX_COMPILER": "/opt/homebrew/opt/llvm/bin/clang++",
-                "CMAKE_BUILD_TYPE": "Debug",
-                "opt_siddiqsoft_btp": {
-                    "type": "BOOL",
-                    "value": "ON"
-                }
+                "CMAKE_BUILD_TYPE": "Debug"
             },
             "condition": {
                 "type": "equals",
@@ -35,11 +31,7 @@
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}",
                 "CMAKE_C_COMPILER": "/opt/homebrew/opt/llvm/bin/clang",
                 "CMAKE_CXX_COMPILER": "/opt/homebrew/opt/llvm/bin/clang++",
-                "CMAKE_BUILD_TYPE": "Release",
-                "opt_siddiqsoft_btp": {
-                    "type": "BOOL",
-                    "value": "ON"
-                }
+                "CMAKE_BUILD_TYPE": "Release"
             },
             "condition": {
                 "type": "equals",
@@ -57,11 +49,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "/usr/bin/clang",
-                "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
-                "opt_siddiqsoft_btp": {
-                    "type": "BOOL",
-                    "value": "ON"
-                }
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
             },
             "condition": {
                 "type": "equals",
@@ -84,11 +72,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_C_COMPILER": "/usr/bin/clang",
-                "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
-                "opt_siddiqsoft_btp": {
-                    "type": "BOOL",
-                    "value": "ON"
-                }
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
             },
             "condition": {
                 "type": "equals",
@@ -110,11 +94,7 @@
             "installDir": "${sourceDir}/install/${presetName}",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe",
-                "opt_siddiqsoft_btp": {
-                    "type": "BOOL",
-                    "value": "ON"
-                }
+                "CMAKE_CXX_COMPILER": "cl.exe"
             },
             "condition": {
                 "type": "equals",
@@ -142,6 +122,29 @@
             "inherits": "Windows-Debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "Custom configure preset",
+            "displayName": "Custom configure preset",
+            "description": "Sets Ninja generator, build and install directory",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            }
+        },
+        {
+            "name": "Clang 19.1.2 arm64-apple-darwin24.1.0",
+            "displayName": "Clang 19.1.2 arm64-apple-darwin24.1.0",
+            "description": "Using compilers: C = /opt/homebrew/opt/llvm/bin/clang, CXX = /opt/homebrew/opt/llvm/bin/clang++",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "/opt/homebrew/opt/llvm/bin/clang",
+                "CMAKE_CXX_COMPILER": "/opt/homebrew/opt/llvm/bin/clang++",
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         }
     ],
@@ -252,6 +255,18 @@
             ],
             "configurations": [
                 "Linux-Debug"
+            ]
+        },
+        {
+            "name": "Windows-Release",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "Windows-Release",
+            "generators": [
+                "NuGet"
+            ],
+            "configurations": [
+                "Windows-Release"
             ]
         },
         {

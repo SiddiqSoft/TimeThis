@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-if(opt_siddiqsoft_btp)
+if(opt_siddiqsoft_testing)
     message(STATUS "....We're building ${PROJECT} for distribution; testing enabled.")
     include(FetchContent)
     include(GNUInstallDirs)

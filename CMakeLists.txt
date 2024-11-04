@@ -1,5 +1,23 @@
 cmake_minimum_required(VERSION 3.25)
 
+execute_process(
+    COMMAND git describe --tags --always --dirty
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_DESCRIBE_OUTPUT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+if(GIT_DESCRIBE_OUTPUT)
+    string(REGEX REPLACE "^v([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-g([0-9a-f]+)(-dirty)?$" "\\1" PROJECT_VERSION_MAJOR "${GIT_DESCRIBE_OUTPUT}")
+    string(REGEX REPLACE "^v([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-g([0-9a-f]+)(-dirty)?$" "\\2" PROJECT_VERSION_MINOR "${GIT_DESCRIBE_OUTPUT}")
+    string(REGEX REPLACE "^v([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-g([0-9a-f]+)(-dirty)?$" "\\3" PROJECT_VERSION_PATCH "${GIT_DESCRIBE_OUTPUT}")
+    set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+
+    if(GIT_DESCRIBE_OUTPUT MATCHES "-dirty$")
+        set(PROJECT_VERSION "${PROJECT_VERSION}-dirty")
+    endif()
+endif()
+
 #   SiddiqSoft CMakeLists for header only libraries
 #   Copyright 2024 Abdulkareem Siddiq. All rights reserved.
 #   See LICENSE file
@@ -13,7 +31,7 @@ cmake_minimum_required(VERSION 3.25)
 # -[]-------------------------------------
 # We need to support "C" language in order for the googletest to build.
 project(timethis
-        VERSION 1.5.0
+        VERSION "${PROJECT_VERSION}"
         LANGUAGES CXX C
         HOMEPAGE_URL "https://github.com/siddiqsoft/TimeThis"
         DESCRIPTION "A header-only library to measure time elapsed for a given scope."
@@ -22,6 +40,7 @@ project(timethis
 # Based on the guide https://ryandeangraham.medium.com/building-a-header-only-library-hello-world-f9dd05ac1066
 
 include(GNUInstallDirs)
+find_package(Git REQUIRED)
 
 add_library(${PROJECT_NAME} INTERFACE)
 
@@ -34,9 +53,9 @@ target_include_directories( ${PROJECT_NAME}
 )
 
 
-# opt_siddiqsoft_btp - Enabled via our CI build script
+# opt_siddiqsoft_testing - Enabled via our CI build script
 # If enabled, we will build the tests
-if(opt_siddiqsoft_btp)
+if(opt_siddiqsoft_testing)
     add_subdirectory(tests)
 endif()
 
