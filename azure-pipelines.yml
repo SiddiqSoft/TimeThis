@@ -112,8 +112,7 @@ stages:
       inputs:
         contents: |
           **/_deps/*
-          **/lib/*
-          **/lib64/*
+          **/tests/*
 
     - task: CMake@1
       displayName: 'CPack -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
