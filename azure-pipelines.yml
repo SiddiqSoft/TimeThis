@@ -140,9 +140,9 @@ stages:
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
       condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
 
-      
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
+      condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
 
     - task: NuGetCommand@2
       displayName: 'NuGet pack'
