@@ -1,6 +1,6 @@
 /*
     TimeThis : Simple stopwatch implementation with optional callback on destructor
-    Version 1.0.0
+    Version @PROJECT_VERSION@
 
     https://github.com/SiddiqSoft/TimeThis
 
@@ -127,6 +127,7 @@ namespace siddiqsoft
 		}
 
 	private:
+		std::string libraryVersionInfo{"@PROJECT_VERSION@"};
 		/// @brief The callback
 		std::function<void(const std::chrono::system_clock::duration&)> mCallback {};
 
