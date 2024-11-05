@@ -79,9 +79,9 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
-      displayName: 'CMake Configure $(cmake.preset).. $(System.DefaultWorkingDirectory)/..  -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -Dopt_siddiqsoft_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
+        cmakeArgs: '--preset $(cmake.preset) -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
