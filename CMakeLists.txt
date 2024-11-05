@@ -61,7 +61,6 @@ if(opt_${PROJECT_NAME}_install)
     file(READ "${PROJECT_SOURCE_DIR}/include/siddiqsoft/timethis.hpp" FILE_CONTENT)
     string(REPLACE "@PROJECT_VERSION@" "${PROJECT_VERSION}" FILE_CONTENT "${FILE_CONTENT}" )
     file(WRITE "${PROJECT_SOURCE_DIR}/include/siddiqsoft/timethis.hpp" "${FILE_CONTENT}")
-    message(STATUS "Replaced version information: ${FILE_CONTENT}")
 
     # Installation Stuff
     # For header-only libraries, we require
