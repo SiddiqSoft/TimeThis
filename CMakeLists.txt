@@ -27,10 +27,10 @@ endif()
 # -[]-------------------------------------
 # We need to support "C" language in order for the googletest to build.
 project(timethis
-        VERSION "${CURRENT_PROJECT_VERSION}"
-        LANGUAGES CXX C
-        HOMEPAGE_URL "https://github.com/siddiqsoft/TimeThis"
-        DESCRIPTION "A header-only library to measure time elapsed for a given scope."
+        VERSION         "${CURRENT_PROJECT_VERSION}"
+        LANGUAGES       CXX C
+        HOMEPAGE_URL    "https://github.com/siddiqsoft/TimeThis"
+        DESCRIPTION     "A header-only library to measure time elapsed for a given scope."
 )
 
 # Based on the guide https://ryandeangraham.medium.com/building-a-header-only-library-hello-world-f9dd05ac1066
@@ -58,6 +58,12 @@ if(opt_${PROJECT_NAME}_testing)
 endif()
 
 if(opt_${PROJECT_NAME}_install)
+    include(CMakePackageConfigHelpers)
+
+    # for testing
+    # cmake --preset Apple-Debug -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=2.0.4
+    # cmake -E chdir build/Apple-Debug cpack -C Debug -G ZIP
+    #
     message(STATUS "CMAKE_CURRENT_SOURCE_DIR.....${CMAKE_CURRENT_SOURCE_DIR}")
     message(STATUS "CMAKE_INSTALL_INCLUDEDIR.....${CMAKE_INSTALL_INCLUDEDIR}")
     message(STATUS "CMAKE_INSTALL_LIBDIR.........${CMAKE_INSTALL_LIBDIR}")
@@ -65,6 +71,12 @@ if(opt_${PROJECT_NAME}_install)
     message(STATUS "CMAKE_CURRENT_LIST_DIR.......${CMAKE_CURRENT_LIST_DIR}")
     message(STATUS "CMAKE_INSTALL_PREFIX.........${CMAKE_INSTALL_PREFIX}")
     message(STATUS "--------------------------------------------------------------------------")
+    # testing end
+    ###
+
+    if(NOT INCLUDE_INSTALL_DIR)
+        set(INCLUDE_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    endif()
 
     target_sources( ${PROJECT_NAME}
                     INTERFACE
@@ -77,27 +89,35 @@ if(opt_${PROJECT_NAME}_install)
             FILE_SET    HEADERS
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
     
-    install(EXPORT      ${PROJECT_NAME}Targets
-            FILE        ${PROJECT_NAME}Config.cmake
-            NAMESPACE   siddiqsoft::
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    #install(EXPORT      ${PROJECT_NAME}Targets
+    #        FILE        ${PROJECT_NAME}Config.cmake
+    #        NAMESPACE   siddiqsoft::
+    #        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
     
+    install(EXPORT ${PROJECT_NAME}Targets
+            FILE ${PROJECT_NAME}Targets.cmake
+            NAMESPACE ${PROJECT_NAME}::
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
+
     install(FILES       ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
                         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TargetsVersion.cmake
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/cmake)
     message(STATUS  "install(FILES       ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake\n"
                     "  .                    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TargetsVersion.cmake\n"
-                    "  .        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})\n")
+                    "  .        DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/cmake)\n")
     
-    export( EXPORT      ${PROJECT_NAME}Targets
-            FILE        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-            NAMESPACE   siddiqsoft::)
+    #export( EXPORT      ${PROJECT_NAME}Targets
+    #        FILE        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+    #        NAMESPACE   siddiqsoft::)
     
-    configure_package_config_file(  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
-                                    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+
+    configure_package_config_file(  "${CMAKE_CURRENT_SOURCE_DIR}/pack/${PROJECT_NAME}Config.cmake.in"
+                                    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
                                     INSTALL_DESTINATION
-                                    ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-    message(STATUS "{CMAKE_CURRENT_SOURCE_DIR}/cmake/{PROJECT_NAME}Config.cmake.in --> ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in")
+                                    ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
+                                    PATH_VARS INCLUDE_INSTALL_DIR)
+    message(STATUS "{CMAKE_CURRENT_SOURCE_DIR}/pack/{PROJECT_NAME}Config.cmake.in --> ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in")
     message(STATUS "{CMAKE_CURRENT_BINARY_DIR}/{PROJECT_NAME}Config.cmake          --> ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
     
     write_basic_package_version_file(   ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Version.cmake
@@ -112,14 +132,14 @@ if(opt_${PROJECT_NAME}_install)
     # > cmake --build . --config Release --target install -- -j $(nproc)
     include(InstallRequiredSystemLibraries)
     # Packaging Configuration
-    set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
-    set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
-    set(CPACK_PACKAGE_VENDOR "SiddiqSoft")
-    set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}")
-    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
-    set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-    set(CPACK_SOURCE_IGNORE_FILES "/gmock/.*;/gtest/.*;/lib64/.*;/_deps/*;/tests/*")
+    set(CPACK_PACKAGE_NAME                  ${PROJECT_NAME})
+    set(CPACK_PACKAGE_VERSION               ${PROJECT_VERSION})
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   ${PROJECT_DESCRIPTION})
+    set(CPACK_PACKAGE_VENDOR                "SiddiqSoft")
+    set(CPACK_PACKAGE_FILE_NAME             "${PROJECT_NAME}-${PROJECT_VERSION}")
+    set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+    set(CPACK_RESOURCE_FILE_README          "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+    set(CPACK_SOURCE_IGNORE_FILES           "/gmock/.*;/gtest/.*;/lib64/.*;/_deps/*;/tests/*")
 
     message(STATUS "Writing the package for `${CPACK_PACKAGE_NAME}` --> CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}")
     include(CPack)

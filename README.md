@@ -101,13 +101,20 @@ TEST(examples, Example1)
 
 ## Notes
 
-- Supported prefix:
-    - `Darwin`
-    - `Linux`
-    - `Windows`
+### Cmake Stuff
 
-<small align="right">
+Get the current presets
+```cmake
+cmake --list-presets
+```
 
-&copy; 2021 Siddiq Software LLC. All rights reserved.
+Build the application and test (as performed via Azure Pipelines)
+```cmake
+cmake --preset Apple-Debug -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=0.0.0.0
+```
 
-</small>
+Package for upload
+```cmake
+cmake -E chdir build/Apple-Debug cpack -C Debug -G ZIP
+```
+
