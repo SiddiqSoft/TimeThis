@@ -73,23 +73,26 @@ if(opt_${PROJECT_NAME}_install)
                     DIRECTORIES include
                     )
 
-    install(TARGETS ${PROJECT_NAME}
-            EXPORT ${PROJECT_NAME}Targets
-            FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+    install(TARGETS     ${PROJECT_NAME}
+            EXPORT      ${PROJECT_NAME}Targets
+            FILE_SET    HEADERS
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
     
-    install(EXPORT ${PROJECT_NAME}Targets
-            FILE ${PROJECT_NAME}Config.cmake
-            NAMESPACE siddiqsoft::
+    install(EXPORT      ${PROJECT_NAME}Targets
+            FILE        ${PROJECT_NAME}Config.cmake
+            NAMESPACE   siddiqsoft::
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
     
-    install(FILES
-            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TargetsVersion.cmake
+    install(FILES       ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+                        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TargetsVersion.cmake
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    message(STATUS  "install(FILES       ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake\n"
+                    "  .                    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TargetsVersion.cmake\n"
+                    "  .        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})\n")
     
-    export(EXPORT ${PROJECT_NAME}Targets
-            FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-            NAMESPACE siddiqsoft::)
+    export(EXPORT       ${PROJECT_NAME}Targets
+            FILE        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+            NAMESPACE   siddiqsoft::)
     
     configure_package_config_file(
             ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
