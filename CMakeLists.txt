@@ -58,20 +58,19 @@ if(opt_${PROJECT_NAME}_testing)
 endif()
 
 if(opt_${PROJECT_NAME}_install)
-    message(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
-    message(STATUS "CMAKE_INSTALL_INCLUDEDIR = ${CMAKE_INSTALL_INCLUDEDIR}")
-    message(STATUS "CMAKE_INSTALL_LIBDIR     = ${CMAKE_INSTALL_LIBDIR}")
-    message(STATUS "CMAKE_CURRENT_BINARY_DIR = ${CMAKE_CURRENT_BINARY_DIR}")
-    message(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
-    message(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
-    message(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
+    message(STATUS "CMAKE_CURRENT_SOURCE_DIR.....${CMAKE_CURRENT_SOURCE_DIR}")
+    message(STATUS "CMAKE_INSTALL_INCLUDEDIR.....${CMAKE_INSTALL_INCLUDEDIR}")
+    message(STATUS "CMAKE_INSTALL_LIBDIR.........${CMAKE_INSTALL_LIBDIR}")
+    message(STATUS "CMAKE_CURRENT_BINARY_DIR.....${CMAKE_CURRENT_BINARY_DIR}")
+    message(STATUS "CMAKE_CURRENT_LIST_DIR.......${CMAKE_CURRENT_LIST_DIR}")
+    message(STATUS "CMAKE_INSTALL_PREFIX.........${CMAKE_INSTALL_PREFIX}")
+    message(STATUS "--------------------------------------------------------------------------")
 
     target_sources( ${PROJECT_NAME}
                     INTERFACE
                     FILE_SET    HEADERS
                     BASE_DIRS   ${CMAKE_CURRENT_SOURCE_DIR}/include
-                    DIRECTORIES include
-                    )
+                    DIRECTORIES include)
 
     install(TARGETS     ${PROJECT_NAME}
             EXPORT      ${PROJECT_NAME}Targets
@@ -90,22 +89,22 @@ if(opt_${PROJECT_NAME}_install)
                     "  .                    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TargetsVersion.cmake\n"
                     "  .        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})\n")
     
-    export(EXPORT       ${PROJECT_NAME}Targets
+    export( EXPORT      ${PROJECT_NAME}Targets
             FILE        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
             NAMESPACE   siddiqsoft::)
     
-    configure_package_config_file(
-            ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
-            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-            INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    configure_package_config_file(  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
+                                    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+                                    INSTALL_DESTINATION
+                                    ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
     message(STATUS "{CMAKE_CURRENT_SOURCE_DIR}/cmake/{PROJECT_NAME}Config.cmake.in --> ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in")
     message(STATUS "{CMAKE_CURRENT_BINARY_DIR}/{PROJECT_NAME}Config.cmake          --> ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
     
-    write_basic_package_version_file(
-            ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Version.cmake
-            VERSION ${PROJECT_VERSION}
-            COMPATIBILITY SameMajorVersion)                    
+    write_basic_package_version_file(   ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Version.cmake
+                                        VERSION         ${PROJECT_VERSION}
+                                        COMPATIBILITY   SameMajorVersion)
     message(STATUS "{PROJECT_BINARY_DIR}/{PROJECT_NAME}Version.cmake               --> ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Version.cmake")
+
     # Usage
     # > mkdir build
     # > cd build
