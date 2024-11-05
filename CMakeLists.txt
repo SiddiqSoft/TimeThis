@@ -1,30 +1,21 @@
 #   SiddiqSoft CMakeLists for header only libraries
 #   Copyright 2024 Abdulkareem Siddiq. All rights reserved.
 #   See LICENSE file
-
+#
+#   When building from our CI server, the following options must be set
+#   opt_timethis_testing ON
+#   opt_timethis_install ON
+#   CI_BUILDID must be set to the 
 cmake_minimum_required(VERSION 3.25)
 
 # -[]-------------------------------------
-# Gather the git version
-if( DEFINED CI_BUILDID)
+if(DEFINED opt_timethis_install AND CI_BUILDID)
     message(STATUS "Using the CI supplied buildid: CURRENT_PROJECT_VERSION --> ${CI_BUILDID}")
     set(CURRENT_PROJECT_VERSION ${CI_BUILDID})
-else()
-    execute_process(
-        COMMAND git describe --tags --always 
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE GIT_DESCRIBE_OUTPUT
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    if(GIT_DESCRIBE_OUTPUT)
-        message(STATUS "Git version of this code: ${GIT_DESCRIBE_OUTPUT}")
-        string(REGEX MATCH "([0-9]+)\\.([0-9]+)\\.([0-9]+)" PV_MMP "${GIT_DESCRIBE_OUTPUT}")
-        set(PV_MAJOR ${CMAKE_MATCH_1})
-        set(PV_MINOR ${CMAKE_MATCH_2})
-        set(PV_PATCH ${CMAKE_MATCH_3})
-        set(CURRENT_PROJECT_VERSION "${PV_MAJOR}.${PV_MINOR}.${PV_PATCH}")
-        message(STATUS "Git version of this code derived: ${CURRENT_PROJECT_VERSION}")
-    endif()
+endif()
+
+if((DEFINED opt_timethis_install) AND (NOT DEFINED CI_BUILDID))
+    message(ERROR "When building from CI the CI_BUILDID must be set")
 endif()
 
 #   ________________________________________________
