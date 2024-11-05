@@ -1,6 +1,6 @@
 /*
     TimeThis : Simple stopwatch implementation with optional callback on destructor
-    Version @PROJECT_VERSION@
+    Version 2
 
     https://github.com/SiddiqSoft/TimeThis
 
@@ -116,11 +116,10 @@ namespace siddiqsoft
 		[[nodiscard]] auto to_string() const
 		{
 			if constexpr (std::is_same<charT, char>()) {
-				return std::format<const char*>("{} started on {:%FT%T}Z took {}us (v{})",
+				return std::format<const char*>("{} started on {:%FT%T}Z took {}us",
 				                                sourceLocation.function_name(),
 				                                startTimestamp,
-				                                std::chrono::duration_cast<std::chrono::microseconds>(elapsed()).count(),
-				                                libraryVersionInfo);
+				                                std::chrono::duration_cast<std::chrono::microseconds>(elapsed()).count());
 			}
 			else if constexpr (std::is_same<charT, wchar_t>()) {
 				throw std::invalid_argument("wchar_t Not implemented");
@@ -128,7 +127,6 @@ namespace siddiqsoft
 		}
 
 	private:
-		std::string_view libraryVersionInfo {"@PROJECT_VERSION@"};
 		/// @brief The callback
 		std::function<void(const std::chrono::system_clock::duration&)> mCallback {};
 

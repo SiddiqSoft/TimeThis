@@ -57,10 +57,10 @@ if(opt_${PROJECT_NAME}_testing)
 endif()
 
 if(opt_${PROJECT_NAME}_install)
-
-    file(READ "${PROJECT_SOURCE_DIR}/include/siddiqsoft/timethis.hpp" FILE_CONTENT)
-    string(REPLACE "@PROJECT_VERSION@" "${PROJECT_VERSION}" FILE_CONTENT "${FILE_CONTENT}" )
-    file(WRITE "${PROJECT_SOURCE_DIR}/include/siddiqsoft/timethis.hpp" "${FILE_CONTENT}")
+    # Not relevant; we can use this code to update the version number of the library.
+    #file(READ "${PROJECT_SOURCE_DIR}/include/siddiqsoft/timethis.hpp" FILE_CONTENT)
+    #string(REPLACE "@PROJECT_VERSION@" "${PROJECT_VERSION}" FILE_CONTENT "${FILE_CONTENT}" )
+    #file(WRITE "${PROJECT_SOURCE_DIR}/include/siddiqsoft/timethis.hpp" "${FILE_CONTENT}")
 
     # Installation Stuff
     # For header-only libraries, we require
