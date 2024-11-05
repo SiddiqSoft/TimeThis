@@ -46,9 +46,11 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 target_include_directories( ${PROJECT_NAME}
                             INTERFACE
                             $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>
-                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-)
-
+                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+message(STATUS  ".target_include_directories( ${PROJECT_NAME}\n"
+                "  .                            INTERFACE\n"
+                "  .                            $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>\n"
+                "  .                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)")
 
 # opt_siddiqsoft_testing - Enabled via our CI build script
 # If enabled, we will build the tests
@@ -97,7 +99,8 @@ if(opt_${PROJECT_NAME}_install)
                 "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
 
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+    #install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
     # Usage
     # > mkdir build
