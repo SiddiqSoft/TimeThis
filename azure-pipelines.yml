@@ -151,8 +151,7 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'release'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/*'
         publishLocation: 'Container'
       condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
 
@@ -175,6 +174,7 @@ stages:
       condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Windows'))
 
     - task: GitHubRelease@1
+      displayName: 'Release to GitHub'
       inputs:
         gitHubConnection: 'github-packages-sqs'
         repositoryName: 'siddiqsoft/TimeThis'
@@ -188,6 +188,8 @@ stages:
         isPreRelease: true
         changeLogCompareToRelease: 'lastFullRelease'
         changeLogType: 'commitBased'
+        addChangeLog: false
         artifactsDirectory: $(Build.ArtifactStagingDirectory)
-        assets: '$(Build.ArtifactStagingDirectory)/**/*.zip;build/*.zip'
+        assets: '$(Build.ArtifactStagingDirectory)/*'
+        assetUploadMode: 'replace'
       condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Linux'))
