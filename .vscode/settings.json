@@ -20,5 +20,6 @@
 				}
 			}
 		]
-	}
+    },
+    "cmake.ctestDefaultArgs": []
 }

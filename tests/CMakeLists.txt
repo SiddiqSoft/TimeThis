@@ -1,27 +1,48 @@
 cmake_minimum_required(VERSION 3.25)
 
-# Require C++20
-message(STATUS "Require C++20..")
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+if(opt_${PROJECT_NAME}_testing)
+    message(STATUS "....We're building ${PROJECT} for distribution; testing enabled.")
+    include(FetchContent)
+    include(GNUInstallDirs)
 
-find_package(Git REQUIRED)
-include(FetchContent)
-FetchContent_Declare(googletest
-					GIT_REPOSITORY https://github.com/google/googletest.git
-					GIT_TAG	v1.15.2
-					FIND_PACKAGE_ARGS NAMES GTest
-)
-FetchContent_MakeAvailable(googletest)
+    set(TESTPROJ ${PROJECT_NAME}_tests)
+    message(STATUS "....Setting the TESTPROJ --> ${PROJECT_NAME}_tests --> ${TESTPROJ}")
 
-# Declare our test source files.
-file(GLOB testSRC "./test.cpp")
+    message(STATUS "....Fetch googletest..")
+    FetchContent_Declare(googletest URL https://github.com/google/googletest/releases/download/v1.15.2/googletest-1.15.2.tar.gz
+                                    FIND_PACKAGE_ARGS NAMES GTest)
+    message(STATUS "....Fetch googletest..Completed.")
 
-add_executable(TimeThis_test ${testSRC})
+    # Typically only one executable
+    add_executable(${TESTPROJ})
+    message(STATUS "....Adding sources for testing from: `${PROJECT_SOURCE_DIR}/tests/test.cpp`")
+    target_sources( ${TESTPROJ}
+                    PRIVATE
+                    ${PROJECT_SOURCE_DIR}/tests/test.cpp)
 
-target_link_libraries(TimeThis_test PRIVATE GTest::gtest_main)
+    FetchContent_MakeAvailable(googletest)
+    enable_testing()
 
-include(GoogleTest)
-gtest_discover_tests(TimeThis_test
-                     XML_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/tests/results"
-)
+    target_include_directories( ${TESTPROJ}
+                                PRIVATE
+                                $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                                $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
+
+    target_compile_features(${TESTPROJ} PRIVATE cxx_std_20)
+
+    target_compile_options( ${TESTPROJ}
+                            PRIVATE
+                            $<$<CXX_COMPILER_ID:MSVC>:/std:c++20> )
+
+    include(GoogleTest)
+
+    target_link_libraries(${TESTPROJ} PRIVATE GTest::gtest_main)
+    message(STATUS "....target_link_libraries(  ${TESTPROJ} PRIVATE GTest::gtest_main)")
+
+    include(CTest)
+
+    gtest_discover_tests(${TESTPROJ} XML_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/tests/results")
+    message(STATUS "....gtest_discover_tests(${TESTPROJ}    XML_OUTPUT_DIR \"${PROJECT_SOURCE_DIR}/tests/results\")")
+
+    message(STATUS "....Completed the setup/configuration for testing.")
+endif()

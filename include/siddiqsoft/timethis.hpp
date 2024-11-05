@@ -1,6 +1,6 @@
 /*
     TimeThis : Simple stopwatch implementation with optional callback on destructor
-    Version 1.0.0
+    Version 2
 
     https://github.com/SiddiqSoft/TimeThis
 
@@ -36,13 +36,8 @@
 */
 
 #pragma once
-#include <exception>
-#include <iterator>
 #include <stdexcept>
-#include <string>
-#include <string_view>
 #include <type_traits>
-#include <exception>
 
 #ifndef TIMETHIS_HPP
 #define TIMETHIS_HPP 1
@@ -50,14 +45,13 @@
 #include <functional>
 #include <chrono>
 #include <ostream>
-#include <source_location>
 #include <format>
-
+#include <source_location>
 
 namespace siddiqsoft
 {
 	/// @brief A class to facilitate the execution of lambda when the object is destroyed.
-	struct TimeThis
+	struct timethis
 	{
 		/// @brief Calculates the duration since the creation of this object
 		/// @return Value representing the elapsed duration as timepoint
@@ -65,7 +59,7 @@ namespace siddiqsoft
 
 
 		/// @brief When source_location is available, collect the calling location
-		explicit TimeThis(const std::source_location& sl = std::source_location::current())
+		explicit timethis(const std::source_location& sl = std::source_location::current())
 		    : sourceLocation(sl)
 		    , startTimestamp(std::chrono::system_clock::now())
 		{
@@ -74,10 +68,10 @@ namespace siddiqsoft
 		/// @brief Construct an object which holds the callback to be executed upon destruction
 		/// @param callback The callback takes timepoint representing the final calculation of the delta
 		/// @param context Reference to the context
-		explicit TimeThis(std::function<void(const std::chrono::system_clock::duration&)>&& callback,
+		explicit timethis(std::function<void(const std::chrono::system_clock::duration&)>&& callback,
 		                  const std::source_location&                                       sl = std::source_location::current())
-		    : sourceLocation(sl)
-		    , mCallback(std::move(callback))
+		    : mCallback(std::move(callback))
+		    , sourceLocation(sl)
 		    , startTimestamp(std::chrono::system_clock::now())
 		{
 		}
@@ -86,7 +80,7 @@ namespace siddiqsoft
 		/// @param os
 		/// @param src
 		/// @return
-		friend std::ostream& operator<<(std::ostream& os, const TimeThis& src)
+		friend std::ostream& operator<<(std::ostream& os, const timethis& src)
 		{
 			os << src.sourceLocation.function_name() << " took " << src.elapsed().count() << "ns";
 			return os;
@@ -95,25 +89,25 @@ namespace siddiqsoft
 		/// @brief Not supported. Makes no sense to copy another instance as the use-case should allow for a single task per
 		/// callback.
 		/// @param  ignored
-		TimeThis(TimeThis&) = delete;
+		timethis(timethis&) = delete;
 
 		/// @brief Not supported. Makes no sense to move another instance as the use-case should allow for a single task per
 		/// callback.
 		/// @param  ignored
-		TimeThis(TimeThis&&) = delete;
+		timethis(timethis&&) = delete;
 
 		/// @brief Not supported
 		/// @param  ignored
 		/// @return self
-		TimeThis& operator=(TimeThis&) = delete;
+		timethis& operator=(timethis&) = delete;
 
 		/// @brief Not supported
 		/// @param  ignored
 		/// @return self
-		TimeThis& operator=(TimeThis&&) = delete;
+		timethis& operator=(timethis&&) = delete;
 
 		/// @brief Invoke the callback if present.
-		~TimeThis() noexcept
+		~timethis() noexcept
 		{
 			if (mCallback) mCallback(elapsed());
 		}
@@ -136,24 +130,24 @@ namespace siddiqsoft
 		/// @brief The callback
 		std::function<void(const std::chrono::system_clock::duration&)> mCallback {};
 
-
+		/// @brief The location for this scope (saved when instanced.)
+		std::source_location sourceLocation;
 		/// @brief The start timestamp
 		std::chrono::system_clock::time_point startTimestamp;
-		std::source_location                  sourceLocation;
 	}; // struct TimeThis
 } // namespace siddiqsoft
 
 
 template <class charT>
-struct std::formatter<siddiqsoft::TimeThis, charT> : std::formatter<charT>
+struct std::formatter<siddiqsoft::timethis, charT> : std::formatter<charT>
 {
 	template <class FC>
-	auto format(const siddiqsoft::TimeThis& sv, FC& ctx) const
+	auto format(const siddiqsoft::timethis& sv, FC& ctx) const
 	{
 		return std::format_to(ctx.out(), "{}", sv.to_string<charT>());
 	}
 };
 
 #else
-#pragma message "Already included TimeThis.hpp"
+#pragma message "Already included timethis.hpp"
 #endif
