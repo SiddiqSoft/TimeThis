@@ -37,7 +37,7 @@ project(timethis
 # With addition info https://cmake.org/cmake/help/v3.18/guide/tutorial/#adding-a-version-number-and-configured-header-file
 
 include(GNUInstallDirs)
-find_package(Git REQUIRED)
+#find_package(Git REQUIRED)
 
 add_library(${PROJECT_NAME} INTERFACE)
 
@@ -45,11 +45,11 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
 target_include_directories( ${PROJECT_NAME}
                             INTERFACE
-                            $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>
+                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 message(STATUS  ".target_include_directories( ${PROJECT_NAME}\n"
                 "  .                            INTERFACE\n"
-                "  .                            $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>\n"
+                "  .                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n"
                 "  .                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)")
 
 # opt_siddiqsoft_testing - Enabled via our CI build script
@@ -95,12 +95,15 @@ if(opt_${PROJECT_NAME}_install)
             NAMESPACE ${PROJECT_NAME}::
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
 
-    install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    install(FILES
+                "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
                 "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
+            DESTINATION
+                ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
 
     #install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
     install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    message(STATUS "install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})")
 
     # Usage
     # > mkdir build
