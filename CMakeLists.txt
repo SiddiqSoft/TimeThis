@@ -16,17 +16,14 @@ else()
         OUTPUT_VARIABLE GIT_DESCRIBE_OUTPUT
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-    message(STATUS "Git version of this code: ${GIT_DESCRIBE_OUTPUT}")
     if(GIT_DESCRIBE_OUTPUT)
+        message(STATUS "Git version of this code: ${GIT_DESCRIBE_OUTPUT}")
         string(REGEX MATCH "([0-9]+)\\.([0-9]+)\\.([0-9]+)" PV_MMP "${GIT_DESCRIBE_OUTPUT}")
         set(PV_MAJOR ${CMAKE_MATCH_1})
         set(PV_MINOR ${CMAKE_MATCH_2})
         set(PV_PATCH ${CMAKE_MATCH_3})
         set(CURRENT_PROJECT_VERSION "${PV_MAJOR}.${PV_MINOR}.${PV_PATCH}")
         message(STATUS "Git version of this code derived: ${CURRENT_PROJECT_VERSION}")
-    else()
-        set(CURRENT_PROJECT_VERSION "0.0.0")
-        message(WARNING "Unable to set the project; using ${CURRENT_PROJECT_VERSION}")
     endif()
 endif()
 
