@@ -37,7 +37,6 @@ project(timethis
 # With addition info https://cmake.org/cmake/help/v3.18/guide/tutorial/#adding-a-version-number-and-configured-header-file
 
 include(GNUInstallDirs)
-#find_package(Git REQUIRED)
 
 add_library(${PROJECT_NAME} INTERFACE)
 
@@ -59,52 +58,51 @@ if(opt_${PROJECT_NAME}_testing)
 endif()
 
 if(opt_${PROJECT_NAME}_install)
-    # Not relevant; we can use this code to update the version number of the library.
-    #file(READ "${PROJECT_SOURCE_DIR}/include/siddiqsoft/timethis.hpp" FILE_CONTENT)
-    #string(REPLACE "@PROJECT_VERSION@" "${PROJECT_VERSION}" FILE_CONTENT "${FILE_CONTENT}" )
-    #file(WRITE "${PROJECT_SOURCE_DIR}/include/siddiqsoft/timethis.hpp" "${FILE_CONTENT}")
+    message(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
+    message(STATUS "CMAKE_INSTALL_INCLUDEDIR = ${CMAKE_INSTALL_INCLUDEDIR}")
+    message(STATUS "CMAKE_INSTALL_LIBDIR     = ${CMAKE_INSTALL_LIBDIR}")
+    message(STATUS "CMAKE_CURRENT_BINARY_DIR = ${CMAKE_CURRENT_BINARY_DIR}")
+    message(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
+    message(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
+    message(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
 
-    # Installation Stuff
-    # For header-only libraries, we require
-    #       PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-    install(TARGETS                     ${PROJECT_NAME}
-            EXPORT                      ${PROJECT_NAME}_Targets
-            COMPONENT                   ${PROJECT_NAME}
-            PUBLIC_HEADER DESTINATION   ${CMAKE_INSTALL_INCLUDEDIR}
-            INCLUDES DESTINATION        ${CMAKE_INSTALL_INCLUDEDIR})
-    message(STATUS  ". install(TARGETS                  ${PROJECT_NAME}\n"
-                    "   .         EXPORT                    ${PROJECT_NAME}_Targets\n"
-                    "   .         COMPONENT                 ${PROJECT_NAME}\n"
-                    "   .         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}\n"
-                    "   .         INCLUDES DESTINATION      ${CMAKE_INSTALL_INCLUDEDIR})\n")
-    include(CMakePackageConfigHelpers)
-    write_basic_package_version_file("${PROJECT_NAME}ConfigVersion.cmake"
-                                    VERSION ${PROJECT_VERSION}
-                                    COMPATIBILITY SameMajorVersion)
-    if(NOT INCLUDE_INSTALL_DIR)
-    set(INCLUDE_INSTALL_DIR include)
-    endif()
-    configure_package_config_file(  "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
-                                    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-                                    INSTALL_DESTINATION
-                                    ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
-                                    PATH_VARS
-                                    INCLUDE_INSTALL_DIR)
-    install(EXPORT          ${PROJECT_NAME}_Targets
-            FILE            ${PROJECT_NAME}Targets.cmake
-            NAMESPACE       ${PROJECT_NAME}::
-            DESTINATION     ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
+    target_sources( ${PROJECT_NAME}
+                    INTERFACE
+                    FILE_SET    HEADERS
+                    BASE_DIRS   ${CMAKE_CURRENT_SOURCE_DIR}/include
+                    DIRECTORIES include
+                    )
 
+    install(TARGETS ${PROJECT_NAME}
+            EXPORT ${PROJECT_NAME}Targets
+            FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+    
+    install(EXPORT ${PROJECT_NAME}Targets
+            FILE ${PROJECT_NAME}Config.cmake
+            NAMESPACE siddiqsoft::
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    
     install(FILES
-                "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-                "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-            DESTINATION
-                ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
-
-    #install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-    message(STATUS "install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})")
-
+            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TargetsVersion.cmake
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    
+    export(EXPORT ${PROJECT_NAME}Targets
+            FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+            NAMESPACE siddiqsoft::)
+    
+    configure_package_config_file(
+            ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
+            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+            INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    message(STATUS "{CMAKE_CURRENT_SOURCE_DIR}/cmake/{PROJECT_NAME}Config.cmake.in --> ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in")
+    message(STATUS "{CMAKE_CURRENT_BINARY_DIR}/{PROJECT_NAME}Config.cmake          --> ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
+    
+    write_basic_package_version_file(
+            ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Version.cmake
+            VERSION ${PROJECT_VERSION}
+            COMPATIBILITY SameMajorVersion)                    
+    message(STATUS "{PROJECT_BINARY_DIR}/{PROJECT_NAME}Version.cmake               --> ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Version.cmake")
     # Usage
     # > mkdir build
     # > cd build
