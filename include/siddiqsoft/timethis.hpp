@@ -116,10 +116,11 @@ namespace siddiqsoft
 		[[nodiscard]] auto to_string() const
 		{
 			if constexpr (std::is_same<charT, char>()) {
-				return std::format<const char*>("{} started on {:%FT%T}Z took {}us",
+				return std::format<const char*>("{} started on {:%FT%T}Z took {}us (v{})",
 				                                sourceLocation.function_name(),
 				                                startTimestamp,
-				                                std::chrono::duration_cast<std::chrono::microseconds>(elapsed()).count());
+				                                std::chrono::duration_cast<std::chrono::microseconds>(elapsed()).count(),
+				                                libraryVersionInfo);
 			}
 			else if constexpr (std::is_same<charT, wchar_t>()) {
 				throw std::invalid_argument("wchar_t Not implemented");
@@ -127,7 +128,7 @@ namespace siddiqsoft
 		}
 
 	private:
-		std::string libraryVersionInfo{"@PROJECT_VERSION@"};
+		std::string_view libraryVersionInfo {"@PROJECT_VERSION@"};
 		/// @brief The callback
 		std::function<void(const std::chrono::system_clock::duration&)> mCallback {};
 
