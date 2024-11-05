@@ -189,5 +189,5 @@ stages:
         changeLogCompareToRelease: 'lastFullRelease'
         changeLogType: 'commitBased'
         artifactsDirectory: $(Build.ArtifactStagingDirectory)
-        assets: '$(Build.ArtifactStagingDirectory)/release/*.zip'
-      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Windows'))
+        assets: '$(Build.ArtifactStagingDirectory)/**/*.zip;build/*.zip'
+      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Linux'))
