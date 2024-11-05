@@ -95,7 +95,7 @@ stages:
       inputs:
         cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests ctest $(System.DefaultWorkingDirectory)/build/$(cmake.preset) --output-junit $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml --output-on-failure'
       condition: succeeded()
-      continueOnError: true
+      continueOnError: false
 
     - task: PublishTestResults@2
       displayName: 'Publish $(buildConfiguration) Test Results test_detail.xml'
