@@ -67,21 +67,15 @@ stages:
         configFilePath: 'GitVersion.yml'
 
     - script: echo %Action%%BuildVersion%
-      displayName: 'Set build version to $(GitVersion.MajorMinorPatch)'
+      displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
       env:
         Action: '##vso[build.updatebuildnumber]'
-        BuildVersion: $(GitVersion.MajorMinorPatch)
+        BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
 
     - task: CMake@1
-      displayName: 'CMake Show Presets.. working at $(System.DefaultWorkingDirectory)/.. '
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
       inputs:
-        cmakeArgs: '--list-presets=all'
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-
-    - task: CMake@1
-      displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
-      inputs:
-        cmakeArgs: '--preset $(cmake.preset) -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch)'
+        cmakeArgs: '--preset $(cmake.preset) -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
@@ -189,7 +183,5 @@ stages:
         changeLogCompareToRelease: 'lastFullRelease'
         changeLogType: 'commitBased'
         addChangeLog: false
-        #artifactsDirectory: $(Build.ArtifactStagingDirectory)
-        #assets: '$(Build.ArtifactStagingDirectory)/*'
         assetUploadMode: 'replace'
       condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Linux'))
