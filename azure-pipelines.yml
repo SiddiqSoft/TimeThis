@@ -155,19 +155,6 @@ stages:
         cmakeArgs: '--preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(buildLatestTag)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
-    - task: PowerShell@2
-      displayName: 'List the outputs and remove directories'
-      inputs:
-        targetType: 'inline'
-        script: |
-          echo "Removing the folders before we pack stuff.."
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/lib -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin -ErrorAction SilentlyContinue
-      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
-
     # Powershell is not supported on Pi aarch64 yet so we have to use this method for Linux
     - task: CmdLine@2
       displayName: 'Clean up folders on Linux machines'
