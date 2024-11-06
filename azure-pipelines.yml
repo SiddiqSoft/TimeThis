@@ -142,12 +142,6 @@ stages:
     - checkout: self
       fetchDepth: 1
 
-    - script: echo %Action%%BuildVersion%
-      displayName: 'Set build version to $(buildLatestTag) or $(build.buildNumber) or $(build.buildid)'
-      env:
-        Action: '##vso[build.updatebuildnumber]'
-        BuildVersion: $(buildLatestTag)
-
     - task: CMake@1
       displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(buildLatestTag)'
       inputs:
