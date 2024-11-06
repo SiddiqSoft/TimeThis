@@ -150,9 +150,9 @@ stages:
       displayName: 'Set the version information'
 
     - task: CMake@1
-      displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(buildLatestTag)'
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(build.buildNumber)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(buildLatestTag)'
+        cmakeArgs: '--preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(build.buildNumber)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     # Powershell is not supported on Pi aarch64 yet so we have to use this method for Linux
@@ -196,7 +196,7 @@ stages:
         command: 'pack'
         packagesToPack: 'pack/*.nuspec'
         versioningScheme: 'off'
-        buildProperties: 'VERSION=$(GitVersion.MajorMinorPatch)'
+        buildProperties: 'VERSION=$(build.buildNumber)'
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
 
     - task: NuGetCommand@2
