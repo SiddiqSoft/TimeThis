@@ -16,11 +16,11 @@
     <projectUrl>https://github.com/SiddiqSoft/TimeThis</projectUrl>
     <repository type="git" url="https://github.com/SiddiqSoft/TimeThis" />
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <license type="expression">BSD-3-Clause</license>
+    <!--<license type="expression">BSD-3-Clause</license>-->
     <!--<icon>docs\Siddiq-Software-Avatar.png</icon>-->
-    <readme>docs\README.md</readme>
+    <!--<readme>docs\README.md</readme>-->
     <releaseNotes></releaseNotes>
-    <copyright>Copyright (c) 2020 Siddiq Software LLC</copyright>
+    <copyright>Copyright (c) 2024 Siddiq Software LLC</copyright>
     <!-- Dependencies -->
     <dependencies>
     </dependencies>
