@@ -110,9 +110,18 @@ if(opt_${PROJECT_NAME}_install)
                         "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
             COMPONENT   "${PROJECT_NAME}"
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+            COMPONENT "${PROJECT_NAME}"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     include_directories("${PROJECT_SOURCE_DIR}/include/")
 
+    # Install the project targets.
+    install(TARGETS             ${PROJECT_NAME}
+            EXPORT              "${PROJECT_NAME}Targets"
+            COMPONENT           "${PROJECT_NAME}"
+            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
     # Usage
     # > mkdir build
     # > cd build
