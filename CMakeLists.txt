@@ -97,6 +97,7 @@ if(opt_${PROJECT_NAME}_install)
                         "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
     install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    include_directories("${PROJECT_SOURCE_DIR}/include/")
     # Usage
     # > mkdir build
     # > cd build
