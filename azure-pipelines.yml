@@ -13,7 +13,7 @@ trigger:
     - README.md
 
 stages:
-- stage: Build
+- stage: Build_n_Test
   displayName: 'Building Multiple OS, Testing and Package for Windows'
   jobs:
   - job: build
@@ -108,7 +108,7 @@ stages:
 
 - stage: Pack_n_Publish
   displayName: 'Package for GitHub (cmake) and Nuget'
-  dependsOn: Build
+  dependsOn: Build_n_Test
   jobs:
   - job: packit
     displayName: PackageIt
@@ -130,7 +130,7 @@ stages:
 
     variables:
       buildConfiguration: 'Release'
-      buildLatestTag: $[ stageDependencies.Build.build.outputs['SetBuildLatestTag.buildLatestTag'] ]
+      buildLatestTag: $[ stageDependencies.Build_n_Test.build.outputs['SetBuildLatestTag.buildLatestTag'] ]
 
     pool:
       name: $(poolName)
