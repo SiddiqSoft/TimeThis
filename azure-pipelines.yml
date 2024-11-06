@@ -130,7 +130,7 @@ stages:
 
     variables:
       buildConfiguration: 'Release'
-      buildLatestTag: $[ stageDependencies.{Build}.{build}.outputs['SetBuildLatestTag.buildLatestTag'] ]
+      buildLatestTag: $[ stageDependencies.Build.build.outputs['SetBuildLatestTag.buildLatestTag'] ]
 
     pool:
       name: $(poolName)
