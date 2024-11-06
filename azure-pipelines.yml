@@ -13,8 +13,8 @@ trigger:
     - README.md
 
 stages:
-- stage: Build
-  displayName: Building Multiple OS, Testing, Publishing
+- stage: 'Build and Test'
+  displayName: Building Multiple OS, Testing and Package for Windows
   jobs:
   - job: build
     displayName: Build
@@ -101,33 +101,8 @@ stages:
       continueOnError: false
       condition: succeeded()
 
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact: drop'
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        publishLocation: 'Container'
-      condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
-
-    - task: NuGetCommand@2
-      displayName: 'NuGet pack'
-      inputs:
-        command: 'pack'
-        packagesToPack: 'pack/*.nuspec'
-        versioningScheme: 'off'
-        buildProperties: 'VERSION=$(GitVersion.MajorMinorPatch)'
-      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
-
-    - task: NuGetCommand@2
-      displayName: 'NuGet push'
-      inputs:
-        command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;build/*.nupkg'
-        nuGetFeedType: 'external'
-        publishFeedCredentials: 'sqs-nuget'
-      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Windows'))
-
-- stage: Package
-  displayName: 'Package for GitHub (cmake)'
+- stage: 'Packaging and Publication'
+  displayName: 'Package for GitHub (cmake) and Nuget'
   dependsOn: Build
   jobs:
   - job: build
@@ -239,6 +214,24 @@ stages:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         publishLocation: 'Container'
       condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
+
+    - task: NuGetCommand@2
+      displayName: 'NuGet pack'
+      inputs:
+        command: 'pack'
+        packagesToPack: 'pack/*.nuspec'
+        versioningScheme: 'off'
+        buildProperties: 'VERSION=$(GitVersion.MajorMinorPatch)'
+      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
+
+    - task: NuGetCommand@2
+      displayName: 'NuGet push'
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;build/*.nupkg'
+        nuGetFeedType: 'external'
+        publishFeedCredentials: 'sqs-nuget'
+      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Windows'))
 
     - task: GitHubRelease@1
       displayName: 'Release to GitHub'
