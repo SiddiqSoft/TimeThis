@@ -76,12 +76,6 @@ if(opt_${PROJECT_NAME}_install)
     message(STATUS  ".write_basic_package_version_file(   ${PROJECT_NAME}ConfigVersion.cmake\n"
                     "   .                                    VERSION         ${PROJECT_VERSION}\n"
                     "   .                                    COMPATIBILITY   SameMajorVersion)")
-    configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}Config.cmake.in"
-                                    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-                                    INSTALL_DESTINATION
-                                    ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
-                                    PATH_VARS
-                                    INCLUDE_INSTALL_DIR)
     install(TARGETS     ${PROJECT_NAME}
             EXPORT      "${PROJECT_NAME}Targets"
             FILE_SET    HEADERS
@@ -90,11 +84,19 @@ if(opt_${PROJECT_NAME}_install)
             ARCHIVE     DESTINATION ${CMAKE_INSTALL_LIBDIR}
             INCLUDES    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     install(EXPORT      "${PROJECT_NAME}Targets"
+            COMPONENT   "${PROJECT_NAME}"
             FILE        "${PROJECT_NAME}Targets.cmake"
-            NAMESPACE   ${PROJECT_NAME}
+            NAMESPACE   ${PROJECT_NAME}::
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}Config.cmake.in"
+                                    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+                                    INSTALL_DESTINATION
+                                    ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+                                    PATH_VARS
+                                    INCLUDE_INSTALL_DIR)
     install(FILES       "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
                         "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+            COMPONENT   "${PROJECT_NAME}"
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
     install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     include_directories("${PROJECT_SOURCE_DIR}/include/")
