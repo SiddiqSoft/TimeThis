@@ -74,8 +74,7 @@ stages:
         BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
     
     - script: |
-        echo "##vso[task.setvariable variable=buildLatestTag;isOutput=true]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
-        buildLatestTag= $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
+        $buildLatestTag= $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
         echo 'We set buildLatestTag: $(buildLatestTag)'
       name: SetBuildLatestTag
 
