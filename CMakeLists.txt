@@ -78,6 +78,7 @@ if(opt_${PROJECT_NAME}_install)
                     "   .                                    COMPATIBILITY   SameMajorVersion)")
     install(TARGETS     ${PROJECT_NAME}
             EXPORT      "${PROJECT_NAME}Targets"
+            COMPONENT   "${PROJECT_NAME}"
             FILE_SET    HEADERS
             LIBRARY     DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
@@ -114,14 +115,6 @@ if(opt_${PROJECT_NAME}_install)
             COMPONENT "${PROJECT_NAME}"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     include_directories("${PROJECT_SOURCE_DIR}/include/")
-
-    # Install the project targets.
-    install(TARGETS             ${PROJECT_NAME}
-            EXPORT              "${PROJECT_NAME}Targets"
-            COMPONENT           "${PROJECT_NAME}"
-            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
     # Usage
     # > mkdir build
     # > cd build
