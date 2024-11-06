@@ -13,11 +13,11 @@ trigger:
     - README.md
 
 stages:
-- stage: 'Build and Test'
-  displayName: Building Multiple OS, Testing and Package for Windows
+- stage: Build
+  displayName: 'Building Multiple OS, Testing and Package for Windows'
   jobs:
   - job: build
-    displayName: Build
+    displayName: 'Build and Test'
     workspace:
       clean: all
 
@@ -36,7 +36,7 @@ stages:
 
     variables:
       buildConfiguration: 'Release'
-      buildLatestTag: '0.0.0'
+      buildLatestTag: '0.0.0.0'
 
     pool:
       name: $(poolName)
@@ -47,6 +47,7 @@ stages:
     steps:
     - checkout: self
       fetchDepth: 0
+      name: step1
 
     - task: NuGetToolInstaller@1
       displayName: 'Install Nuget'
@@ -71,6 +72,10 @@ stages:
       env:
         Action: '##vso[build.updatebuildnumber]'
         BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
+    
+    - script: |
+        echo "##vso[task.setvariable variable=buildLatestTag;isOutput=true]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
+      name: SetBuildLatestTag
 
     - task: CMake@1
       displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
@@ -105,8 +110,8 @@ stages:
   displayName: 'Package for GitHub (cmake) and Nuget'
   dependsOn: Build
   jobs:
-  - job: build
-    displayName: Build
+  - job: packit
+    displayName: PackageIt
     workspace:
       clean: all
 
@@ -125,7 +130,7 @@ stages:
 
     variables:
       buildConfiguration: 'Release'
-      buildLatestTag: '0.0.0'
+      buildLatestTag: $[ stageDependencies.{Build}.{build}.outputs['SetBuildLatestTag.buildLatestTag'] ]
 
     pool:
       name: $(poolName)
@@ -135,36 +140,18 @@ stages:
 
     steps:
     - checkout: self
-      fetchDepth: 0
-
-    - task: NuGetToolInstaller@1
-      displayName: 'Install Nuget'
-      inputs:
-        versionSpec: '>=5.0.0-0'
-        checkLatest: true
-
-    - task: gitversion/setup@3.0.0
-      displayName: 'Install GitVersion..'
-      inputs:
-        versionSpec: '6.x'
-        preferLatestVersion: true
-
-    - task: gitversion/execute@3.0.0
-      displayName: 'Determine Version..'
-      inputs:
-        useConfigFile: true
-        configFilePath: 'GitVersion.yml'
+      fetchDepth: 1
 
     - script: echo %Action%%BuildVersion%
-      displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource) or $(build.buildid)'
+      displayName: 'Set build version to $(buildLatestTag) or $(build.buildNumber) or $(build.buildid)'
       env:
         Action: '##vso[build.updatebuildnumber]'
-        BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
+        BuildVersion: $(buildLatestTag)
 
     - task: CMake@1
-      displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(build.buildid)'
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(buildLatestTag)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(build.buildid)'
+        cmakeArgs: '--preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(buildLatestTag)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: PowerShell@2
