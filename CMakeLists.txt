@@ -44,12 +44,8 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
 target_include_directories( ${PROJECT_NAME}
                             INTERFACE
-                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-message(STATUS  ".target_include_directories( ${PROJECT_NAME}\n"
-                "   .                            INTERFACE\n"
-                "   .                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n"
-                "   .                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)")
 
 # opt_siddiqsoft_testing - Enabled via our CI build script
 # If enabled, we will build the tests
@@ -73,58 +69,34 @@ if(opt_${PROJECT_NAME}_install)
     message(STATUS "--------------------------------------------------------------------------")
     # testing end
     ###
-
-    if(NOT INCLUDE_INSTALL_DIR)
-        set(INCLUDE_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
-    endif()
-
-    target_sources( ${PROJECT_NAME}
-                    INTERFACE
-                    FILE_SET    HEADERS
-                    BASE_DIRS   ${CMAKE_CURRENT_SOURCE_DIR}/include
-                    DIRECTORIES include)
-
-    install(TARGETS     ${PROJECT_NAME}
-            EXPORT      ${PROJECT_NAME}Targets
-            FILE_SET    HEADERS
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-    
-    #install(EXPORT      ${PROJECT_NAME}Targets
-    #        FILE        ${PROJECT_NAME}Config.cmake
-    #        NAMESPACE   siddiqsoft::
-    #        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-    
-    install(EXPORT ${PROJECT_NAME}Targets
-            FILE ${PROJECT_NAME}Targets.cmake
-            NAMESPACE ${PROJECT_NAME}::
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
-
-    install(FILES       ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-                        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TargetsVersion.cmake
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/cmake)
-    message(STATUS  "install(FILES       ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake\n"
-                    "  .                    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TargetsVersion.cmake\n"
-                    "  .        DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/cmake)\n")
-    
-    #export( EXPORT      ${PROJECT_NAME}Targets
-    #        FILE        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-    #        NAMESPACE   siddiqsoft::)
-    
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-
-    configure_package_config_file(  "${CMAKE_CURRENT_SOURCE_DIR}/pack/${PROJECT_NAME}Config.cmake.in"
-                                    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-                                    INSTALL_DESTINATION
-                                    ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
-                                    PATH_VARS INCLUDE_INSTALL_DIR)
-    message(STATUS "{CMAKE_CURRENT_SOURCE_DIR}/pack/{PROJECT_NAME}Config.cmake.in --> ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in")
-    message(STATUS "{CMAKE_CURRENT_BINARY_DIR}/{PROJECT_NAME}Config.cmake          --> ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
-    
-    write_basic_package_version_file(   ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Version.cmake
+    set(INCLUDE_INSTALL_DIR "${PROJECT_SOURCE_DIR}/include/")
+    write_basic_package_version_file(   "${PROJECT_NAME}ConfigVersion.cmake"
                                         VERSION         ${PROJECT_VERSION}
                                         COMPATIBILITY   SameMajorVersion)
-    message(STATUS "{PROJECT_BINARY_DIR}/{PROJECT_NAME}Version.cmake               --> ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Version.cmake")
-
+    message(STATUS  ".write_basic_package_version_file(   ${PROJECT_NAME}ConfigVersion.cmake\n"
+                    "   .                                    VERSION         ${PROJECT_VERSION}\n"
+                    "   .                                    COMPATIBILITY   SameMajorVersion)")
+    configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}Config.cmake.in"
+                                    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+                                    INSTALL_DESTINATION
+                                    ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
+                                    PATH_VARS
+                                    INCLUDE_INSTALL_DIR)
+    install(TARGETS     ${PROJECT_NAME}
+            EXPORT      "${PROJECT_NAME}Targets"
+            FILE_SET    HEADERS
+            LIBRARY     DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+            ARCHIVE     DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            INCLUDES    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    install(EXPORT      "${PROJECT_NAME}Targets"
+            FILE        "${PROJECT_NAME}Targets.cmake"
+            NAMESPACE   ${PROJECT_NAME}
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    install(FILES       "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+                        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     # Usage
     # > mkdir build
     # > cd build
@@ -133,13 +105,28 @@ if(opt_${PROJECT_NAME}_install)
     include(InstallRequiredSystemLibraries)
     # Packaging Configuration
     set(CPACK_PACKAGE_NAME                  ${PROJECT_NAME})
-    set(CPACK_PACKAGE_VERSION               ${PROJECT_VERSION})
+    string(REGEX MATCH "v([0-9]+)\\.([0-9]+)\\.([0-9]+)" VERSION_MATCH "${PROJECT_VERSION}")
+    set(CPACK_PACKAGE_VERSION_MAJOR         "${CMAKE_MATCH_1}")
+    set(CPACK_PACKAGE_VERSION_MINOR         "${CMAKE_MATCH_2}")
+    set(CPACK_PACKAGE_VERSION_MINOR         "${CMAKE_MATCH_3}")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   ${PROJECT_DESCRIPTION})
     set(CPACK_PACKAGE_VENDOR                "SiddiqSoft")
     set(CPACK_PACKAGE_FILE_NAME             "${PROJECT_NAME}-${PROJECT_VERSION}")
     set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
     set(CPACK_RESOURCE_FILE_README          "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
     set(CPACK_SOURCE_IGNORE_FILES           "/gmock/.*;/gtest/.*;/lib64/.*;/_deps/*;/tests/*")
+
+    if(WIN32)
+        set(CPACK_GENERATOR ZIP)
+    elseif(Darwin)
+        set(CPACK_GENERATOR ZIP)
+    elseif(APPLE)
+        set(CPACK_GENERATOR TGZ productbuild)
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        set(CPACK_GENERATOR TGZ RPM)
+    else()
+        set(CPACK_GENERATOR TGZ)
+    endif()
 
     message(STATUS "Writing the package for `${CPACK_PACKAGE_NAME}` --> CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}")
     include(CPack)
