@@ -74,7 +74,7 @@ stages:
         BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
     
     - script: |
-        $buildLatestTag= $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
+        set $(buildLatestTag)= $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
         echo 'We set buildLatestTag: $(buildLatestTag)'
       name: SetBuildLatestTag
 
