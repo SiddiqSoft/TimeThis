@@ -12,6 +12,10 @@ trigger:
     exclude:
     - README.md
 
+variables:
+  buildConfiguration: 'Release'
+  buildLatestTag: '0.0.0.0'
+
 stages:
 - stage: Build_n_Test
   displayName: 'Building Multiple OS, Testing and Package for Windows'
@@ -33,10 +37,6 @@ stages:
           poolName: Default
           poolImageName:
           cmake.preset: Linux-Release
-
-    variables:
-      buildConfiguration: 'Release'
-      buildLatestTag: '0.0.0.0'
 
     pool:
       name: $(poolName)
@@ -75,6 +75,7 @@ stages:
     
     - script: |
         echo "##vso[task.setvariable variable=buildLatestTag;isOutput=true]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
+        buildLatestTag= $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
         echo 'We set buildLatestTag: $(buildLatestTag)'
       name: SetBuildLatestTag
 
@@ -146,7 +147,7 @@ stages:
     - task: CmdLine@2
       inputs:
         script: |
-          echo 'We have the previous information: $(buildLatestTag) or $(build.buildid) or $(build.buildNumber)'
+          echo 'We have the previous information: `$(buildLatestTag)` or $(build.buildid) or $(build.buildNumber)'
       displayName: 'Set the version information'
 
     - task: CMake@1
