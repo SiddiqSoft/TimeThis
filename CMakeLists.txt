@@ -59,7 +59,7 @@ if(opt_${PROJECT_NAME}_testing)
     add_subdirectory(tests)
 endif()
 
-if(opt_${PROJECT_NAME}_install)
+#if(opt_${PROJECT_NAME}_install)
     include(CMakePackageConfigHelpers)
 
     # for testing
@@ -136,4 +136,4 @@ if(opt_${PROJECT_NAME}_install)
 
     message(STATUS "Writing the package for `${CPACK_PACKAGE_NAME}` --> CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}")
     include(CPack)
-endif()
+#endif()
