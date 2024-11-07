@@ -12,11 +12,14 @@ cmake_minimum_required(VERSION 3.25)
 if(DEFINED opt_timethis_install AND CI_BUILDID)
     message(STATUS "Using the CI supplied buildid: CURRENT_PROJECT_VERSION --> ${CI_BUILDID}")
     set(CURRENT_PROJECT_VERSION ${CI_BUILDID})
+else()
+    message(STATUS "Using the dev-only version")
+    set(CURRENT_PROJECT_VERSION "0.0.0.0")
 endif()
 
-if((DEFINED opt_timethis_install) AND (NOT DEFINED CI_BUILDID))
-    message(ERROR "When building from CI the CI_BUILDID must be set")
-endif()
+#if((DEFINED opt_timethis_install) AND (NOT DEFINED CI_BUILDID))
+#    message(ERROR "When building from CI the CI_BUILDID must be set")
+#endif()
 
 #   ________________________________________________
 # - Set the Name of the project and the details
