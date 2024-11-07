@@ -82,7 +82,7 @@ endif()
                                     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
                                     INSTALL_DESTINATION
                                     ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-    install(TARGETS     ${PROJECT_NAME} INTERFACE
+    install(TARGETS     ${PROJECT_NAME}
             EXPORT      "${PROJECT_NAME}Targets"
             COMPONENT   "${PROJECT_NAME}"
             FILE_SET    HEADERS
