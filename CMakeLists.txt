@@ -46,6 +46,10 @@ target_include_directories( ${PROJECT_NAME}
                             SYSTEM INTERFACE
                             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                             $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>)
+message(STATUS ".target_include_directories( ${PROJECT_NAME}\n"
+               "   .                         SYSTEM INTERFACE\n"
+               "   .                         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>\n"
+               "   .                         $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>)")
 
 # opt_siddiqsoft_testing - Enabled via our CI build script
 # If enabled, we will build the tests
@@ -69,26 +73,22 @@ if(opt_${PROJECT_NAME}_install)
     message(STATUS "--------------------------------------------------------------------------")
     # testing end
     ###
-    set(INCLUDE_INSTALL_DIR "${PROJECT_SOURCE_DIR}/include/")
     write_basic_package_version_file(   "${PROJECT_NAME}ConfigVersion.cmake"
                                         VERSION         ${PROJECT_VERSION}
-                                        COMPATIBILITY   SameMajorVersion)
-    message(STATUS  ".write_basic_package_version_file(   ${PROJECT_NAME}ConfigVersion.cmake\n"
-                    "   .                                    VERSION         ${PROJECT_VERSION}\n"
-                    "   .                                    COMPATIBILITY   SameMajorVersion)")
+                                        COMPATIBILITY   AnyMajorVersion)
     install(TARGETS     ${PROJECT_NAME}
             EXPORT      "${PROJECT_NAME}Targets"
             COMPONENT   "${PROJECT_NAME}"
             FILE_SET    HEADERS
             LIBRARY     DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
-            ARCHIVE     DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            INCLUDES    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+            ARCHIVE     DESTINATION ${CMAKE_INSTALL_LIBDIR})
     install(EXPORT      "${PROJECT_NAME}Targets"
             COMPONENT   "${PROJECT_NAME}"
             FILE        "${PROJECT_NAME}Targets.cmake"
             NAMESPACE   ${PROJECT_NAME}::
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME})
+            #DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
     #    set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated" CACHE INTERNAL "")
     #    set(cmake_files_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${cmake_package_name}")
@@ -106,13 +106,13 @@ if(opt_${PROJECT_NAME}_install)
                                     INSTALL_DESTINATION
                                     ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
                                     PATH_VARS
-                                    INCLUDE_INSTALL_DIR)
+                                    "${PROJECT_SOURCE_DIR}/include/")
     install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
                         "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
             COMPONENT   "${PROJECT_NAME}"
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
-            COMPONENT "${PROJECT_NAME}"
+    install(DIRECTORY   ${PROJECT_SOURCE_DIR}/include/
+            COMPONENT   "${PROJECT_NAME}"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     include_directories("${PROJECT_SOURCE_DIR}/include/")
     # Usage
