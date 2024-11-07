@@ -35,6 +35,7 @@ project(timethis
 
 # Based on the guide https://ryandeangraham.medium.com/building-a-header-only-library-hello-world-f9dd05ac1066
 # With addition info https://cmake.org/cmake/help/v3.18/guide/tutorial/#adding-a-version-number-and-configured-header-file
+# https://www.foonathan.net/2022/06/cmake-fetchcontent/
 
 include(GNUInstallDirs)
 
@@ -44,8 +45,8 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
 target_include_directories( ${PROJECT_NAME}
                             SYSTEM INTERFACE
-                            $<BUILD_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>
-                            $<INSTALL_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
+                            $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
 message(STATUS ".target_include_directories( ${PROJECT_NAME}\n"
                "   .                         SYSTEM INTERFACE\n"
                "   .                         $<BUILD_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>\n"
