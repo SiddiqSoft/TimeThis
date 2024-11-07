@@ -98,7 +98,7 @@ if(opt_${PROJECT_NAME}_install)
                         "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
             COMPONENT   "${PROJECT_NAME}"
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-    install(DIRECTORY   ${PROJECT_SOURCE_DIR}/include/
+    install(DIRECTORY   "${PROJECT_SOURCE_DIR}/include/"
             COMPONENT   "${PROJECT_NAME}"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     include_directories("${PROJECT_SOURCE_DIR}/include/")
