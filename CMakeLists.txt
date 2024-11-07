@@ -40,6 +40,7 @@ project(timethis
 include(GNUInstallDirs)
 
 add_library(${PROJECT_NAME} INTERFACE "${PROJECT_SOURCE_DIR}/include")
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
@@ -80,8 +81,7 @@ endif()
     configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}Config.cmake.in"
                                     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
                                     INSTALL_DESTINATION
-                                    ${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME})
-                                    #${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+                                    ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
     install(TARGETS     ${PROJECT_NAME} INTERFACE
             EXPORT      "${PROJECT_NAME}Targets"
             COMPONENT   "${PROJECT_NAME}"
@@ -93,12 +93,11 @@ endif()
             COMPONENT   "${PROJECT_NAME}"
             FILE        "${PROJECT_NAME}Targets.cmake"
             NAMESPACE   ${PROJECT_NAME}::
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME})
-    #DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
     install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
                         "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
             COMPONENT   "${PROJECT_NAME}"
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME})
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
     install(DIRECTORY   "${PROJECT_SOURCE_DIR}/include/"
             COMPONENT   "${PROJECT_NAME}"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
