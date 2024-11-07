@@ -62,7 +62,7 @@ if(opt_${PROJECT_NAME}_testing)
     add_subdirectory(tests)
 endif()
 
-#if(opt_${PROJECT_NAME}_install)
+if(opt_${PROJECT_NAME}_install)
     include(CMakePackageConfigHelpers)
 
     # for testing
@@ -78,9 +78,9 @@ endif()
     message(STATUS "--------------------------------------------------------------------------")
     # testing end
     ###
-    write_basic_package_version_file(   "${PROJECT_NAME}ConfigVersion.cmake"
+    write_basic_package_version_file(   "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
                                         VERSION         ${PROJECT_VERSION}
-                                        COMPATIBILITY   SameMajorVersion)
+                                        COMPATIBILITY   AnyNewerVersion)
     configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}Config.cmake.in"
                                     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
                                     INSTALL_DESTINATION
@@ -139,4 +139,4 @@ endif()
 
     message(STATUS "Writing the package for `${CPACK_PACKAGE_NAME}` --> CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}")
     include(CPack)
-#endif()
+endif()
