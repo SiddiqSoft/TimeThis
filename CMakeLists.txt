@@ -44,9 +44,7 @@ add_library(${PROJECT_NAME} INTERFACE "${PROJECT_SOURCE_DIR}/include")
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
 target_include_directories( ${PROJECT_NAME}
-                            PRIVATE
-                            ${CMAKE_CURRENT_SOURCE_DIR}/include
-                            PUBLIC
+                            INTERFACE
                             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 message(STATUS ".target_include_directories( ${PROJECT_NAME}\n"
@@ -112,7 +110,7 @@ endif()
     # > cmake --build . --config Release --target install -- -j $(nproc)
     include(InstallRequiredSystemLibraries)
     # Packaging Configuration
-    set(CPACK_PACKAGE_NAME                  ${PROJECT_NAME})
+    set(CPACK_PACKAGE_NAME                  "${PROJECT_NAME}")
     string(REGEX MATCH "v([0-9]+)\\.([0-9]+)\\.([0-9]+)" VERSION_MATCH "${PROJECT_VERSION}")
     set(CPACK_PACKAGE_VERSION_MAJOR         "${CMAKE_MATCH_1}")
     set(CPACK_PACKAGE_VERSION_MINOR         "${CMAKE_MATCH_2}")
