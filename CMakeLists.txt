@@ -53,7 +53,7 @@ option(${PROJECT_NAME}_BUILD_TESTS "Build tests. Uncheck for install only runs" 
 option(${PROJECT_NAME}_BUILD_PACKAGE "Build tests. Uncheck for install only runs" ${${PROJECT_NAME}_DEVMODE})
 
 message(STATUS  "Configuration options: ${PROJECT_NAME}_BUILD_TESTS  -- > ${${PROJECT_NAME}_BUILD_TESTS}\n"
-                "                       ${PROJECT_NAME}_BUILD_PACKAGE --> ${PROJECT_NAME}_BUILD_PACKAGE")
+                "                       ${PROJECT_NAME}_BUILD_PACKAGE --> ${${PROJECT_NAME}_BUILD_PACKAGE}")
 include(CMakePackageConfigHelpers)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
@@ -80,7 +80,7 @@ install(DIRECTORY include/
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 # Write out the config file template.
-file(WRITE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in" [[
+file(WRITE "${PROJECT_BINARY_DIR}/${${PROJECT_NAME}-config.cmake.in}" [[
 @PACKAGE_INIT@
 include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake")
 ]])
