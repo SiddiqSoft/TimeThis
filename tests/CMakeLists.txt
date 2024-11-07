@@ -18,11 +18,6 @@ if(opt_${PROJECT_NAME}_testing)
     FetchContent_MakeAvailable(googletest)
     enable_testing()
 
-    target_include_directories( ${TESTPROJ}
-                                PRIVATE
-                                $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                                $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
-
     target_compile_features(${TESTPROJ} PRIVATE cxx_std_20)
 
     target_compile_options( ${TESTPROJ}
