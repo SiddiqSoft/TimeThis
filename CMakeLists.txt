@@ -60,6 +60,7 @@ endif()
 
 #if(opt_${PROJECT_NAME}_install)
     include(CMakePackageConfigHelpers)
+    include(InstallRequiredSystemLibraries)
 
     # for testing
     # cmake --preset Apple-Debug -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=2.0.4
@@ -77,38 +78,28 @@ endif()
     write_basic_package_version_file(   "${PROJECT_NAME}ConfigVersion.cmake"
                                         VERSION         ${PROJECT_VERSION}
                                         COMPATIBILITY   SameMajorVersion)
-    install(TARGETS     ${PROJECT_NAME}
-            EXPORT      "${PROJECT_NAME}Targets"
-            COMPONENT   "${PROJECT_NAME}"
-            FILE_SET    HEADERS
-            LIBRARY     DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            RUNTIME     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
-            ARCHIVE     DESTINATION ${CMAKE_INSTALL_LIBDIR})
-    configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}Config.cmake.in"
-                                    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-                                    INSTALL_DESTINATION
-                                    ${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME})
-                                    #${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
     install(EXPORT      "${PROJECT_NAME}Targets"
             COMPONENT   "${PROJECT_NAME}"
             FILE        "${PROJECT_NAME}Targets.cmake"
             NAMESPACE   ${PROJECT_NAME}::
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME})
     #DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-    install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-                        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-            COMPONENT   "${PROJECT_NAME}"
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME})
     install(DIRECTORY   "${PROJECT_SOURCE_DIR}/include/"
             COMPONENT   "${PROJECT_NAME}"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     include_directories("${PROJECT_SOURCE_DIR}/include/")
+
+    configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}Config.cmake.in"
+                                    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+                                    INSTALL_DESTINATION
+                                    ${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME})
+                                    #${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+
     # Usage
     # > mkdir build
     # > cd build
     # > cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/your/installation/path
     # > cmake --build . --config Release --target install -- -j $(nproc)
-    include(InstallRequiredSystemLibraries)
     # Packaging Configuration
     set(CPACK_PACKAGE_NAME                  "${PROJECT_NAME}")
     string(REGEX MATCH "v([0-9]+)\\.([0-9]+)\\.([0-9]+)" VERSION_MATCH "${PROJECT_VERSION}")
