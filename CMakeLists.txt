@@ -75,7 +75,7 @@ if(opt_${PROJECT_NAME}_install)
     ###
     write_basic_package_version_file(   "${PROJECT_NAME}ConfigVersion.cmake"
                                         VERSION         ${PROJECT_VERSION}
-                                        COMPATIBILITY   AnyMajorVersion)
+                                        COMPATIBILITY   SameMajorVersion)
     install(TARGETS     ${PROJECT_NAME}
             EXPORT      "${PROJECT_NAME}Targets"
             COMPONENT   "${PROJECT_NAME}"
