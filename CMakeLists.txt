@@ -69,19 +69,20 @@ target_include_directories( ${PROJECT_NAME} INTERFACE
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
-install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}-targets)
+install(TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}-targets)
 install(DIRECTORY include/
         DESTINATION include
         FILES_MATCHING PATTERN *.hpp)
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
-if (NOT EXISTS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in")
-  file(WRITE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in [[
-    @PACKAGE_INIT@
-    include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake")
-  ]])
-endif()
+# Write out the config file template.
+file(WRITE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in" [[
+@PACKAGE_INIT@
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake")
+]])
+message(STATUS "Write out file `${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in`.")
 
 configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}-config.cmake.in"
                                 "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
@@ -89,7 +90,7 @@ configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}-conf
                                 NO_SET_AND_CHECK_MACRO
                                 NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
-write_basic_package_version_file(   ${PROJECT_NAME}-config-version.cmake
+write_basic_package_version_file(   "${PROJECT_NAME}-config-version.cmake"
                                     VERSION ${PROJECT_VERSION}
                                     COMPATIBILITY SameMajorVersion)
 

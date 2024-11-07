@@ -17,6 +17,9 @@ variables:
   buildLatestTag: '0.0.0.0'
 
 stages:
+################################## STAGE ####################################
+# STAGE: Build_n_Test                                                       #
+#############################################################################
 - stage: Build_n_Test
   displayName: 'Building Multiple OS, Testing and Package for Windows'
   jobs:
@@ -109,7 +112,9 @@ stages:
       continueOnError: false
       condition: succeeded()
 
-################################## STAGE ###################################
+################################## STAGE ####################################
+# STAGE: Pack_n_Publish                                                     #
+#############################################################################
 - stage: Pack_n_Publish
   displayName: 'Package for GitHub (cmake) and Nuget'
   dependsOn: Build_n_Test
