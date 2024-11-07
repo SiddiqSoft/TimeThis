@@ -83,29 +83,17 @@ if(opt_${PROJECT_NAME}_install)
             LIBRARY     DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
             ARCHIVE     DESTINATION ${CMAKE_INSTALL_LIBDIR})
-    install(EXPORT      "${PROJECT_NAME}Targets"
-            COMPONENT   "${PROJECT_NAME}"
-            FILE        "${PROJECT_NAME}Targets.cmake"
-            NAMESPACE   ${PROJECT_NAME}::
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME})
-            #DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-
-    #    set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated" CACHE INTERNAL "")
-    #    set(cmake_files_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${cmake_package_name}")
-    #    set(config_file "${generated_dir}/${cmake_package_name}Config.cmake")            
-    #    configure_package_config_file(  "${gtest_SOURCE_DIR}/cmake/Config.cmake.in"
-    #                                    "${config_file}"
-    #                                    INSTALL_DESTINATION
-    #                                    ${cmake_files_install_dir})
-    #    install(FILES ${version_file} ${config_file}
-    #            COMPONENT "${PROJECT_NAME}"
-    #            DESTINATION ${cmake_files_install_dir})
-        
     configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}Config.cmake.in"
                                     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
                                     INSTALL_DESTINATION
                                     ${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME})
                                     #${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    install(EXPORT      "${PROJECT_NAME}Targets"
+            COMPONENT   "${PROJECT_NAME}"
+            FILE        "${PROJECT_NAME}Targets.cmake"
+            NAMESPACE   ${PROJECT_NAME}::
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME})
+    #DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
     install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
                         "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
             COMPONENT   "${PROJECT_NAME}"
