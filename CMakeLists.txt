@@ -104,9 +104,7 @@ if(opt_${PROJECT_NAME}_install)
     configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}Config.cmake.in"
                                     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
                                     INSTALL_DESTINATION
-                                    ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-                                    PATH_VARS
-                                    "${PROJECT_SOURCE_DIR}/include/")
+                                    ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
     install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
                         "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
             COMPONENT   "${PROJECT_NAME}"
