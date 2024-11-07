@@ -45,11 +45,11 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 target_include_directories( ${PROJECT_NAME}
                             SYSTEM INTERFACE
                             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                            $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>)
+                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 message(STATUS ".target_include_directories( ${PROJECT_NAME}\n"
                "   .                         SYSTEM INTERFACE\n"
                "   .                         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>\n"
-               "   .                         $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>)")
+               "   .                         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)")
 
 # opt_siddiqsoft_testing - Enabled via our CI build script
 # If enabled, we will build the tests
@@ -57,7 +57,7 @@ if(opt_${PROJECT_NAME}_testing)
     add_subdirectory(tests)
 endif()
 
-if(opt_${PROJECT_NAME}_install)
+#if(opt_${PROJECT_NAME}_install)
     include(CMakePackageConfigHelpers)
 
     # for testing
@@ -135,4 +135,4 @@ if(opt_${PROJECT_NAME}_install)
 
     message(STATUS "Writing the package for `${CPACK_PACKAGE_NAME}` --> CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}")
     include(CPack)
-endif()
+#endif()
