@@ -44,12 +44,14 @@ add_library(${PROJECT_NAME} INTERFACE "${PROJECT_SOURCE_DIR}/include")
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
 target_include_directories( ${PROJECT_NAME}
-                            SYSTEM INTERFACE
-                            $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
-                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)
+                            PRIVATE
+                            ${CMAKE_CURRENT_SOURCE_DIR}/include
+                            PUBLIC
+                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 message(STATUS ".target_include_directories( ${PROJECT_NAME}\n"
                "   .                         SYSTEM INTERFACE\n"
-               "   .                         $<BUILD_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>\n"
+               "   .                         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>\n"
                "   .                         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)")
 
 # opt_siddiqsoft_testing - Enabled via our CI build script
