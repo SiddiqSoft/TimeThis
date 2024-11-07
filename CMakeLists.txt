@@ -45,7 +45,7 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 target_include_directories( ${PROJECT_NAME}
                             SYSTEM INTERFACE
                             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+                            $<INSTALL_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 message(STATUS ".target_include_directories( ${PROJECT_NAME}\n"
                "   .                         SYSTEM INTERFACE\n"
                "   .                         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>\n"
