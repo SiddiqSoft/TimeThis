@@ -38,7 +38,7 @@ project(timethis
 
 include(GNUInstallDirs)
 
-add_library(${PROJECT_NAME} INTERFACE)
+add_library(${PROJECT_NAME} INTERFACE "${PROJECT_SOURCE_DIR}/include")
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
