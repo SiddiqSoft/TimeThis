@@ -161,9 +161,9 @@ stages:
     # TIMETHIS_BUILD_TESTS=OFF
     # TIMETHIS_BUILD_PACKAGE=ON
     - task: CMake@1
-      displayName: 'CMake Configure --preset $(cmake.preset) -DTIMETHIS_BUILD_TESTS=OFF -DTIMETHIS_BUILD_PACKAGE=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+      displayName: 'CMake Configure --preset $(cmake.preset) -DTIMETHIS_BUILD_TESTS=OFF -DTIMETHIS_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -DTIMETHIS_BUILD_TESTS=OFF -DTIMETHIS_BUILD_PACKAGE=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+        cmakeArgs: '--preset $(cmake.preset) -DTIMETHIS_BUILD_TESTS=OFF -DTIMETHIS_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     # Powershell is not supported on Pi aarch64 yet so we have to use this method for Linux

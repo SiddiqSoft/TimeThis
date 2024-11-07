@@ -41,7 +41,7 @@ project(timethis
 set(${PROJECT_NAME}_DEVMODE OFF)
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(${PROJECT_NAME}_DEVMODE ON)
-    message(STATUS "Project is in `librarys developer's home` directory. ${${PROJECT_NAME}_DEVMODE}-->ON")
+    message(STATUS "Project is in the `library developer's home` directory. ${${PROJECT_NAME}_DEVMODE}-->ON")
 endif()
 
 #############
@@ -52,6 +52,8 @@ endif()
 option(${PROJECT_NAME}_BUILD_TESTS "Build tests. Uncheck for install only runs" ${${PROJECT_NAME}_DEVMODE})
 option(${PROJECT_NAME}_BUILD_PACKAGE "Build tests. Uncheck for install only runs" ${${PROJECT_NAME}_DEVMODE})
 
+message(STATUS  "Configuration options: ${PROJECT_NAME}_BUILD_TESTS  -- > ${${PROJECT_NAME}_BUILD_TESTS}\n"
+                "                       ${PROJECT_NAME}_BUILD_PACKAGE --> ${PROJECT_NAME}_BUILD_PACKAGE")
 include(CMakePackageConfigHelpers)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
@@ -104,10 +106,12 @@ install(FILES
         ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 if(${PROJECT_NAME}_BUILD_TESTS)
+    message(STATUS "Asked to build tests.. ${PROJECT_NAME}_BUILD_TESTS")
   add_subdirectory(tests)
 endif()
 
 if (${PROJECT_NAME}_BUILD_PACKAGE)
+    message(STATUS "Asked to build package: ${PROJECT_NAME}_BUILD_PACKAGE")
     # Continue on to the install/package stage..
     set(CPACK_SOURCE_GENERATOR TBZ2 TGZ TXZ ZIP)
     set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}")
