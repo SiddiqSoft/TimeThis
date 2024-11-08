@@ -105,10 +105,12 @@ target_compile_features(timethis INTERFACE cxx_std_20)
 
 install(TARGETS timethis
         EXPORT timethis-targets)
-install(DIRECTORY include/
-        DESTINATION include
-        FILES_MATCHING PATTERN *.hpp)
-
+install(TARGETS timethis
+        EXPORT timethis-config.cmake)
+install(DIRECTORY
+        ${CMAKE_CURRENT_LIST_DIR}/include/
+        DESTINATION
+        ${CMAKE_INSTALL_INCLUDEDIR})
 add_library(timethis::timethis ALIAS timethis)
 
 configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/timethis-config.cmake.in"
