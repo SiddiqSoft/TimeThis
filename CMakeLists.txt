@@ -53,7 +53,7 @@ option(${PROJECT_NAME}_BUILD_TESTS "Build tests. Uncheck for install only runs" 
 option(${PROJECT_NAME}_BUILD_PACKAGE "Build tests. Uncheck for install only runs" ${${PROJECT_NAME}_DEVMODE})
 
 message(STATUS  "Configuration options: ${PROJECT_NAME}_BUILD_TESTS  -- > ${${PROJECT_NAME}_BUILD_TESTS}\n"
-                "                       ${PROJECT_NAME}_BUILD_PACKAGE --> ${${PROJECT_NAME}_BUILD_PACKAGE}")
+                "                          ${PROJECT_NAME}_BUILD_PACKAGE --> ${${PROJECT_NAME}_BUILD_PACKAGE}")
 include(CMakePackageConfigHelpers)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
@@ -79,14 +79,7 @@ install(DIRECTORY include/
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
-# Write out the config file template.
-file(WRITE "${PROJECT_BINARY_DIR}/${${PROJECT_NAME}-config.cmake.in}" [[
-@PACKAGE_INIT@
-include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake")
-]])
-message(STATUS "Write out file `${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in`.")
-
-configure_package_config_file(  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in"
+configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}-config.cmake.in"
                                 "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
                                 INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
                                 NO_SET_AND_CHECK_MACRO
@@ -106,12 +99,12 @@ install(FILES
         ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 if(${PROJECT_NAME}_BUILD_TESTS)
-    message(STATUS "Asked to build tests.. ${PROJECT_NAME}_BUILD_TESTS")
+    message(STATUS "Asked to build tests.. ${PROJECT_NAME}_BUILD_TESTS = ${${PROJECT_NAME}_BUILD_TESTS}")
   add_subdirectory(tests)
 endif()
 
 if (${PROJECT_NAME}_BUILD_PACKAGE)
-    message(STATUS "Asked to build package: ${PROJECT_NAME}_BUILD_PACKAGE")
+    message(STATUS "Asked to build package: ${PROJECT_NAME}_BUILD_PACKAGE = ${${PROJECT_NAME}_BUILD_PACKAGE}")
     # Continue on to the install/package stage..
     set(CPACK_SOURCE_GENERATOR TBZ2 TGZ TXZ ZIP)
     set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}")

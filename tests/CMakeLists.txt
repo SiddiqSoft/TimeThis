@@ -31,4 +31,5 @@ if(opt_${PROJECT_NAME}_testing)
     include(CTest)
 
     gtest_discover_tests(${TESTPROJ} XML_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/tests/results")
+    message(STATUS "  Finished configuring for ${PROJECT_NAME}_BUILD_TESTS = ${${PROJECT_NAME}_BUILD_TESTS}")
 endif()
