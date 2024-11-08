@@ -77,11 +77,11 @@ stages:
         BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
     
     - script: |
-        set buildLatestTag=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
+        echo "##vso[task.setvariable variable=buildLatestTag;]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)" 
+        echo "##vso[build.updatebuildnumber]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)" 
         echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion) buildLatestTag:$(buildLatestTag)"
-        echo "##vso[task.setvariable variable=buildLatestTag;isOutput=true]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)" 
       name: SetBuildLatestTag
-
+        
     # Set the flags for testing, build here.
     # timethis_BUILD_TESTS=ON
     # timethis_BUILD_PACKAGE=OFF
