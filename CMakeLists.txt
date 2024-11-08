@@ -96,9 +96,10 @@ include(CTest)
 #########################
 
 add_library(timethis INTERFACE)
+add_library(timethis::timethis ALIAS timethis)
 	
 target_include_directories( timethis INTERFACE
-                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/siddiqsoft>
                             $<INSTALL_INTERFACE:include>)
 
 target_compile_features(timethis INTERFACE cxx_std_20)
@@ -111,7 +112,6 @@ install(DIRECTORY
         ${CMAKE_CURRENT_LIST_DIR}/include/siddiqsoft
         DESTINATION
         ${CMAKE_INSTALL_INCLUDEDIR})
-add_library(timethis::timethis ALIAS timethis)
 
 configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/timethis-config.cmake.in"
                                 "${PROJECT_BINARY_DIR}/timethis-config.cmake"
