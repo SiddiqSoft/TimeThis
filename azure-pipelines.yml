@@ -75,10 +75,8 @@ stages:
         Action: '##vso[build.updatebuildnumber]'
         BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
     
-    #- script: |
-    #    echo "##vso[build.updatebuildnumber]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)" 
-    #    echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion)"
-    #  name: SetBuildLatestTag
+    - script: |
+        echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion)"
         
     # Set the flags for testing, build here.
     # timethis_BUILD_TESTS=ON
