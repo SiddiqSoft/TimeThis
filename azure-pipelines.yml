@@ -81,12 +81,12 @@ stages:
       name: SetBuildLatestTag
 
     # Set the flags for testing, build here.
-    # TIMETHIS_BUILD_TESTS=ON
-    # TIMETHIS_BUILD_PACKAGE=OFF
+    # timethis_BUILD_TESTS=ON
+    # timethis_BUILD_PACKAGE=OFF
     - task: CMake@1
-      displayName: 'CMake Configure --preset $(cmake.preset) -DTIMETHIS_BUILD_TESTS=ON -DTIMETHIS_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -DTIMETHIS_BUILD_TESTS=ON -DTIMETHIS_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+        cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
@@ -158,12 +158,12 @@ stages:
       displayName: 'Set the version information'
 
     # Set the flags for testing, build here.
-    # TIMETHIS_BUILD_TESTS=OFF
-    # TIMETHIS_BUILD_PACKAGE=ON
+    # timethis_BUILD_TESTS=OFF
+    # timethis_BUILD_PACKAGE=ON
     - task: CMake@1
-      displayName: 'CMake Configure --preset $(cmake.preset) -DTIMETHIS_BUILD_TESTS=OFF -DTIMETHIS_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber)'
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dtimethis_BUILD_TESTS=OFF -Dtimethis_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -DTIMETHIS_BUILD_TESTS=OFF -DTIMETHIS_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber)'
+        cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=OFF -Dtimethis_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     # Powershell is not supported on Pi aarch64 yet so we have to use this method for Linux
