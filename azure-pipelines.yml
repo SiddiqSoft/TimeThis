@@ -69,7 +69,7 @@ stages:
         useConfigFile: true
         configFilePath: 'GitVersion.yml'
 
-    - script: update-build-number
+    - script: echo 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
       displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
       env:
         Action: '##vso[build.updatebuildnumber]'
