@@ -69,16 +69,16 @@ stages:
         useConfigFile: true
         configFilePath: 'GitVersion.yml'
 
-    - script: echo %Action%%BuildVersion%
+    - script: update-build-number
       displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
       env:
         Action: '##vso[build.updatebuildnumber]'
         BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
     
-    - script: |
-        echo "##vso[build.updatebuildnumber]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)" 
-        echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion)"
-      name: SetBuildLatestTag
+    #- script: |
+    #    echo "##vso[build.updatebuildnumber]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)" 
+    #    echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion)"
+    #  name: SetBuildLatestTag
         
     # Set the flags for testing, build here.
     # timethis_BUILD_TESTS=ON
