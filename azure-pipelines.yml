@@ -14,7 +14,6 @@ trigger:
 
 variables:
   buildConfiguration: 'Release'
-  buildFullSemVer: '0.0.0.0'
 
 stages:
 ################################## STAGE ####################################
@@ -66,6 +65,7 @@ stages:
 
     - task: gitversion/execute@3.0.0
       displayName: 'Determine Version..'
+      name: version_step
       inputs:
         useConfigFile: true
         configFilePath: 'GitVersion.yml'
@@ -140,7 +140,7 @@ stages:
 
     variables:
       buildConfiguration: 'Release'
-      myFullSemVer: $[ dependencies.BuildTest.outputs['passOutput.buildFullSemVer'] ]
+      myFullSemVer: $[ dependencies.BuildTest.outputs['version_step.GitVersion_MajorMinorPatch'] ]
 
     pool:
       name: $(poolName)
@@ -156,7 +156,7 @@ stages:
       inputs:
         script: |
           echo "We have the previous information: buildid:$(build.buildid) or buildNumber:$(build.buildNumber)"
-          echo "                                  buildFullSemVer:$(buildFullSemVer) or myFullSemVer:$(myFullSemVer) or  $[ dependencies.BuildTest.outputs['passOutput.buildFullSemVer'] ]"
+          echo "                                  buildFullSemVer:$(buildFullSemVer) or myFullSemVer:$(myFullSemVer)"
       displayName: 'Show the version information'
 
     # Set the flags for testing, build here.
