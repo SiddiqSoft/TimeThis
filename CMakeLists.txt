@@ -111,9 +111,9 @@ install(DIRECTORY include/
 
 add_library(timethis::timethis ALIAS timethis)
 
-configure_package_config_file(  ${PROJECT_SOURCE_DIR}/pack/timethis-config.cmake.in
-                                ${PROJECT_BINARY_DIR}/timethis-config.cmake
-                                INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/timethis
+configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/timethis-config.cmake.in"
+                                "${PROJECT_BINARY_DIR}/timethis-config.cmake"
+                                INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/timethis"
                                 NO_SET_AND_CHECK_MACRO
                                 NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
@@ -122,29 +122,28 @@ write_basic_package_version_file(   timethis-config-version.cmake
                                     COMPATIBILITY SameMajorVersion)
 
 install(EXPORT timethis-targets 
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/timethis
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/timethis"
         NAMESPACE timethis::)
 install(FILES
-        ${PROJECT_BINARY_DIR}/timethis-config-version.cmake
-        ${PROJECT_BINARY_DIR}/timethis-config.cmake
-        DESTINATION
-        ${CMAKE_INSTALL_LIBDIR}/cmake/timethis)
+        "${PROJECT_BINARY_DIR}/timethis-config-version.cmake"
+        "${PROJECT_BINARY_DIR}/timethis-config.cmake"
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/timethis)
 
-if(${timethis_BUILD_TESTS})
+if(timethis_BUILD_TESTS)
     message(STATUS "Asked to build tests.. timethis_BUILD_TESTS = ${timethis_BUILD_TESTS}")
     add_subdirectory(tests)
 endif()
 
-if (${timethis_BUILD_PACKAGE})
+if (timethis_BUILD_PACKAGE)
     message(STATUS "Asked to build package: timethis_BUILD_PACKAGE = ${timethis_BUILD_PACKAGE}")
     # Continue on to the install/package stage..
     set(CPACK_SOURCE_GENERATOR TBZ2 TGZ TXZ ZIP)
     set(CPACK_SOURCE_PACKAGE_FILE_NAME ${CPACK_PACKAGE_FILE_NAME})
 
-    set(PKG_CONFIG_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/timethis.pc)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pack/pkgconfig.pc.in ${PKG_CONFIG_FILE_NAME} @ONLY)
-    install(FILES ${PKG_CONFIG_FILE_NAME}
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+    set(PKG_CONFIG_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/timethis.pc")
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/pack/pkgconfig.pc.in" "${PKG_CONFIG_FILE_NAME}" @ONLY)
+    install(FILES       "${PKG_CONFIG_FILE_NAME}"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
     # Packaging Configuration
     set(CPACK_PACKAGE_NAME                  "${PROJECT_NAME}")
