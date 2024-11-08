@@ -9,7 +9,7 @@
 cmake_minimum_required(VERSION 3.25)
 
 # -[]-------------------------------------
-if(DEFINED opt_timethis_install AND CI_BUILDID)
+if(DEFINED CI_BUILDID)
     message(STATUS "Using the CI supplied buildid: CURRENT_PROJECT_VERSION --> ${CI_BUILDID}")
     set(CURRENT_PROJECT_VERSION ${CI_BUILDID})
 else()
