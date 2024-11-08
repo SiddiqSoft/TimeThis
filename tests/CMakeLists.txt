@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-if(opt_${PROJECT_NAME}_testing)
+if(${${PROJECT_NAME}_BUILD_TESTS})
     include(FetchContent)
     include(GNUInstallDirs)
 
