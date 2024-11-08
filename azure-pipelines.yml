@@ -70,11 +70,11 @@ stages:
         useConfigFile: true
         configFilePath: 'GitVersion.yml'
 
-    - script: echo 'Set build version $(build.buildNumber)'
-      displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
-      env:
-        Action: '##vso[build.updatebuildnumber]'
-        BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
+    #- script: echo 'Set build version $(build.buildNumber)'
+    #  displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+    #  env:
+    #    Action: '##vso[build.updatebuildnumber]'
+    #    BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
     
     - script: |
         echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion)"
