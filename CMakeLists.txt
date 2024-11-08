@@ -108,7 +108,7 @@ install(TARGETS timethis
 install(TARGETS timethis
         EXPORT timethis-config.cmake)
 install(DIRECTORY
-        ${CMAKE_CURRENT_LIST_DIR}/include/
+        ${CMAKE_CURRENT_LIST_DIR}/include/siddiqsoft
         DESTINATION
         ${CMAKE_INSTALL_INCLUDEDIR})
 add_library(timethis::timethis ALIAS timethis)
