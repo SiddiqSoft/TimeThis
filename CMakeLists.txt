@@ -41,7 +41,7 @@ if(DEFINED CI_BUILDID)
         string(APPEND CURRENT_PROJECT_VERSION ".${VERSION_LAST}")
     endif()
 else()
-    if((DEFINED ${PROJECT_NAME}_BUILD_PACKAGE) AND (NOT DEFINED CI_BUILDID))
+    if((DEFINED timethis_BUILD_PACKAGE) AND (NOT DEFINED CI_BUILDID))
         message(ERROR "When building from CI the CI_BUILDID must be set")
     endif()
     message(STATUS "Using the dev-only version")
@@ -52,6 +52,7 @@ message(STATUS "Parsed out the CI_BUILDID --> CURRENT_PROJECT_VERSION:${CURRENT_
 
 #   ________________________________________________
 # - Set the Name of the project and the details
+# - Change the name to your name: timethis
 # - The namespace is set to "siddiqsoft"
 # - The options are all prefixed opt_siddiqsoft_XXX
 # - The option opt_siddiqsoft_testing is set to OFF and used by our CI to build, test and package
@@ -67,10 +68,10 @@ project(timethis
 # With addition info https://cmake.org/cmake/help/v3.18/guide/tutorial/#adding-a-version-number-and-configured-header-file
 # https://www.foonathan.net/2022/06/cmake-fetchcontent/
 
-set(${PROJECT_NAME}_DEVMODE OFF)
+set(timethis_DEVMODE OFF)
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    set(${PROJECT_NAME}_DEVMODE ON)
-    message(STATUS "Project is in the `library developer's home` directory. ${${PROJECT_NAME}_DEVMODE}-->ON")
+    set(timethis_DEVMODE ON)
+    message(STATUS "Project is in the `library developer's home` directory. ${timethis_DEVMODE}-->ON")
 endif()
 
 #############
@@ -78,12 +79,12 @@ endif()
 #############
 
 # We run the tests by default when we're in development mode for this library
-option(${PROJECT_NAME}_BUILD_TESTS "Build tests. Uncheck for install only runs" OFF)
-option(${PROJECT_NAME}_BUILD_PACKAGE "Package. Uncheck for install only runs" OFF)
+option(timethis_BUILD_TESTS "Build tests. Uncheck for install only runs" OFF)
+option(timethis_BUILD_PACKAGE "Package. Uncheck for install only runs" OFF)
 
-message(STATUS  "Configuration options: ${PROJECT_NAME}_BUILD_TESTS  -- > ${${PROJECT_NAME}_BUILD_TESTS}\n"
+message(STATUS  "Configuration options: timethis_BUILD_TESTS  -- > ${timethis_BUILD_TESTS}\n"
                 "                          CI_BUILDID            -- > ${CI_BUILDID} --> ${CURRENT_PROJECT_VERSION}\n"
-                "                          ${PROJECT_NAME}_BUILD_PACKAGE --> ${${PROJECT_NAME}_BUILD_PACKAGE}")
+                "                          timethis_BUILD_PACKAGE --> ${timethis_BUILD_PACKAGE}")
 
 include(CMakePackageConfigHelpers)
 include(CMakeDependentOption)
@@ -94,53 +95,53 @@ include(CTest)
 #  Library Definition   #
 #########################
 
-add_library(${PROJECT_NAME} INTERFACE)
+add_library(timethis INTERFACE)
 	
-target_include_directories( ${PROJECT_NAME} INTERFACE
+target_include_directories( timethis INTERFACE
                             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                             $<INSTALL_INTERFACE:include>)
 
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
+target_compile_features(timethis INTERFACE cxx_std_20)
 
-install(TARGETS ${PROJECT_NAME}
-        EXPORT ${PROJECT_NAME}-targets)
+install(TARGETS timethis
+        EXPORT timethis-targets)
 install(DIRECTORY include/
         DESTINATION include
         FILES_MATCHING PATTERN *.hpp)
 
-add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+add_library(timethis::timethis ALIAS timethis)
 
-configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}-config.cmake.in"
-                                "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
-                                INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/timethis-config.cmake.in"
+                                "${PROJECT_BINARY_DIR}/timethis-config.cmake"
+                                INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/timethis"
                                 NO_SET_AND_CHECK_MACRO
                                 NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
-write_basic_package_version_file(   "${PROJECT_NAME}-config-version.cmake"
+write_basic_package_version_file(   "timethis-config-version.cmake"
                                     VERSION ${PROJECT_VERSION}
                                     COMPATIBILITY SameMajorVersion)
 
-install(EXPORT ${PROJECT_NAME}-targets 
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
-        NAMESPACE ${PROJECT_NAME}::)
+install(EXPORT timethis-targets 
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/timethis"
+        NAMESPACE timethis::)
 install(FILES
-        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
-        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+        "${PROJECT_BINARY_DIR}/timethis-config-version.cmake"
+        "${PROJECT_BINARY_DIR}/timethis-config.cmake"
         DESTINATION
-        ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+        ${CMAKE_INSTALL_LIBDIR}/cmake/timethis)
 
-if(${${PROJECT_NAME}_BUILD_TESTS})
-    message(STATUS "Asked to build tests.. ${PROJECT_NAME}_BUILD_TESTS = ${${PROJECT_NAME}_BUILD_TESTS}")
+if(${timethis_BUILD_TESTS})
+    message(STATUS "Asked to build tests.. timethis_BUILD_TESTS = ${timethis_BUILD_TESTS}")
     add_subdirectory(tests)
 endif()
 
-if (${${PROJECT_NAME}_BUILD_PACKAGE})
-    message(STATUS "Asked to build package: ${PROJECT_NAME}_BUILD_PACKAGE = ${${PROJECT_NAME}_BUILD_PACKAGE}")
+if (${timethis_BUILD_PACKAGE})
+    message(STATUS "Asked to build package: timethis_BUILD_PACKAGE = ${timethis_BUILD_PACKAGE}")
     # Continue on to the install/package stage..
     set(CPACK_SOURCE_GENERATOR TBZ2 TGZ TXZ ZIP)
     set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}")
 
-    set(PKG_CONFIG_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc")
+    set(PKG_CONFIG_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/timethis.pc")
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/pack/pkgconfig.pc.in" "${PKG_CONFIG_FILE_NAME}" @ONLY)
     install(FILES "${PKG_CONFIG_FILE_NAME}"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
