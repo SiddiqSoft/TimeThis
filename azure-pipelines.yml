@@ -156,7 +156,7 @@ stages:
       inputs:
         script: |
           echo "We have the previous information: buildid:$(build.buildid) or buildNumber:$(build.buildNumber)"
-          echo "                                  buildFullSemVer:$(buildFullSemVer) or myFullSemVer:$(myFullSemVer)"
+          echo "                                  myFullSemVer:$(myFullSemVer)"
       displayName: 'Show the version information'
 
     # Set the flags for testing, build here.
