@@ -13,13 +13,12 @@ if(DEFINED CI_BUILDID)
     message(STATUS "Using the CI supplied buildid: CURRENT_PROJECT_VERSION --> ${CI_BUILDID}")
     set(CURRENT_PROJECT_VERSION ${CI_BUILDID})
 else()
+    if((DEFINED ${PROJECT_NAME}_BUILD_PACKAGE) AND (NOT DEFINED CI_BUILDID))
+        message(ERROR "When building from CI the CI_BUILDID must be set")
+    endif()
     message(STATUS "Using the dev-only version")
     set(CURRENT_PROJECT_VERSION "0.0.0.0")
 endif()
-
-#if((DEFINED opt_timethis_install) AND (NOT DEFINED CI_BUILDID))
-#    message(ERROR "When building from CI the CI_BUILDID must be set")
-#endif()
 
 #   ________________________________________________
 # - Set the Name of the project and the details
@@ -53,7 +52,9 @@ option(${PROJECT_NAME}_BUILD_TESTS "Build tests. Uncheck for install only runs" 
 option(${PROJECT_NAME}_BUILD_PACKAGE "Package. Uncheck for install only runs" OFF)
 
 message(STATUS  "Configuration options: ${PROJECT_NAME}_BUILD_TESTS  -- > ${${PROJECT_NAME}_BUILD_TESTS}\n"
+                "                          CI_BUILDID                    --> ${CI_BUILDID}\n"
                 "                          ${PROJECT_NAME}_BUILD_PACKAGE --> ${${PROJECT_NAME}_BUILD_PACKAGE}")
+
 include(CMakePackageConfigHelpers)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
