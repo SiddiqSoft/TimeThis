@@ -14,7 +14,6 @@ trigger:
 
 variables:
   buildConfiguration: 'Release'
-  buildLatestTag: '0.0.0.0'
 
 stages:
 ################################## STAGE ####################################
@@ -77,18 +76,17 @@ stages:
         BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
     
     - script: |
-        echo "##vso[task.setvariable variable=buildLatestTag;]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)" 
         echo "##vso[build.updatebuildnumber]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)" 
-        echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion) buildLatestTag:$(buildLatestTag)"
+        echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion)"
       name: SetBuildLatestTag
         
     # Set the flags for testing, build here.
     # timethis_BUILD_TESTS=ON
     # timethis_BUILD_PACKAGE=OFF
     - task: CMake@1
-      displayName: 'CMake Configure --preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(build.buildNumber)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+        cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(build.buildNumber)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
@@ -141,7 +139,6 @@ stages:
 
     variables:
       buildConfiguration: 'Release'
-      buildLatestTag: $[ stageDependencies.Build_n_Test.build.outputs['SetBuildLatestTag.buildLatestTag'] ]
 
     pool:
       name: $(poolName)
