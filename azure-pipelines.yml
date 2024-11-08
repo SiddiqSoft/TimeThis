@@ -12,12 +12,18 @@ trigger:
     exclude:
     - README.md
 
+variables:
+  buildConfiguration: 'Release'
+
 stages:
-- stage: Build
-  displayName: Building Multiple OS, Testing, Publishing
+################################## STAGE ####################################
+# STAGE: BuildTest                                                          #
+#############################################################################
+- stage: BuildTest
+  displayName: 'Building Multiple OS, Testing and Package for Windows'
   jobs:
   - job: build
-    displayName: Build
+    displayName: 'Build and Test'
     workspace:
       clean: all
 
@@ -34,10 +40,6 @@ stages:
           poolImageName:
           cmake.preset: Linux-Release
 
-    variables:
-      buildConfiguration: 'Release'
-      buildLatestTag: '0.0.0'
-
     pool:
       name: $(poolName)
       vmImage: $(poolImageName)
@@ -47,6 +49,7 @@ stages:
     steps:
     - checkout: self
       fetchDepth: 0
+      name: step1
 
     - task: NuGetToolInstaller@1
       displayName: 'Install Nuget'
@@ -62,20 +65,29 @@ stages:
 
     - task: gitversion/execute@3.0.0
       displayName: 'Determine Version..'
+      name: version_step
       inputs:
         useConfigFile: true
         configFilePath: 'GitVersion.yml'
 
-    - script: echo %Action%%BuildVersion%
-      displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
-      env:
-        Action: '##vso[build.updatebuildnumber]'
-        BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
-
+    #- script: echo 'Set build version $(build.buildNumber)'
+    #  displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+    #  env:
+    #    Action: '##vso[build.updatebuildnumber]'
+    #    BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
+    
+    #- script: |
+    #    echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion)"
+    #    echo "##vso[task.setvariable variable=buildFullSemVer;isoutput=true]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
+    #  name: passOutput
+    
+    # Set the flags for testing, build here.
+    # timethis_BUILD_TESTS=ON
+    # timethis_BUILD_PACKAGE=OFF
     - task: CMake@1
-      displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+        cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
@@ -101,18 +113,53 @@ stages:
       continueOnError: false
       condition: succeeded()
 
-    - task: PowerShell@2
-      displayName: 'List the outputs and remove directories'
+################################## STAGE ####################################
+# STAGE: Pack_n_Publish                                                     #
+#############################################################################
+- stage: Pack_n_Publish
+  displayName: 'Package for GitHub (cmake) and Nuget'
+  dependsOn: BuildTest
+  jobs:
+  - job: packit
+    displayName: PackageIt
+    workspace:
+      clean: all
+
+    strategy:
+      matrix:
+        Windows:
+          osName: Windows_NT
+          poolName: Default
+          poolImageName:
+          cmake.preset: Windows-Release
+        Linux:
+          osName: Linux
+          poolName: Default
+          poolImageName:
+          cmake.preset: Linux-Release
+
+    variables:
+      buildConfiguration: 'Release'
+      myFullSemVer: $[ dependencies.BuildTest.outputs['version_step.GitVersion_AssemblySemVer'] ]
+
+    pool:
+      name: $(poolName)
+      vmImage: $(poolImageName)
+      demands:
+        - Agent.OS -equals $(osName)
+
+    steps:
+    - checkout: self
+      fetchDepth: 1
+
+    # Set the flags for testing, build here.
+    # timethis_BUILD_TESTS=OFF
+    # timethis_BUILD_PACKAGE=ON
+    - task: CMake@1
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dtimethis_BUILD_TESTS=OFF -Dtimethis_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber)'
       inputs:
-        targetType: 'inline'
-        script: |
-          echo "Removing the folders before we pack stuff.."
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/Testing -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/lib -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force -LiteralPath $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin -ErrorAction SilentlyContinue
-      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
+        cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=OFF -Dtimethis_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber)'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     # Powershell is not supported on Pi aarch64 yet so we have to use this method for Linux
     - task: CmdLine@2
@@ -153,9 +200,9 @@ stages:
       displayName: 'NuGet pack'
       inputs:
         command: 'pack'
-        packagesToPack: 'nuget/*.nuspec'
+        packagesToPack: 'pack/*.nuspec'
         versioningScheme: 'off'
-        buildProperties: 'VERSION=$(GitVersion.MajorMinorPatch)'
+        buildProperties: 'VERSION=$(build.buildNumber)'
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Windows'))
 
     - task: NuGetCommand@2
@@ -184,4 +231,5 @@ stages:
         changeLogType: 'commitBased'
         addChangeLog: false
         assetUploadMode: 'replace'
-      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Linux'))
+      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
+      #condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Linux'))

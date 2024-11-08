@@ -101,13 +101,32 @@ TEST(examples, Example1)
 
 ## Notes
 
-- Supported prefix:
-    - `Darwin`
-    - `Linux`
-    - `Windows`
+### CMake usage
 
-<small align="right">
+From your CMakeLists.txt file:
+```cmake
+FetchContent_Declare(timethis GIT_REPOSITORY https://github.com/SiddiqSoft/TimeThis.git)
+FetchContent_MakeAvailable(timethis)
 
-&copy; 2021 Siddiq Software LLC. All rights reserved.
+target_link_libraries(${PROJECT_NAME} timethis)
+```
 
-</small>
+### Cmake Stuff (development)
+
+For development and testing:
+
+Get the current presets
+```cmake
+cmake --list-presets
+```
+
+Build the application and test (as performed via Azure Pipelines)
+```cmake
+cmake --preset Apple-Debug -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=0.0.0.0
+```
+
+Package for upload
+```cmake
+cmake -E chdir build/Apple-Debug cpack -C Debug -G ZIP
+```
+
