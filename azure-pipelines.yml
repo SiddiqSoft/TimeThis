@@ -14,12 +14,13 @@ trigger:
 
 variables:
   buildConfiguration: 'Release'
+  buildFullSemVer: '0.0.0.0'
 
 stages:
 ################################## STAGE ####################################
-# STAGE: Build_n_Test                                                       #
+# STAGE: BuildTest                                                          #
 #############################################################################
-- stage: Build_n_Test
+- stage: BuildTest
   displayName: 'Building Multiple OS, Testing and Package for Windows'
   jobs:
   - job: build
@@ -69,7 +70,7 @@ stages:
         useConfigFile: true
         configFilePath: 'GitVersion.yml'
 
-    - script: echo 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+    - script: echo 'Set build version $(build.buildNumber)'
       displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
       env:
         Action: '##vso[build.updatebuildnumber]'
@@ -77,14 +78,16 @@ stages:
     
     - script: |
         echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion)"
-        
+        echo "##vso[task.setvariable variable=buildFullSemVer;isoutput=true]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
+      name: passOutput
+    
     # Set the flags for testing, build here.
     # timethis_BUILD_TESTS=ON
     # timethis_BUILD_PACKAGE=OFF
     - task: CMake@1
-      displayName: 'CMake Configure --preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(build.buildNumber)'
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(build.buildNumber)'
+        cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
@@ -137,6 +140,7 @@ stages:
 
     variables:
       buildConfiguration: 'Release'
+      myFullSemVer: $[ dependencies.BuildTest.outputs['passOutput.buildFullSemVer'] ]
 
     pool:
       name: $(poolName)
@@ -151,8 +155,9 @@ stages:
     - task: CmdLine@2
       inputs:
         script: |
-          echo 'We have the previous information: `$(buildLatestTag)` or $(build.buildid) or $(build.buildNumber)'
-      displayName: 'Set the version information'
+          echo "We have the previous information: buildid:$(build.buildid) or buildNumber:$(build.buildNumber)"
+          echo "                                  buildFullSemVer:$(buildFullSemVer) or myFullSemVer:$(myFullSemVer) or  $[ dependencies.BuildTest.outputs['passOutput.buildFullSemVer'] ]"
+      displayName: 'Show the version information'
 
     # Set the flags for testing, build here.
     # timethis_BUILD_TESTS=OFF
