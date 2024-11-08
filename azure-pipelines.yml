@@ -118,7 +118,7 @@ stages:
 #############################################################################
 - stage: Pack_n_Publish
   displayName: 'Package for GitHub (cmake) and Nuget'
-  dependsOn: Build_n_Test
+  dependsOn: BuildTest
   jobs:
   - job: packit
     displayName: PackageIt
