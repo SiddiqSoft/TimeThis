@@ -140,7 +140,7 @@ stages:
 
     variables:
       buildConfiguration: 'Release'
-      myFullSemVer: $[ dependencies.BuildTest.outputs['version_step.GitVersion_MajorMinorPatch'] ]
+      myFullSemVer: $[ dependencies.BuildTest.outputs['version_step.GitVersion_AssemblySemVer'] ]
 
     pool:
       name: $(poolName)
