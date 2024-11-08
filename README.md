@@ -101,7 +101,19 @@ TEST(examples, Example1)
 
 ## Notes
 
-### Cmake Stuff
+### CMake usage
+
+From your CMakeLists.txt file:
+```cmake
+FetchContent_Declare(timethis GIT_REPOSITORY https://github.com/SiddiqSoft/TimeThis.git)
+FetchContent_MakeAvailable(timethis)
+
+target_link_libraries(${PROJECT_NAME} timethis)
+```
+
+### Cmake Stuff (development)
+
+For development and testing:
 
 Get the current presets
 ```cmake
