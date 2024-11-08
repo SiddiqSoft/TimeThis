@@ -49,8 +49,8 @@ endif()
 #############
 
 # We run the tests by default when we're in development mode for this library
-option(${PROJECT_NAME}_BUILD_TESTS "Build tests. Uncheck for install only runs" ${${PROJECT_NAME}_DEVMODE})
-option(${PROJECT_NAME}_BUILD_PACKAGE "Build tests. Uncheck for install only runs" ${${PROJECT_NAME}_DEVMODE})
+option(${PROJECT_NAME}_BUILD_TESTS "Build tests. Uncheck for install only runs" OFF)
+option(${PROJECT_NAME}_BUILD_PACKAGE "Build tests. Uncheck for install only runs" OFF)
 
 message(STATUS  "Configuration options: ${PROJECT_NAME}_BUILD_TESTS  -- > ${${PROJECT_NAME}_BUILD_TESTS}\n"
                 "                          ${PROJECT_NAME}_BUILD_PACKAGE --> ${${PROJECT_NAME}_BUILD_PACKAGE}")
@@ -98,12 +98,12 @@ install(FILES
         DESTINATION
         ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
-if(${PROJECT_NAME}_BUILD_TESTS)
+if(${${PROJECT_NAME}_BUILD_TESTS})
     message(STATUS "Asked to build tests.. ${PROJECT_NAME}_BUILD_TESTS = ${${PROJECT_NAME}_BUILD_TESTS}")
-  add_subdirectory(tests)
+    add_subdirectory(tests)
 endif()
 
-if (${PROJECT_NAME}_BUILD_PACKAGE)
+if (${${PROJECT_NAME}_BUILD_PACKAGE})
     message(STATUS "Asked to build package: ${PROJECT_NAME}_BUILD_PACKAGE = ${${PROJECT_NAME}_BUILD_PACKAGE}")
     # Continue on to the install/package stage..
     set(CPACK_SOURCE_GENERATOR TBZ2 TGZ TXZ ZIP)
