@@ -110,9 +110,12 @@ include(CTest)
 add_library(timethis INTERFACE)
 add_library(timethis::timethis ALIAS timethis)
 
+#target_include_directories( timethis INTERFACE
+#                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+#                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_include_directories( timethis INTERFACE
-                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                            $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>)
 target_compile_features(timethis INTERFACE cxx_std_20)
 
 install(TARGETS timethis
@@ -134,6 +137,7 @@ install(TARGETS timethis
 
 configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}-config.cmake.in"
                                 "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+
                                 INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 install(FILES       "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
@@ -147,7 +151,10 @@ install(DIRECTORY include
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING
         PATTERN "*.hpp")
-                            
+export( TARGETS  ${PROJECT_NAME}
+        NAMESPACE ${PROJECT_NAME}::
+        FILE timethis-targets.cmake)
+export( PACKAGE ${PROJECT_NAME})                            
 install(EXPORT timethis-targets 
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/timethis"
         NAMESPACE timethis::)
