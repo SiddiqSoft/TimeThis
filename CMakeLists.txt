@@ -110,11 +110,11 @@ include(CTest)
 
 add_library(timethis INTERFACE)
 add_library(timethis::timethis ALIAS timethis)
+target_sources(timethis INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 	
 target_include_directories( timethis INTERFACE
                             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_sources(timethis INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(timethis INTERFACE cxx_std_20)
 
 install(TARGETS timethis
