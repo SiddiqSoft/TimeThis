@@ -127,12 +127,12 @@ install(DIRECTORY
         ${CMAKE_INSTALL_INCLUDEDIR})
 include_directories(AFTER ${CMAKE_INSTALL_INCLUDEDIR} ${CMAKE_CURRENT_LIST_DIR}/include)
 
-install(    TARGETS timethis-targets
-            EXPORT  ${PROJECT_NAME}
-            LIBRARY         DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
-            ARCHIVE         DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT lib
-            RUNTIME         DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT bin
-            PUBLIC_HEADER   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}" COMPONENT dev)
+install(TARGETS timethis
+        EXPORT  ${PROJECT_NAME}
+        LIBRARY         DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
+        ARCHIVE         DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT lib
+        RUNTIME         DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT bin
+        PUBLIC_HEADER   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}" COMPONENT dev)
 
 configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/timethis-config.cmake.in"
                                 "${PROJECT_BINARY_DIR}/timethis-config.cmake"
