@@ -123,10 +123,10 @@ install(TARGETS timethis
 install(TARGETS timethis
         EXPORT timethis-config.cmake)
 install(DIRECTORY
-        ${CMAKE_CURRENT_LIST_DIR}/include
+        ${CMAKE_CURRENT_LIST_DIR} #/include
         DESTINATION
         ${CMAKE_INSTALL_INCLUDEDIR})
-include_directories(AFTER ${CMAKE_INSTALL_INCLUDEDIR} ${CMAKE_CURRENT_LIST_DIR}/include)
+include_directories(AFTER ${CMAKE_INSTALL_INCLUDEDIR} ${CMAKE_CURRENT_LIST_DIR}) #/include)
 
 install(TARGETS timethis
         EXPORT  ${PROJECT_NAME}
@@ -195,7 +195,8 @@ if (timethis_BUILD_PACKAGE)
     # Experience shows that explicit package naming can help make it easier to sort
     # out potential ABI related issues before they start, while helping you
     # track a build to a specific GIT SHA
-    set(CPACK_PACKAGE_FILE_NAME             "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}")
+    #set(CPACK_PACKAGE_FILE_NAME             "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}")
+    set(CPACK_PACKAGE_FILE_NAME             "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}")
     set(CPACK_SOURCE_PACKAGE_FILE_NAME      ${CPACK_PACKAGE_FILE_NAME})
 
     if(WIN32)

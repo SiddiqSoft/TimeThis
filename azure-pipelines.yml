@@ -161,7 +161,13 @@ stages:
         cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=OFF -Dtimethis_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
-    # Powershell is not supported on Pi aarch64 yet so we have to use this method for Linux
+    - task: CMake@1
+      displayName: 'CMake PACKAGE --preset $(cmake.preset) -Dtimethis_BUILD_TESTS=OFF -Dtimethis_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber) --target timethis_package'
+      inputs:
+        cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=OFF -Dtimethis_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber) --target timethis_package'
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+  
+      # Powershell is not supported on Pi aarch64 yet so we have to use this method for Linux
     - task: CmdLine@2
       displayName: 'Clean up folders on Linux machines'
       inputs:
@@ -189,6 +195,16 @@ stages:
         Contents: '*.zip'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
       condition: succeeded()
+      #condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
+
+    - task: CopyFiles@2
+      displayName: 'Copy ZIP CPack Files to: $(Build.ArtifactStagingDirectory)'
+      inputs:
+        SourceFolder: $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/bin
+        Contents: '*.zip'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      condition: succeeded()
+      continueOnError: true
       #condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
 
     - task: PublishBuildArtifacts@1
