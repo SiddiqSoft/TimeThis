@@ -132,16 +132,22 @@ install(TARGETS timethis
         RUNTIME         DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT bin
         PUBLIC_HEADER   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}" COMPONENT dev)
 
-configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/timethis-config.cmake.in"
-                                "${PROJECT_BINARY_DIR}/timethis-config.cmake"
-                                INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/timethis"
-                                NO_SET_AND_CHECK_MACRO
-                                NO_CHECK_REQUIRED_COMPONENTS_MACRO)
-
-write_basic_package_version_file(   timethis-config-version.cmake
+configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/${PROJECT_NAME}-config.cmake.in"
+                                "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+                                INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+install(FILES       "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+write_basic_package_version_file(   ${PROJECT_NAME}-config-version.cmake
                                     VERSION ${PROJECT_VERSION}
                                     COMPATIBILITY SameMajorVersion)
+install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 
+install(DIRECTORY include
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING
+        PATTERN "*.hpp")
+                            
 install(EXPORT timethis-targets 
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/timethis"
         NAMESPACE timethis::)
