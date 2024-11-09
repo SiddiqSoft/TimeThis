@@ -74,6 +74,19 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     message(STATUS "Project is in the `library developer's home` directory. ${timethis_DEVMODE}-->ON")
 endif()
 
+# Global configuration
+
+# Only set the cxx_standard if it is not set by someone else
+if (NOT DEFINED CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 20)
+endif()
+
+# strongly encouraged to enable this globally to avoid conflicts between
+# -Wpedantic being enabled and -std=c++20 and -std=gnu++20 for example
+# when compiling with PCH enabled
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+
 #############
 #  Options  #
 #############
@@ -100,7 +113,7 @@ add_library(timethis::timethis ALIAS timethis)
 	
 target_include_directories( timethis INTERFACE
                             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                            $<INSTALL_INTERFACE:include>)
+                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_compile_features(timethis INTERFACE cxx_std_20)
 
@@ -113,6 +126,13 @@ install(DIRECTORY
         DESTINATION
         ${CMAKE_INSTALL_INCLUDEDIR})
 include_directories(AFTER ${CMAKE_INSTALL_INCLUDEDIR} ${CMAKE_CURRENT_LIST_DIR}/include)
+
+install(    TARGETS timethis-targets
+            EXPORT  ${PROJECT_NAME}
+            LIBRARY         DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
+            ARCHIVE         DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT lib
+            RUNTIME         DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT bin
+            PUBLIC_HEADER   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}" COMPONENT dev)
 
 configure_package_config_file(  "${PROJECT_SOURCE_DIR}/pack/timethis-config.cmake.in"
                                 "${PROJECT_BINARY_DIR}/timethis-config.cmake"
@@ -137,11 +157,12 @@ if(timethis_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
+message(STATUS "The value of CMAKE_SKIP_INSTALL_RULES == ${CMAKE_SKIP_INSTALL_RULES}")
+
 if (timethis_BUILD_PACKAGE)
     message(STATUS "Asked to build package: timethis_BUILD_PACKAGE = ${timethis_BUILD_PACKAGE}")
     # Continue on to the install/package stage..
     set(CPACK_SOURCE_GENERATOR TBZ2 TGZ TXZ ZIP)
-    set(CPACK_SOURCE_PACKAGE_FILE_NAME ${CPACK_PACKAGE_FILE_NAME})
 
     set(PKG_CONFIG_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/timethis.pc")
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/pack/pkgconfig.pc.in" "${PKG_CONFIG_FILE_NAME}" @ONLY)
@@ -155,11 +176,16 @@ if (timethis_BUILD_PACKAGE)
     set(CPACK_PACKAGE_VERSION_PATCH         "${VERSION_PATCH}")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   ${PROJECT_DESCRIPTION})
     set(CPACK_PACKAGE_VENDOR                "SiddiqSoft")
-    set(CPACK_PACKAGE_FILE_NAME             "${PROJECT_NAME}-${PROJECT_VERSION}")
     set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
     set(CPACK_RESOURCE_FILE_README          "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
     set(CPACK_SOURCE_IGNORE_FILES           gmock/ gtest/ build/ .DS_Store .gitignore _deps/ tests/ ${CMAKE_BINARY_DIR}/ ${PROJECT_BINARY_DIR}/)
     #set(CPACK_PACKAGE_DIRECTORY             ${PROJECT_BINARY_DIR}/package)
+
+    # Experience shows that explicit package naming can help make it easier to sort
+    # out potential ABI related issues before they start, while helping you
+    # track a build to a specific GIT SHA
+    set(CPACK_PACKAGE_FILE_NAME             "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${GIT_SHORT_SHA}-${CMAKE_SYSTEM_NAME}-${CMAKE_BUILD_TYPE}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}")
+    set(CPACK_SOURCE_PACKAGE_FILE_NAME      ${CPACK_PACKAGE_FILE_NAME})
 
     if(WIN32)
         set(CPACK_GENERATOR ZIP)
