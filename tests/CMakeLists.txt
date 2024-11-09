@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-if(opt_${PROJECT_NAME}_testing)
+if(${${PROJECT_NAME}_BUILD_TESTS})
     include(FetchContent)
     include(GNUInstallDirs)
 
@@ -18,11 +18,6 @@ if(opt_${PROJECT_NAME}_testing)
     FetchContent_MakeAvailable(googletest)
     enable_testing()
 
-    target_include_directories( ${TESTPROJ}
-                                PRIVATE
-                                $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                                $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
-
     target_compile_features(${TESTPROJ} PRIVATE cxx_std_20)
 
     target_compile_options( ${TESTPROJ}
@@ -36,4 +31,5 @@ if(opt_${PROJECT_NAME}_testing)
     include(CTest)
 
     gtest_discover_tests(${TESTPROJ} XML_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/tests/results")
+    message(STATUS "  Finished configuring for ${PROJECT_NAME}_BUILD_TESTS = ${${PROJECT_NAME}_BUILD_TESTS}")
 endif()

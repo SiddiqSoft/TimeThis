@@ -14,10 +14,12 @@ trigger:
 
 variables:
   buildConfiguration: 'Release'
-  buildLatestTag: '0.0.0.0'
 
 stages:
-- stage: Build_n_Test
+################################## STAGE ####################################
+# STAGE: BuildTest                                                          #
+#############################################################################
+- stage: BuildTest
   displayName: 'Building Multiple OS, Testing and Package for Windows'
   jobs:
   - job: build
@@ -63,25 +65,29 @@ stages:
 
     - task: gitversion/execute@3.0.0
       displayName: 'Determine Version..'
+      name: version_step
       inputs:
         useConfigFile: true
         configFilePath: 'GitVersion.yml'
 
-    - script: echo %Action%%BuildVersion%
-      displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
-      env:
-        Action: '##vso[build.updatebuildnumber]'
-        BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
+    #- script: echo 'Set build version $(build.buildNumber)'
+    #  displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+    #  env:
+    #    Action: '##vso[build.updatebuildnumber]'
+    #    BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
     
-    - script: |
-        set $(buildLatestTag)= $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
-        echo 'We set buildLatestTag: $(buildLatestTag)'
-      name: SetBuildLatestTag
-
+    #- script: |
+    #    echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion)"
+    #    echo "##vso[task.setvariable variable=buildFullSemVer;isoutput=true]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
+    #  name: passOutput
+    
+    # Set the flags for testing, build here.
+    # timethis_BUILD_TESTS=ON
+    # timethis_BUILD_PACKAGE=OFF
     - task: CMake@1
-      displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -Dopt_timethis_testing=ON -Dopt_timethis_install=ON -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
+        cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=ON -Dtimethis_BUILD_PACKAGE=OFF -DCI_BUILDID=$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: CMake@1
@@ -107,9 +113,12 @@ stages:
       continueOnError: false
       condition: succeeded()
 
+################################## STAGE ####################################
+# STAGE: Pack_n_Publish                                                     #
+#############################################################################
 - stage: Pack_n_Publish
   displayName: 'Package for GitHub (cmake) and Nuget'
-  dependsOn: Build_n_Test
+  dependsOn: BuildTest
   jobs:
   - job: packit
     displayName: PackageIt
@@ -131,7 +140,7 @@ stages:
 
     variables:
       buildConfiguration: 'Release'
-      buildLatestTag: $[ stageDependencies.Build_n_Test.build.outputs['SetBuildLatestTag.buildLatestTag'] ]
+      myFullSemVer: $[ dependencies.BuildTest.outputs['version_step.GitVersion_AssemblySemVer'] ]
 
     pool:
       name: $(poolName)
@@ -143,16 +152,13 @@ stages:
     - checkout: self
       fetchDepth: 1
 
-    - task: CmdLine@2
-      inputs:
-        script: |
-          echo 'We have the previous information: `$(buildLatestTag)` or $(build.buildid) or $(build.buildNumber)'
-      displayName: 'Set the version information'
-
+    # Set the flags for testing, build here.
+    # timethis_BUILD_TESTS=OFF
+    # timethis_BUILD_PACKAGE=ON
     - task: CMake@1
-      displayName: 'CMake Configure --preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(build.buildNumber)'
+      displayName: 'CMake Configure --preset $(cmake.preset) -Dtimethis_BUILD_TESTS=OFF -Dtimethis_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber)'
       inputs:
-        cmakeArgs: '--preset $(cmake.preset) -Dopt_timethis_install=ON -DCI_BUILDID=$(build.buildNumber)'
+        cmakeArgs: '--preset $(cmake.preset) -Dtimethis_BUILD_TESTS=OFF -Dtimethis_BUILD_PACKAGE=ON -DCI_BUILDID=$(build.buildNumber)'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     # Powershell is not supported on Pi aarch64 yet so we have to use this method for Linux
