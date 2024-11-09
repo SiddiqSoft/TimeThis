@@ -179,7 +179,8 @@ stages:
       inputs:
         cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) cpack -C $(buildConfiguration) -G ZIP'
       continueOnError: false
-      condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
+      condition: succeeded()
+      #condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
 
     - task: CopyFiles@2
       displayName: 'Copy ZIP CPack Files to: $(Build.ArtifactStagingDirectory)'
@@ -187,14 +188,16 @@ stages:
         SourceFolder: $(System.DefaultWorkingDirectory)/build/$(cmake.preset)
         Contents: '*.zip'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
-      condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
+      condition: succeeded()
+      #condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         publishLocation: 'Container'
-      condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
+      condition: succeeded()
+      #condition: and(succeeded(), or(startsWith(variables['Agent.OS'], 'Darwin'), startsWith(variables['Agent.OS'], 'Linux')) )
 
     - task: NuGetCommand@2
       displayName: 'NuGet pack'
@@ -231,5 +234,6 @@ stages:
         changeLogType: 'commitBased'
         addChangeLog: false
         assetUploadMode: 'replace'
-      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
+      condition: succeeded()
+      #condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
       #condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), startsWith(variables['Agent.OS'], 'Linux'))

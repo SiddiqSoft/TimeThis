@@ -114,7 +114,7 @@ add_library(timethis::timethis ALIAS timethis)
 target_include_directories( timethis INTERFACE
                             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
+target_sources(timethis INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(timethis INTERFACE cxx_std_20)
 
 install(TARGETS timethis
@@ -201,4 +201,11 @@ if (timethis_BUILD_PACKAGE)
 
     message(STATUS "Writing the package for `${CPACK_PACKAGE_NAME}` --> CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}")
     include(CPack)
+
+    set(package_files include/ CMakeLists.txt LICENSE)
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}-src.zip
+        COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_CURRENT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}-src.zip --format=zip -- ${package_files}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        DEPENDS ${package_files})
+    add_custom_target(${PROJECT_NAME}_package DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}-src.zip)    
 endif()
