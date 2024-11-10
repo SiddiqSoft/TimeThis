@@ -105,7 +105,7 @@ stages:
 
     # Try for coverage (but only on Linux build machines)
     - task: CMake@1
-      displayName: 'CTest Coverage'
+      displayName: 'CTest Coverage (Linux build only)'
       inputs:
         cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) ctest $(System.DefaultWorkingDirectory)/build/$(cmake.preset) --output-junit $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml --output-on-failure  -T Test -T Coverage'
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
@@ -116,8 +116,8 @@ stages:
       inputs:
         script: |
           echo "Running lcov.."
-          lcov --directory $(System.DefaultWorkingDirectory)/build/$(cmake.preset) --capture --output-file $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.info -rc lcov_branch_coverage=1
-          genhtml coverage.info --branch-coverage --output-directory $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/
+          lcov --directory "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)" --capture --output-file "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.info" -rc lcov_branch_coverage=1
+          genhtml coverage.info --branch-coverage --output-directory "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/"
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
  
     - task: PublishTestResults@2
