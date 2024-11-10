@@ -103,6 +103,23 @@ stages:
       condition: succeeded()
       continueOnError: false
 
+    # Try for coverage (but only on Linux build machines)
+    - task: CMake@1
+      displayName: 'CMake -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests ctest -T Test -T Coverage'
+      inputs:
+        cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests ctest $(System.DefaultWorkingDirectory)/build/$(cmake.preset) --output-junit $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml --output-on-failure  -T Test -T Coverage'
+      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
+      continueOnError: false
+
+    - task: Bash@3
+      displayName: 'Coverage collection (Linux builds Only)'
+      inputs:
+        script: |
+          echo "Running lcov.."
+          lcov --directory $(System.DefaultWorkingDirectory)/build/ --capture --output-file $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.info -rc lcov_branch_coverage=1
+          genhtml coverage.info --branch-coverage --output-directory $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/
+      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
+ 
     - task: PublishTestResults@2
       displayName: 'Publish $(buildConfiguration) Test Results test_detail.xml'
       inputs:
@@ -112,6 +129,12 @@ stages:
           buildConfiguration: '$(buildConfiguration)'
       continueOnError: false
       condition: succeeded()
+
+    - task: PublishCodeCoverageResults@2
+      displayName: 'Publish Coverage Results (Linux builds)'
+      inputs:
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/'
+      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
 
 ################################## STAGE ####################################
 # STAGE: Pack_n_Publish                                                     #
