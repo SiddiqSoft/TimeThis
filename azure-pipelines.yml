@@ -111,7 +111,7 @@ stages:
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
       continueOnError: false
 
-    - task: Bash@3
+    - task: CmdLine@2
       displayName: 'Coverage collection (Linux builds Only)'
       inputs:
         script: |
