@@ -116,7 +116,7 @@ stages:
       inputs:
         script: |
           echo "Running lcov.."
-          lcov --directory "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)" --capture --output-file "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.info" -rc lcov_branch_coverage=1
+          lcov --capture --directory . --output-directory "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/" --output-file coverage.info
           genhtml coverage.info --branch-coverage --output-directory "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/"
         workingDirectory: "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)"
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
