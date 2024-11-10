@@ -105,7 +105,7 @@ stages:
 
     # Try for coverage (but only on Linux build machines)
     - task: CMake@1
-      displayName: 'CMake -E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests ctest -T Test -T Coverage'
+      displayName: 'CTest Coverage'
       inputs:
         cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests ctest $(System.DefaultWorkingDirectory)/build/$(cmake.preset) --output-junit $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml --output-on-failure  -T Test -T Coverage'
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
