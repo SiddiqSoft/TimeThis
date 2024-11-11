@@ -120,7 +120,7 @@ stages:
           #echo "Running llvm-cov gcov.."
           #llvm-cov gcov -a -b -instr-profile=default.profraw -o coverage.info --object-directory=$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/ 
           echo "Running llvm-cov show.."
-          llvm-cov show -format=html -instr-profile=default.profraw -o coverage.info --object-directory=$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/ 
+          llvm-cov show -format=html -instr-profile=default.profraw -o coverage.info
 
           genhtml coverage.info --branch-coverage --output-directory "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/"
         workingDirectory: "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)"
