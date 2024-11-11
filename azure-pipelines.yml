@@ -117,7 +117,7 @@ stages:
         script: |
           echo "Running lcov.."
           pwd
-          llvm-cov gcov "-c -f . -o $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.info"
+          llvm-cov gcov -c -f . -o $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.info
           genhtml coverage.info --branch-coverage --output-directory "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/"
         workingDirectory: "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)"
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))

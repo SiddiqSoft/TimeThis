@@ -23,9 +23,12 @@ if(${${PROJECT_NAME}_BUILD_TESTS})
     # For GCC/Clang
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+    set(CMAKE_LINKLIB_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     target_compile_options( ${TESTPROJ}
                             PRIVATE
                             $<$<CXX_COMPILER_ID:MSVC>:/std:c++20> )
+    target_compile_options(${TESTPROJ} PRIVATE -coverage)
+    target_link_options(${TESTPROJ} PRIVATE -coverage)
     target_link_libraries(${TESTPROJ} PRIVATE GTest::gtest_main)
     gtest_discover_tests(${TESTPROJ} XML_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/tests/results")
 

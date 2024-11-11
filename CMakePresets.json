@@ -164,6 +164,7 @@
             "execution": {
                 "noTestsAction": "error",
                 "stopOnFailure": true
+
             }
         },
         {
@@ -224,7 +225,8 @@
             "configurations": [
                 "Apple-Release"
             ]
-        },        {
+        },
+        {
             "name": "Linux-Release",
             "description": "Package for Linux",
             "displayName": "Linux-Package (Release)",
