@@ -115,9 +115,12 @@ stages:
       displayName: 'Coverage collection (Linux builds Only)'
       inputs:
         script: |
-          echo "Running lcov.."
           pwd
+          echo "Run llvm-cov as is."
+          llvm-cov show -format=html -a -b -instr-profile=default.profraw -o coverage.info --object-directory=$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/ 
+          echo "Running llvm-cov.."
           llvm-cov gcov -c -f . -o $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.info
+
           genhtml coverage.info --branch-coverage --output-directory "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/"
         workingDirectory: "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)"
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
