@@ -70,17 +70,6 @@ stages:
         useConfigFile: true
         configFilePath: 'GitVersion.yml'
 
-    #- script: echo 'Set build version $(build.buildNumber)'
-    #  displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
-    #  env:
-    #    Action: '##vso[build.updatebuildnumber]'
-    #    BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
-    
-    #- script: |
-    #    echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion)"
-    #    echo "##vso[task.setvariable variable=buildFullSemVer;isoutput=true]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
-    #  name: passOutput
-    
     # Set the flags for testing, build here.
     # timethis_BUILD_TESTS=ON
     # timethis_BUILD_PACKAGE=OFF
@@ -103,6 +92,31 @@ stages:
       condition: succeeded()
       continueOnError: false
 
+    # Try for coverage (but only on Linux build machines)
+    - task: CMake@1
+      displayName: 'CTest Coverage (Linux build only)'
+      inputs:
+        cmakeArgs: '-E chdir $(System.DefaultWorkingDirectory)/build/$(cmake.preset) ctest $(System.DefaultWorkingDirectory)/build/$(cmake.preset) --output-junit $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/test_detail.xml --output-on-failure  -T Test -T Coverage'
+      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
+      continueOnError: false
+
+    - task: CmdLine@2
+      displayName: 'Coverage collection (Linux builds Only)'
+      inputs:
+        script: |
+          #tree
+          #gcovr -e $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps/ --cobertura-pretty --cobertura $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.xml
+          echo "Profile data show..functions.."
+          llvm-profdata show -all-functions -counts -ic-targets -output=tests/llvm_prof.log tests/default.profraw
+          echo "Profile data merge............"
+          llvm-profdata merge -output=tests/merge.out -instr tests/default.profraw
+          echo "Profile data show..html......."
+          llvm-cov show -format=html tests/timethis_tests --instr-profile=tests/merge.out -o tests/results/coverage.info
+          echo "Profile data export..lcov....."
+          llvm-cov export  tests/timethis_tests --instr-profile=tests/merge.out -format=lcov > tests/results/coverage.lcov
+        workingDirectory: "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)"
+      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
+ 
     - task: PublishTestResults@2
       displayName: 'Publish $(buildConfiguration) Test Results test_detail.xml'
       inputs:
@@ -112,6 +126,12 @@ stages:
           buildConfiguration: '$(buildConfiguration)'
       continueOnError: false
       condition: succeeded()
+
+    - task: PublishCodeCoverageResults@2
+      displayName: 'Publish Coverage Results (Linux builds)'
+      inputs:
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.*'
+      condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
 
 ################################## STAGE ####################################
 # STAGE: Pack_n_Publish                                                     #

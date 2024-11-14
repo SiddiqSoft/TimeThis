@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.25)
 if(${${PROJECT_NAME}_BUILD_TESTS})
     include(FetchContent)
     include(GNUInstallDirs)
+    include(GoogleTest)
 
     set(TESTPROJ ${PROJECT_NAME}_tests)
 
@@ -19,17 +20,19 @@ if(${${PROJECT_NAME}_BUILD_TESTS})
     enable_testing()
 
     target_compile_features(${TESTPROJ} PRIVATE cxx_std_20)
-
     target_compile_options( ${TESTPROJ}
                             PRIVATE
                             $<$<CXX_COMPILER_ID:MSVC>:/std:c++20> )
-
-    include(GoogleTest)
-
     target_link_libraries(${TESTPROJ} PRIVATE GTest::gtest_main)
+    gtest_discover_tests(${TESTPROJ} XML_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/tests/results")
+
+    # For GCC/Clang
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -fprofile-arcs -ftest-coverage -fprofile-instr-generate -fcoverage-mapping")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -fprofile-arcs -ftest-coverage -fprofile-instr-generate -fcoverage-mapping")
+    set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fprofile-instr-generate")
+    message(STATUS "Setting compiler flags for coverage: ${CMAKE_CXX_FLAGS}")
+    message(STATUS "Setting linker flags for coverage  : ${CMAKE_LINKER_FLAGS}")
 
     include(CTest)
-
-    gtest_discover_tests(${TESTPROJ} XML_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/tests/results")
     message(STATUS "  Finished configuring for ${PROJECT_NAME}_BUILD_TESTS = ${${PROJECT_NAME}_BUILD_TESTS}")
 endif()
