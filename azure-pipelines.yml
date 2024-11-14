@@ -104,15 +104,15 @@ stages:
       displayName: 'Coverage collection (Linux builds Only)'
       inputs:
         script: |
-          gcovr -e build/ --cobertura-pretty --cobertura $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.xml
-          #echo "Profile data show..functions.."
-          #llvm-profdata show -all-functions -counts -ic-targets -output=tests/llvm_prof.log tests/default.profraw
-          #echo "Profile data merge............"
-          #llvm-profdata merge -output=tests/merge.out -instr tests/default.profraw
-          #echo "Profile data show..html......."
-          #llvm-cov show -format=html tests/timethis_tests --instr-profile=tests/merge.out -o tests/coverage.info
-          #echo "Profile data export..lcov....."
-          #llvm-cov export  tests/timethis_tests --instr-profile=tests/merge.out -format=lcov > tests/coverage.lcov
+          #gcovr -e build/ --cobertura-pretty --cobertura $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.xml
+          echo "Profile data show..functions.."
+          llvm-profdata show -all-functions -counts -ic-targets -output=tests/llvm_prof.log tests/default.profraw
+          echo "Profile data merge............"
+          llvm-profdata merge -output=tests/merge.out -instr tests/default.profraw
+          echo "Profile data show..html......."
+          llvm-cov show -format=html tests/timethis_tests --instr-profile=tests/merge.out -o tests/coverage.info
+          echo "Profile data export..lcov....."
+          llvm-cov export  tests/timethis_tests --instr-profile=tests/merge.out -format=lcov > tests/coverage.lcov
         #workingDirectory: "$(System.DefaultWorkingDirectory)"
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
  
