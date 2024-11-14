@@ -70,17 +70,6 @@ stages:
         useConfigFile: true
         configFilePath: 'GitVersion.yml'
 
-    #- script: echo 'Set build version $(build.buildNumber)'
-    #  displayName: 'Set build version to $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)'
-    #  env:
-    #    Action: '##vso[build.updatebuildnumber]'
-    #    BuildVersion: $(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)
-    
-    #- script: |
-    #    echo "Updating the version for this build: BuildId:$(build.buildid) Build.buildNumber:$(build.buildNumber) build.sourceversion:$(Build.SourceVersion)"
-    #    echo "##vso[task.setvariable variable=buildFullSemVer;isoutput=true]$(GitVersion.MajorMinorPatch).$(GitVersion.CommitsSinceVersionSource)"
-    #  name: passOutput
-    
     # Set the flags for testing, build here.
     # timethis_BUILD_TESTS=ON
     # timethis_BUILD_PACKAGE=OFF
@@ -115,15 +104,16 @@ stages:
       displayName: 'Coverage collection (Linux builds Only)'
       inputs:
         script: |
-          echo "Examine the tests directory"
-          tree $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/ 
-          #echo "Running llvm-cov gcov.."
-          #llvm-cov gcov -a -b -instr-profile=default.profraw -o coverage.info --object-directory=$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/ 
-          echo "Running llvm-cov show.."
-          llvm-cov show -format=html -instr-profile=default.profraw -o coverage.info
-
-          genhtml coverage.info --branch-coverage --output-directory "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/"
-        workingDirectory: "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)"
+          gcovr -e build/ --cobertura-pretty --cobertura $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.xml
+          #echo "Profile data show..functions.."
+          #llvm-profdata show -all-functions -counts -ic-targets -output=tests/llvm_prof.log tests/default.profraw
+          #echo "Profile data merge............"
+          #llvm-profdata merge -output=tests/merge.out -instr tests/default.profraw
+          #echo "Profile data show..html......."
+          #llvm-cov show -format=html tests/timethis_tests --instr-profile=tests/merge.out -o tests/coverage.info
+          #echo "Profile data export..lcov....."
+          #llvm-cov export  tests/timethis_tests --instr-profile=tests/merge.out -format=lcov > tests/coverage.lcov
+        workingDirectory: "$(System.DefaultWorkingDirectory)"
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
  
     - task: PublishTestResults@2
@@ -139,7 +129,7 @@ stages:
     - task: PublishCodeCoverageResults@2
       displayName: 'Publish Coverage Results (Linux builds)'
       inputs:
-        summaryFileLocation: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/'
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.xml'
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
 
 ################################## STAGE ####################################
