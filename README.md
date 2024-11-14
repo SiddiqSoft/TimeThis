@@ -5,7 +5,7 @@ TimeThis : Simple stopwatch for scope
 ![](https://img.shields.io/nuget/v/SiddiqSoft.TimeThis)
 ![](https://img.shields.io/github/v/tag/SiddiqSoft/TimeThis)
 ![](https://img.shields.io/azure-devops/tests/siddiqsoft/siddiqsoft/11)
-
+![Coverage](https://img.shields.io/azure-devops/coverage/siddiqsoft/siddiqsoft/11)
 
 # Objective
 Provide for a simple utility class where we can time the operation of a code block and allow
