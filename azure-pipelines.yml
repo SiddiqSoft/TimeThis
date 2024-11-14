@@ -104,8 +104,8 @@ stages:
       displayName: 'Coverage collection (Linux builds Only)'
       inputs:
         script: |
-          tree
-          gcovr -e $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps/ --cobertura-pretty --cobertura $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.xml
+          #tree
+          #gcovr -e $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/_deps/ --cobertura-pretty --cobertura $(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.xml
           echo "Profile data show..functions.."
           llvm-profdata show -all-functions -counts -ic-targets -output=tests/llvm_prof.log tests/default.profraw
           echo "Profile data merge............"
