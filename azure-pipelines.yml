@@ -113,7 +113,7 @@ stages:
           #llvm-cov show -format=html tests/timethis_tests --instr-profile=tests/merge.out -o tests/coverage.info
           #echo "Profile data export..lcov....."
           #llvm-cov export  tests/timethis_tests --instr-profile=tests/merge.out -format=lcov > tests/coverage.lcov
-        workingDirectory: "$(System.DefaultWorkingDirectory)"
+        #workingDirectory: "$(System.DefaultWorkingDirectory)"
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
  
     - task: PublishTestResults@2
