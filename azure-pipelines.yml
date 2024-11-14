@@ -111,9 +111,9 @@ stages:
           echo "Profile data merge............"
           llvm-profdata merge -output=tests/merge.out -instr tests/default.profraw
           echo "Profile data show..html......."
-          llvm-cov show -format=html tests/timethis_tests --instr-profile=tests/merge.out -o tests/coverage.info
+          llvm-cov show -format=html tests/timethis_tests --instr-profile=tests/merge.out -o tests/results/coverage.info
           echo "Profile data export..lcov....."
-          llvm-cov export  tests/timethis_tests --instr-profile=tests/merge.out -format=lcov > tests/coverage.lcov
+          llvm-cov export  tests/timethis_tests --instr-profile=tests/merge.out -format=lcov > tests/results/coverage.lcov
         workingDirectory: "$(System.DefaultWorkingDirectory)/build/$(cmake.preset)"
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
  
@@ -130,7 +130,7 @@ stages:
     - task: PublishCodeCoverageResults@2
       displayName: 'Publish Coverage Results (Linux builds)'
       inputs:
-        summaryFileLocation: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.xml'
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/build/$(cmake.preset)/tests/results/coverage.*'
       condition: and(succeeded(), startsWith(variables['Agent.OS'], 'Linux'))
 
 ################################## STAGE ####################################
