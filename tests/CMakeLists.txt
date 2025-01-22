@@ -1,38 +1,58 @@
-cmake_minimum_required(VERSION 3.25)
-
 if(${${PROJECT_NAME}_BUILD_TESTS})
-    include(FetchContent)
-    include(GNUInstallDirs)
-    include(GoogleTest)
-
     set(TESTPROJ ${PROJECT_NAME}_tests)
 
-    FetchContent_Declare(googletest URL https://github.com/google/googletest/releases/download/v1.15.2/googletest-1.15.2.tar.gz
-                                    FIND_PACKAGE_ARGS NAMES GTest)
-
+    set( CMAKE_CXX_STANDARD 23)
+    set( CMAKE_CXX_STANDARD_REQUIRED On)
+    set( CMAKE_CXX_EXTENSIONS Off)
+    
     add_executable(${TESTPROJ})
 
+    target_compile_features(${TESTPROJ} PRIVATE cxx_std_23)
+    target_compile_options( ${TESTPROJ}
+                            PRIVATE
+                            $<$<CXX_COMPILER_ID:MSVC>:/std:c++latest> )
+    target_compile_options( ${TESTPROJ}
+                            PRIVATE
+                            $<$<CXX_COMPILER_ID:Clang>:-fexperimental-library> )
+
+    # ASAN and Coverage only for Debug builds on Linux
+    if(((CMAKE_CXX_COMPILER_ID MATCHES [Cc][Ll][Aa][Nn][Gg]) 
+        OR (CMAKE_CXX_COMPILER_ID MATCHES [Gg][Nn][Uu]))
+       AND (CMAKE_BUILD_TYPE MATCHES [Dd][Ee][Bb][Uu][Gg]))
+        #message(STATUS "Using sanitizers for leak and address on ${CMAKE_CXX_COMPILER_ID}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,leak")
+        target_link_libraries(${TESTPROJ} PRIVATE -fsanitize=address,leak)
+        #message(STATUS "Enable instrumentation for code coverage")
+        target_compile_options(${TESTPROJ} PRIVATE -coverage -O0 -g)
+        target_link_options(${TESTPROJ} PRIVATE -coverage)
+    endif()
+
+    if( CMAKE_BUILD_TYPE MATCHES [Dd][Ee][Bb][Uu][Gg])
+        add_compile_definitions(${TESTPROJ} PRIVATE DEBUG=1 _DEBUG=1)
+    endif()
+
+    # Dependencies
+    #cpmaddpackage("gh:google/googletest#v1.15.2")
+    CPMAddPackage("gh:google/googletest#7d76a231b0e29caf86e68d1df858308cd53b2a66")
     target_sources( ${TESTPROJ}
                     PRIVATE
                     ${PROJECT_SOURCE_DIR}/tests/test.cpp)
+    # Link dependencies..
+    target_link_libraries(${TESTPROJ} PRIVATE
+            GTest::gtest_main
+            nlohmann_json::nlohmann_json
+            $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:CURL::libcurl>
+            $<$<CXX_COMPILER_ID:MSVC>:acw32h::acw32h>
+            RunOnEnd::RunOnEnd
+            SplitUri::SplitUri
+            string2map::string2map
+            asynchrony::asynchrony
+            AzureCppUtils::AzureCppUtils
+            StringHelpers::StringHelpers)
 
-    FetchContent_MakeAvailable(googletest)
-    enable_testing()
-
-    target_compile_features(${TESTPROJ} PRIVATE cxx_std_20)
-    target_compile_options( ${TESTPROJ}
-                            PRIVATE
-                            $<$<CXX_COMPILER_ID:MSVC>:/std:c++20> )
-    target_link_libraries(${TESTPROJ} PRIVATE GTest::gtest_main)
+    include(GoogleTest)
     gtest_discover_tests(${TESTPROJ} XML_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/tests/results")
 
-    # For GCC/Clang
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -fprofile-arcs -ftest-coverage -fprofile-instr-generate -fcoverage-mapping")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -fprofile-arcs -ftest-coverage -fprofile-instr-generate -fcoverage-mapping")
-    set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fprofile-instr-generate")
-    message(STATUS "Setting compiler flags for coverage: ${CMAKE_CXX_FLAGS}")
-    message(STATUS "Setting linker flags for coverage  : ${CMAKE_LINKER_FLAGS}")
-
     include(CTest)
-    message(STATUS "  Finished configuring for ${PROJECT_NAME}_BUILD_TESTS = ${${PROJECT_NAME}_BUILD_TESTS}")
+    message(STATUS "  Finished configuring for ${PROJECT_NAME} -- ${PROJECT_NAME}_BUILD_TESTS = ${${PROJECT_NAME}_BUILD_TESTS}")
 endif()

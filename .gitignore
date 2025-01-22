@@ -22,10 +22,9 @@ CMakeCache.txt
 *.cmake
 Makefile
 lib/
-tests/results/*.xml
-**/*.vcxproj
-**/*.filters
-*.tcl
+**/tests/results/**
+**/*.profraw
+**/.DS_Store
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
