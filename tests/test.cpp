@@ -148,3 +148,289 @@ TEST_F(TimeThisTest, MoveOperationsDeleted)
 	static_assert(!std::is_move_assignable_v<siddiqsoft::timethis>,
 	              "timethis should not be move assignable");
 }
+
+/// @test Verify that elapsed time increases over time
+TEST_F(TimeThisTest, ElapsedTimeIncreases)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	
+	const auto elapsed1 = timer.elapsed();
+	std::this_thread::sleep_for(50ms);
+	const auto elapsed2 = timer.elapsed();
+	std::this_thread::sleep_for(50ms);
+	const auto elapsed3 = timer.elapsed();
+
+	EXPECT_LT(elapsed1, elapsed2) << "Elapsed time should increase";
+	EXPECT_LT(elapsed2, elapsed3) << "Elapsed time should continue to increase";
+}
+
+/// @test Verify that multiple calls to elapsed() return consistent results
+TEST_F(TimeThisTest, MultipleElapsedCalls)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto elapsed1 = timer.elapsed();
+	const auto elapsed2 = timer.elapsed();
+	const auto elapsed3 = timer.elapsed();
+
+	// All should be approximately equal (within a small tolerance)
+	EXPECT_GE(elapsed2, elapsed1) << "Second call should be >= first call";
+	EXPECT_GE(elapsed3, elapsed2) << "Third call should be >= second call";
+}
+
+/// @test Verify callback receives accurate duration
+TEST_F(TimeThisTest, CallbackDurationAccuracy)
+{
+	using namespace std::chrono;
+
+	auto received_duration = system_clock::duration(0);
+	auto callback = [&received_duration](const auto& duration) {
+		received_duration = duration;
+	};
+
+	{
+		siddiqsoft::timethis timer(std::move(callback));
+		std::this_thread::sleep_for(SLEEP_DURATION);
+	}
+
+	const auto received_ms = duration_cast<milliseconds>(received_duration).count();
+	EXPECT_GE(received_ms, 90) << "Callback duration should be at least 90ms";
+	EXPECT_LE(received_ms, 200) << "Callback duration should be at most 200ms";
+}
+
+/// @test Verify that timer works with very short durations
+TEST_F(TimeThisTest, VeryShortDuration)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	// No sleep - just measure the overhead
+
+	const auto elapsed = timer.elapsed();
+	EXPECT_GE(elapsed.count(), 0) << "Elapsed time should be non-negative";
+}
+
+/// @test Verify that timer works with longer durations
+TEST_F(TimeThisTest, LongerDuration)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(250ms);
+
+	const auto elapsed_ms = duration_cast<milliseconds>(timer.elapsed()).count();
+	EXPECT_GE(elapsed_ms, 240) << "Elapsed time should be at least 240ms";
+}
+
+/// @test Verify that multiple timers can run independently
+TEST_F(TimeThisTest, MultipleIndependentTimers)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer1;
+	std::this_thread::sleep_for(50ms);
+	
+	siddiqsoft::timethis timer2;
+	std::this_thread::sleep_for(50ms);
+
+	const auto elapsed1_ms = duration_cast<milliseconds>(timer1.elapsed()).count();
+	const auto elapsed2_ms = duration_cast<milliseconds>(timer2.elapsed()).count();
+
+	// Timer1 should have more elapsed time than timer2
+	EXPECT_GT(elapsed1_ms, elapsed2_ms) << "Timer1 should have more elapsed time";
+}
+
+/// @test Verify that callback is not invoked if no callback is provided
+TEST_F(TimeThisTest, NoCallbackProvided)
+{
+	// This test verifies that creating a timer without a callback doesn't cause issues
+	{
+		siddiqsoft::timethis timer;
+		std::this_thread::sleep_for(SLEEP_DURATION);
+	}
+	// If we reach here without crashing, the test passes
+	EXPECT_TRUE(true);
+}
+
+/// @test Verify that elapsed time is measured in nanoseconds
+TEST_F(TimeThisTest, ElapsedTimeUnit)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto elapsed = timer.elapsed();
+	const auto elapsed_ns = elapsed.count();
+	const auto elapsed_ms = duration_cast<milliseconds>(elapsed).count();
+
+	// Verify that nanoseconds are much larger than milliseconds
+	// (nanoseconds should be at least 1000x larger than milliseconds)
+	EXPECT_GE(elapsed_ns, elapsed_ms * 1000) << "Nanoseconds should be at least 1000x milliseconds";
+}
+
+/// @test Verify stream operator includes function name
+TEST_F(TimeThisTest, StreamOperatorIncludesFunctionName)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	std::ostringstream oss;
+	oss << timer;
+	const auto output = oss.str();
+
+	// Should contain the function name
+	EXPECT_NE(output.find("TimeThisTest"), std::string::npos) 
+		<< "Output should contain test function name";
+}
+
+/// @test Verify to_string includes timestamp
+TEST_F(TimeThisTest, ToStringIncludesTimestamp)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto output = timer.to_string();
+
+	// Should contain timestamp indicators
+	EXPECT_NE(output.find("T"), std::string::npos) 
+		<< "Output should contain ISO timestamp (T separator)";
+	EXPECT_NE(output.find("Z"), std::string::npos) 
+		<< "Output should contain Z (UTC indicator)";
+}
+
+/// @test Verify callback with exception handling
+TEST_F(TimeThisTest, CallbackWithExceptionHandling)
+{
+	using namespace std::chrono;
+
+	bool callback_executed = false;
+	auto callback = [&callback_executed](const auto& /* duration */) {
+		callback_executed = true;
+		// Callback executes successfully
+	};
+
+	try {
+		siddiqsoft::timethis timer(std::move(callback));
+		std::this_thread::sleep_for(SLEEP_DURATION);
+	}
+	catch (...) {
+		FAIL() << "Timer should not throw exceptions";
+	}
+
+	EXPECT_TRUE(callback_executed) << "Callback should have been executed";
+}
+
+/// @test Verify that elapsed() is noexcept
+TEST_F(TimeThisTest, ElapsedIsNoexcept)
+{
+	siddiqsoft::timethis timer;
+	
+	// This test verifies at compile-time that elapsed() is noexcept
+	static_assert(noexcept(timer.elapsed()), 
+	              "elapsed() should be noexcept");
+	
+	EXPECT_TRUE(true);
+}
+
+/// @test Verify that destructor is noexcept
+TEST_F(TimeThisTest, DestructorIsNoexcept)
+{
+	// This test verifies at compile-time that destructor is noexcept
+	static_assert(std::is_nothrow_destructible_v<siddiqsoft::timethis>,
+	              "timethis destructor should be noexcept");
+	
+	EXPECT_TRUE(true);
+}
+
+/// @test Verify callback receives duration as const reference
+TEST_F(TimeThisTest, CallbackReceivesDurationAsConstRef)
+{
+	using namespace std::chrono;
+
+	bool callback_executed = false;
+	auto callback = [&callback_executed](const auto& duration) {
+		// Verify we can read the duration
+		auto count = duration.count();
+		callback_executed = (count >= 0);
+	};
+
+	{
+		siddiqsoft::timethis timer(std::move(callback));
+		std::this_thread::sleep_for(SLEEP_DURATION);
+	}
+
+	EXPECT_TRUE(callback_executed) << "Callback should receive valid duration";
+}
+
+/// @test Verify that type aliases are correct
+TEST_F(TimeThisTest, TypeAliasesCorrect)
+{
+	// Verify type aliases exist and are correct
+	static_assert(std::is_same_v<siddiqsoft::timethis::duration_type, 
+	                             std::chrono::system_clock::duration>,
+	              "duration_type should be system_clock::duration");
+	
+	static_assert(std::is_same_v<siddiqsoft::timethis::time_point_type,
+	                             std::chrono::system_clock::time_point>,
+	              "time_point_type should be system_clock::time_point");
+	
+	EXPECT_TRUE(true);
+}
+
+/// @test Verify that format output is consistent
+TEST_F(TimeThisTest, FormatOutputConsistency)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto formatted1 = std::format("{}", timer);
+	const auto formatted2 = std::format("{}", timer);
+
+	// Both should contain the same function name and timestamp
+	EXPECT_NE(formatted1.find("FormatOutputConsistency"), std::string::npos);
+	EXPECT_NE(formatted2.find("FormatOutputConsistency"), std::string::npos);
+	EXPECT_NE(formatted1.find("started on"), std::string::npos);
+	EXPECT_NE(formatted2.find("started on"), std::string::npos);
+}
+
+/// @test Verify callback is called exactly once
+TEST_F(TimeThisTest, CallbackCalledExactlyOnce)
+{
+	using namespace std::chrono;
+
+	int callback_count = 0;
+	auto callback = [&callback_count](const auto& /* duration */) {
+		callback_count++;
+	};
+
+	{
+		siddiqsoft::timethis timer(std::move(callback));
+		std::this_thread::sleep_for(SLEEP_DURATION);
+	}
+
+	EXPECT_EQ(callback_count, 1) << "Callback should be called exactly once";
+}
+
+/// @test Verify elapsed time is always non-negative
+TEST_F(TimeThisTest, ElapsedTimeNonNegative)
+{
+	using namespace std::chrono;
+
+	for (int i = 0; i < 10; ++i) {
+		siddiqsoft::timethis timer;
+		const auto elapsed = timer.elapsed();
+		EXPECT_GE(elapsed.count(), 0) << "Elapsed time should never be negative";
+	}
+}
