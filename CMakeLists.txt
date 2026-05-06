@@ -45,35 +45,6 @@ target_compile_options(${PROJECT_NAME}
     INTERFACE
     $<$<CXX_COMPILER_ID:Clang>:-fexperimental-library>)
 
-# Platform-specific dependencies
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    # Linux/Unix specific
-    find_package(CURL 8.7 REQUIRED)
-    target_link_libraries(${PROJECT_NAME} INTERFACE CURL::libcurl)
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    # Windows specific
-    CPMAddPackage("gh:SiddiqSoft/acw32h#2.7.4")
-    target_link_libraries(${PROJECT_NAME} INTERFACE acw32h::acw32h)
-endif()
-
-# Common dependencies
-CPMAddPackage("gh:nlohmann/json#v3.12.0")
-target_link_libraries(${PROJECT_NAME} INTERFACE nlohmann_json::nlohmann_json)
-
-CPMAddPackage("gh:SiddiqSoft/SplitUri#3.0.3")
-target_link_libraries(${PROJECT_NAME} INTERFACE SplitUri::SplitUri)
-
-CPMAddPackage("gh:SiddiqSoft/AzureCppUtils#3.2.5")
-target_link_libraries(${PROJECT_NAME} INTERFACE AzureCppUtils::AzureCppUtils)
-
-CPMAddPackage("gh:SiddiqSoft/string2map#2.4.3")
-target_link_libraries(${PROJECT_NAME} INTERFACE string2map::string2map)
-
-CPMAddPackage("gh:SiddiqSoft/RunOnEnd#1.4.2")
-target_link_libraries(${PROJECT_NAME} INTERFACE RunOnEnd::RunOnEnd)
-
-CPMAddPackage("gh:SiddiqSoft/asynchrony#2.1.1")
-target_link_libraries(${PROJECT_NAME} INTERFACE asynchrony::asynchrony)
 
 # Testing configuration
 if(${PROJECT_NAME}_BUILD_TESTS AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests" AND IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/tests")
