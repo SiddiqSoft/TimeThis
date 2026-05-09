@@ -44,14 +44,15 @@
 #include <source_location>
 #include <stdexcept>
 #include <type_traits>
+#include <utility>
 
 namespace siddiqsoft
 {
 	/// @brief A stopwatch class that measures elapsed time and optionally executes a callback on destruction.
-	/// 
+	///
 	/// This class provides a simple RAII-based timing mechanism. It captures the current time upon
 	/// construction and can execute a user-provided callback with the elapsed duration upon destruction.
-	/// 
+	///
 	/// @note Copy and move operations are explicitly deleted to ensure single ownership semantics.
 	class timethis
 	{
@@ -66,7 +67,7 @@ namespace siddiqsoft
 		using time_point_type = std::chrono::system_clock::time_point;
 
 		/// @brief Default constructor that captures the current time and source location.
-		/// 
+		///
 		/// @param sl Source location information (automatically captured from call site)
 		explicit timethis(const std::source_location& sl = std::source_location::current()) noexcept
 		    : m_callback()
@@ -75,12 +76,20 @@ namespace siddiqsoft
 		{
 		}
 
+		/// @brief Resets the timer to the current time.
+		///
+		/// This method resets the start time to the current moment, effectively restarting
+		/// the timer. All subsequent calls to elapsed() or lap() will measure time from
+		/// this new start point.
+		///
+		/// @note This is useful for measuring multiple intervals without creating new timer objects.
+		void reset() noexcept { m_start_time = std::chrono::system_clock::now(); }
+
 		/// @brief Constructor that accepts a callback to be executed on destruction.
-		/// 
+		///
 		/// @param callback Function to be called with elapsed duration upon destruction
 		/// @param sl Source location information (automatically captured from call site)
-		explicit timethis(callback_type&& callback,
-		                  const std::source_location& sl = std::source_location::current()) noexcept
+		explicit timethis(callback_type&& callback, const std::source_location& sl = std::source_location::current()) noexcept
 		    : m_callback(std::move(callback))
 		    , m_source_location(sl)
 		    , m_start_time(std::chrono::system_clock::now())
@@ -96,23 +105,58 @@ namespace siddiqsoft
 		}
 
 		// Delete copy operations - single ownership semantics
-		timethis(const timethis&) = delete;
+		timethis(const timethis&)            = delete;
 		timethis& operator=(const timethis&) = delete;
 
 		// Delete move operations - prevents accidental misuse
-		timethis(timethis&&) = delete;
+		timethis(timethis&&)            = delete;
 		timethis& operator=(timethis&&) = delete;
 
 		/// @brief Calculates the duration since the creation of this object.
-		/// 
+		///
 		/// @return Duration representing the elapsed time
-		[[nodiscard]] duration_type elapsed() const noexcept
+		[[nodiscard]] duration_type elapsed() const noexcept { return std::chrono::system_clock::now() - m_start_time; }
+
+		/// @brief Returns the elapsed time as a formatted string in the specified duration unit.
+		///
+		/// This method provides a convenient way to get the elapsed time as a string representation
+		/// without needing to manually cast and format the duration. It's useful for logging,
+		/// debugging, or displaying timing information.
+		///
+		/// @tparam DC Duration cast type (default: std::chrono::microseconds)
+		///            Common options: std::chrono::nanoseconds, std::chrono::microseconds,
+		///            std::chrono::milliseconds, std::chrono::seconds, etc.
+		///
+		/// @return A string containing the numeric count of elapsed time in the specified duration unit.
+		///         For example, if 1500 microseconds have elapsed and DC is microseconds,
+		///         the return value will be "1500".
+		///
+		/// @note The returned value is the raw count without unit suffix. The caller is responsible
+		///       for knowing which unit was used based on the template parameter.
+		///
+		/// @example
+		/// @code
+		/// siddiqsoft::timethis timer;
+		/// std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		///
+		/// // Get elapsed time in microseconds (default)
+		/// auto elapsed_us = timer.lap();  // e.g., "100000"
+		///
+		/// // Get elapsed time in milliseconds
+		/// auto elapsed_ms = timer.lap<std::chrono::milliseconds>();  // e.g., "100"
+		///
+		/// // Get elapsed time in seconds
+		/// auto elapsed_s = timer.lap<std::chrono::seconds>();  // e.g., "0"
+		/// @endcode
+		template <typename DC = std::chrono::microseconds>
+		[[nodiscard]] std::string lap() const noexcept
 		{
-			return std::chrono::system_clock::now() - m_start_time;
+			auto lapTime = std::chrono::system_clock::now() - m_start_time;
+			return std::format("{}", std::chrono::duration_cast<DC>(lapTime).count());
 		}
 
 		/// @brief Converts the timing information to a formatted string.
-		/// 
+		///
 		/// @tparam charT Character type for the output string
 		/// @return Formatted string containing timing information
 		/// @throws std::invalid_argument if charT is wchar_t (not yet implemented)
@@ -131,7 +175,7 @@ namespace siddiqsoft
 		}
 
 		/// @brief Stream output operator for convenient printing.
-		/// 
+		///
 		/// @param os Output stream
 		/// @param src timethis object to output
 		/// @return Reference to the output stream
@@ -142,9 +186,9 @@ namespace siddiqsoft
 		}
 
 	private:
-		callback_type m_callback;                    ///< Optional callback to execute on destruction
-		std::source_location m_source_location;      ///< Source location where this object was created
-		time_point_type m_start_time;                ///< Time point when this object was created
+		callback_type        m_callback;        ///< Optional callback to execute on destruction
+		std::source_location m_source_location; ///< Source location where this object was created
+		time_point_type      m_start_time;      ///< Time point when this object was created
 	};
 
 } // namespace siddiqsoft

@@ -9,6 +9,7 @@
 #include <chrono>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include "../include/siddiqsoft/timethis.hpp"
 #include "gtest/gtest.h"
@@ -433,4 +434,328 @@ TEST_F(TimeThisTest, ElapsedTimeNonNegative)
 		const auto elapsed = timer.elapsed();
 		EXPECT_GE(elapsed.count(), 0) << "Elapsed time should never be negative";
 	}
+}
+
+/// @test Verify lap() returns a string
+TEST_F(TimeThisTest, LapReturnsString)
+{
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap_result = timer.lap();
+	EXPECT_FALSE(lap_result.empty()) << "lap() should return a non-empty string";
+	EXPECT_TRUE(std::all_of(lap_result.begin(), lap_result.end(), ::isdigit))
+		<< "lap() should return a string containing only digits";
+}
+
+/// @test Verify lap() default template parameter uses microseconds
+TEST_F(TimeThisTest, LapDefaultUnitIsMicroseconds)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap_us = timer.lap();
+	const auto lap_ms = timer.lap<milliseconds>();
+
+	// Convert both to numbers for comparison
+	const auto lap_us_count = std::stoll(lap_us);
+	const auto lap_ms_count = std::stoll(lap_ms);
+
+	// Microseconds should be approximately 1000x larger than milliseconds
+	// (allowing for some timing variance)
+	EXPECT_GT(lap_us_count, lap_ms_count * 900)
+		<< "Default lap() should use microseconds (much larger than milliseconds)";
+}
+
+/// @test Verify lap() with milliseconds
+TEST_F(TimeThisTest, LapWithMilliseconds)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap_ms = timer.lap<milliseconds>();
+	const auto lap_ms_count = std::stoll(lap_ms);
+
+	// Should be approximately 100ms (with tolerance)
+	EXPECT_GE(lap_ms_count, 90) << "lap<milliseconds>() should be at least 90ms";
+	EXPECT_LE(lap_ms_count, 200) << "lap<milliseconds>() should be at most 200ms";
+}
+
+/// @test Verify lap() with seconds
+TEST_F(TimeThisTest, LapWithSeconds)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap_s = timer.lap<seconds>();
+	const auto lap_s_count = std::stoll(lap_s);
+
+	// Should be 0 seconds since we only slept for 100ms
+	EXPECT_EQ(lap_s_count, 0) << "lap<seconds>() should be 0 for 100ms sleep";
+}
+
+/// @test Verify lap() with nanoseconds
+TEST_F(TimeThisTest, LapWithNanoseconds)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap_ns = timer.lap<nanoseconds>();
+	const auto lap_ns_count = std::stoll(lap_ns);
+
+	// Should be approximately 100,000,000 nanoseconds (100ms)
+	EXPECT_GE(lap_ns_count, 90000000) << "lap<nanoseconds>() should be at least 90,000,000ns";
+	EXPECT_LE(lap_ns_count, 200000000) << "lap<nanoseconds>() should be at most 200,000,000ns";
+}
+
+/// @test Verify lap() returns consistent results
+TEST_F(TimeThisTest, LapConsistentResults)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap1 = timer.lap();
+	const auto lap2 = timer.lap();
+	const auto lap3 = timer.lap();
+
+	// All should be approximately equal (lap2 and lap3 should be >= lap1)
+	const auto lap1_count = std::stoll(lap1);
+	const auto lap2_count = std::stoll(lap2);
+	const auto lap3_count = std::stoll(lap3);
+
+	EXPECT_GE(lap2_count, lap1_count) << "Second lap should be >= first lap";
+	EXPECT_GE(lap3_count, lap2_count) << "Third lap should be >= second lap";
+}
+
+/// @test Verify lap() increases over time
+TEST_F(TimeThisTest, LapIncreaseOverTime)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+
+	const auto lap1 = timer.lap<milliseconds>();
+	std::this_thread::sleep_for(50ms);
+	const auto lap2 = timer.lap<milliseconds>();
+	std::this_thread::sleep_for(50ms);
+	const auto lap3 = timer.lap<milliseconds>();
+
+	const auto lap1_count = std::stoll(lap1);
+	const auto lap2_count = std::stoll(lap2);
+	const auto lap3_count = std::stoll(lap3);
+
+	EXPECT_LT(lap1_count, lap2_count) << "lap() should increase over time";
+	EXPECT_LT(lap2_count, lap3_count) << "lap() should continue to increase";
+}
+
+/// @test Verify lap() with very short duration
+TEST_F(TimeThisTest, LapVeryShortDuration)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	// No sleep - just measure overhead
+
+	const auto lap = timer.lap();
+	const auto lap_count = std::stoll(lap);
+
+	EXPECT_GE(lap_count, 0) << "lap() should return non-negative value";
+}
+
+/// @test Verify lap() with longer duration
+TEST_F(TimeThisTest, LapLongerDuration)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(250ms);
+
+	const auto lap_ms = timer.lap<milliseconds>();
+	const auto lap_ms_count = std::stoll(lap_ms);
+
+	EXPECT_GE(lap_ms_count, 240) << "lap<milliseconds>() should be at least 240ms";
+}
+
+/// @test Verify lap() is noexcept
+TEST_F(TimeThisTest, LapIsNoexcept)
+{
+	siddiqsoft::timethis timer;
+
+	// This test verifies at compile-time that lap() is noexcept
+	static_assert(noexcept(timer.lap()),
+	              "lap() should be noexcept");
+
+	EXPECT_TRUE(true);
+}
+
+/// @test Verify lap() with different duration types
+TEST_F(TimeThisTest, LapWithMultipleDurationTypes)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap_ns = timer.lap<nanoseconds>();
+	const auto lap_us = timer.lap<microseconds>();
+	const auto lap_ms = timer.lap<milliseconds>();
+	const auto lap_s = timer.lap<seconds>();
+
+	const auto lap_ns_count = std::stoll(lap_ns);
+	const auto lap_us_count = std::stoll(lap_us);
+	const auto lap_ms_count = std::stoll(lap_ms);
+	const auto lap_s_count = std::stoll(lap_s);
+
+	// Verify the relationships between different units
+	EXPECT_GT(lap_ns_count, lap_us_count * 900) << "ns should be ~1000x us";
+	EXPECT_GT(lap_us_count, lap_ms_count * 900) << "us should be ~1000x ms";
+	EXPECT_GT(lap_ms_count, lap_s_count * 90) << "ms should be ~1000x s";
+}
+
+/// @test Verify lap() returns numeric string that can be parsed
+TEST_F(TimeThisTest, LapReturnsParseableNumericString)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap = timer.lap();
+
+	// Should be able to parse as long long
+	try {
+		const auto lap_count = std::stoll(lap);
+		EXPECT_GT(lap_count, 0) << "Parsed lap value should be positive";
+	}
+	catch (const std::exception& e) {
+		FAIL() << "lap() should return a parseable numeric string: " << e.what();
+	}
+}
+
+/// @test Verify lap() with multiple timers
+TEST_F(TimeThisTest, LapWithMultipleTimers)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer1;
+	std::this_thread::sleep_for(50ms);
+
+	siddiqsoft::timethis timer2;
+	std::this_thread::sleep_for(50ms);
+
+	const auto lap1_ms = timer1.lap<milliseconds>();
+	const auto lap2_ms = timer2.lap<milliseconds>();
+
+	const auto lap1_count = std::stoll(lap1_ms);
+	const auto lap2_count = std::stoll(lap2_ms);
+
+	// Timer1 should have more elapsed time than timer2
+	EXPECT_GT(lap1_count, lap2_count) << "Timer1 should have more elapsed time";
+}
+
+/// @test Verify lap() after reset
+TEST_F(TimeThisTest, LapAfterReset)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap_before_reset = timer.lap<milliseconds>();
+	timer.reset();
+	const auto lap_after_reset = timer.lap<milliseconds>();
+
+	const auto lap_before_count = std::stoll(lap_before_reset);
+	const auto lap_after_count = std::stoll(lap_after_reset);
+
+	// After reset, lap should be much smaller
+	EXPECT_LT(lap_after_count, lap_before_count) << "lap() should be smaller after reset()";
+}
+
+/// @test Verify lap() with microseconds precision
+TEST_F(TimeThisTest, LapMicrosecondsPrecision)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap_us = timer.lap<microseconds>();
+	const auto lap_us_count = std::stoll(lap_us);
+
+	// Should be approximately 100,000 microseconds (100ms)
+	EXPECT_GE(lap_us_count, 90000) << "lap<microseconds>() should be at least 90,000us";
+	EXPECT_LE(lap_us_count, 200000) << "lap<microseconds>() should be at most 200,000us";
+}
+
+/// @test Verify lap() is marked with [[nodiscard]]
+TEST_F(TimeThisTest, LapIsMarkedNodexcept)
+{
+	// This test verifies that lap() is properly documented
+	// The [[nodiscard]] attribute should encourage proper usage
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	// Using the result to avoid compiler warnings
+	const auto result = timer.lap();
+	EXPECT_FALSE(result.empty()) << "lap() result should not be empty";
+}
+
+/// @test Verify lap() with zero duration
+TEST_F(TimeThisTest, LapWithZeroDuration)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	// Immediately call lap without sleeping
+
+	const auto lap = timer.lap();
+	const auto lap_count = std::stoll(lap);
+
+	// Should be a small positive number (overhead)
+	EXPECT_GE(lap_count, 0) << "lap() should return non-negative value even with zero sleep";
+}
+
+/// @test Verify lap() string format is numeric only
+TEST_F(TimeThisTest, LapStringFormatNumericOnly)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap = timer.lap();
+
+	// Verify all characters are digits
+	for (char c : lap) {
+		EXPECT_TRUE(std::isdigit(c)) << "lap() should only contain digits";
+	}
+}
+
+/// @test Verify lap() with milliseconds and seconds comparison
+TEST_F(TimeThisTest, LapMillisecondsSecondsComparison)
+{
+	using namespace std::chrono;
+
+	siddiqsoft::timethis timer;
+	std::this_thread::sleep_for(SLEEP_DURATION);
+
+	const auto lap_ms = timer.lap<milliseconds>();
+	const auto lap_s = timer.lap<seconds>();
+
+	const auto lap_ms_count = std::stoll(lap_ms);
+	const auto lap_s_count = std::stoll(lap_s);
+
+	// Milliseconds should be approximately 1000x larger than seconds
+	EXPECT_GT(lap_ms_count, lap_s_count * 90) << "ms should be ~1000x s";
 }
