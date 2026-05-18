@@ -26,6 +26,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Build options
 option(${PROJECT_NAME}_BUILD_TESTS "Build tests for ${PROJECT_NAME}" OFF)
+option(CI_BUILDID "Git version for CI builds" "notset")
 
 # Library definition
 add_library(${PROJECT_NAME} INTERFACE)
