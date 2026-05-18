@@ -16,7 +16,8 @@
             },
             "cacheVariables": {
                 "CPM_SOURCE_CACHE": "${sourceParentDir}/.cpmcache",
-                "timethis_BUILD_TESTS": "ON"
+                "timethis_BUILD_TESTS": "ON",
+                "CI_BUILDID": "0.0.0"
             }
         },
         {
