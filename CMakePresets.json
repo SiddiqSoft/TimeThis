@@ -156,6 +156,7 @@
             "binaryDir": "${sourceDir}/build/${presetName}",
             "installDir": "${sourceDir}/install/${presetName}",
             "generator": "Ninja Multi-Config",
+            "inherits": "Project-Base",
             "cacheVariables": {
                 "CMAKE_MAKE_PROGRAM": "ninja.exe",
                 "CMAKE_C_COMPILER": "cl.exe",
