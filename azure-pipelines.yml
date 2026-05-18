@@ -2,9 +2,6 @@
 # Azure Pipelines Main Configuration
 # ============================================================================
 #
-# Purpose: Main pipeline orchestration for building and publishing restcl
-# Project: SiddiqSoft restcl - A Focused REST Client for Modern C++
-#
 # This pipeline:
 # 1. Builds the library on Windows (x64 and arm64)
 # 2. Builds the library on Linux (Clang and GCC)
