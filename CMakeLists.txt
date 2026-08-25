@@ -46,6 +46,32 @@ target_compile_options(${PROJECT_NAME}
     INTERFACE
     $<$<CXX_COMPILER_ID:Clang>:-fexperimental-library>)
 
+# ____________________________
+# Debugger visualization (natvis)
+#
+# - Visual Studio / MSVC generators: .natvis files attached as INTERFACE sources
+#   are loaded automatically by the debugger.
+# - VS Code consumers (cpptools "cppdbg" or lldb-dap): point "visualizerFile"
+#   in launch.json at the file, e.g. when consuming via CPM/FetchContent:
+#       "visualizerFile": "${timethis_SOURCE_DIR}/timethis.natvis"
+#   or query the target property after find_package():
+#       get_target_property(_natvis timethis::timethis NATVIS_FILE)
+set(${PROJECT_NAME}_NATVIS
+    "${CMAKE_CURRENT_SOURCE_DIR}/timethis.natvis"
+    CACHE INTERNAL "Path to the ${PROJECT_NAME} debugger visualization (natvis) file")
+
+# Attach the visualizer to the target (BUILD_INTERFACE keeps installed/exported
+# targets free of absolute paths while in-tree builds get the benefit).
+target_sources(${PROJECT_NAME}
+    INTERFACE
+    $<BUILD_INTERFACE:${${PROJECT_NAME}_NATVIS}>)
+
+# Expose the path as a target property so find_package() consumers can query it:
+#   get_target_property(_natvis timethis::timethis NATVIS_FILE)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    NATVIS_FILE "${${PROJECT_NAME}_NATVIS}")
+
+message(STATUS "${PROJECT_NAME}: natvis visualizer --> ${${PROJECT_NAME}_NATVIS}")
 
 # Testing configuration
 if(${PROJECT_NAME}_BUILD_TESTS AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests" AND IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/tests")

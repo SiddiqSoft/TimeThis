@@ -5,4 +5,11 @@
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
+
+  <!-- Debugger visualization: natvis files placed in build\native are picked up automatically
+       by Visual Studio when the package is consumed. -->
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)timethis.natvis" />
+    <None Include="$(MSBuildThisFileDirectory)timethis.natvis" />
+  </ItemGroup>
 </Project>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Visualizer for siddiqsoft::timethis (https://github.com/SiddiqSoft/TimeThis)
+
+    Usage:
+      - Visual Studio : place next to the project/solution or add via
+                        Tools > Options > Debugging > Visual Studio visualization files.
+      - VS Code (cppdbg) : add the file path to "visualizerFile" in launch.json.
+      - LLDB (lldb-dap)  : supported via natvis import.
+
+    Shows the captured source location and start time of the stopwatch.
+-->
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <Type Name="siddiqsoft::timethis">
+    <!-- libc++ / libstdc++ both expose source_location members; fall back gracefully. -->
+    <DisplayString Condition="m_source_location.__function_ != 0">
+      {m_source_location.__function_,sb} | line {m_source_location.__line_} | started @ {_M_start_time.__d_.__rep_} ticks
+    </DisplayString>
+    <DisplayString Condition="m_source_location._M_function_name != 0">
+      {m_source_location._M_function_name,sb} | line {m_source_location._M_line} | started @ {_M_start_time._M_d.__r_._M_value.__rep_} ticks
+    </DisplayString>
+    <DisplayString>siddiqsoft::timethis</DisplayString>
+
+    <Expand>
+      <!-- libc++ std::source_location -->
+      <Item Name="[function]" Condition="m_source_location.__function_ != 0">m_source_location.__function_,sb</Item>
+      <Item Name="[file]" Condition="m_source_location.__file_name_ != 0">m_source_location.__file_name_,sb</Item>
+      <Item Name="[line]" Condition="m_source_location.__line_ != 0">m_source_location.__line_</Item>
+      <Item Name="[column]" Condition="m_source_location.__column_ != 0">m_source_location.__column_</Item>
+
+      <!-- libstdc++ std::source_location -->
+      <Item Name="[function]" Condition="m_source_location._M_function_name != 0">m_source_location._M_function_name,sb</Item>
+      <Item Name="[file]" Condition="m_source_location._M_file_name != 0">m_source_location._M_file_name,sb</Item>
+      <Item Name="[line]" Condition="m_source_location._M_line != 0">m_source_location._M_line</Item>
+      <Item Name="[column]" Condition="m_source_location._M_column != 0">m_source_location._M_column</Item>
+
+      <!-- libc++ std::chrono::system_clock::time_point -->
+      <Item Name="[start_time (ticks)]" Condition="_M_start_time.__d_.__rep_ >= 0">_M_start_time.__d_.__rep_</Item>
+      <!-- libstdc++ std::chrono::system_clock::time_point -->
+      <Item Name="[start_time (ticks)]" Condition="_M_start_time._M_d.__r_._M_value.__rep_ >= 0">_M_start_time._M_d.__r_._M_value.__rep_</Item>
+
+      <!-- callback presence -->
+      <Synthetic Name="[callback]">
+        <DisplayString Condition="m_callback.__f_ != 0">set</DisplayString>
+        <DisplayString Condition="m_callback._M_functor != 0">set</DisplayString>
+        <DisplayString>none</DisplayString>
+      </Synthetic>
+    </Expand>
+  </Type>
+
+</AutoVisualizer>
