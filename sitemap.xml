@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://siddiqsoft.github.io/timethis/</loc>
+         <lastmod>2026-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://siddiqsoft.github.io/timethis/license/</loc>
+         <lastmod>2026-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://siddiqsoft.github.io/timethis/api/</loc>
+         <lastmod>2026-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://siddiqsoft.github.io/timethis/maintainers/pipelines/</loc>
+         <lastmod>2026-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://siddiqsoft.github.io/timethis/quickstart/</loc>
+         <lastmod>2026-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://siddiqsoft.github.io/timethis/quickstart/cmake/</loc>
+         <lastmod>2026-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://siddiqsoft.github.io/timethis/quickstart/dependencies/</loc>
+         <lastmod>2026-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://siddiqsoft.github.io/timethis/quickstart/nuget/</loc>
+         <lastmod>2026-09-07</lastmod>
+    </url>
+</urlset>
