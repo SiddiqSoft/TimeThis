@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Lightweight, header-only C++23 stopwatch utility with optional callbacks">
+        <meta name="description" content="Lightweight, header-only C++20 stopwatch utility with optional callbacks">
       
       
         <meta name="author" content="Siddiq Software LLC">
@@ -907,19 +907,19 @@
 <a href="https://www.nuget.org/packages/SiddiqSoft.TimeThis/"><img alt="NuGet Version" src="https://img.shields.io/nuget/v/SiddiqSoft.TimeThis?logo=nuget" /></a>
 <a href="https://www.nuget.org/packages/SiddiqSoft.TimeThis/"><img alt="NuGet Downloads" src="https://img.shields.io/nuget/dt/SiddiqSoft.TimeThis?logo=nuget" /></a>
 <a href="https://dev.azure.com/siddiqsoft/siddiqsoft/_build/latest?definitionId=11&amp;branchName=main"><img alt="Tests" src="https://img.shields.io/azure-devops/tests/siddiqsoft/siddiqsoft/11/main.svg" /></a>
-<a href="https://en.cppreference.com/w/cpp/23"><img alt="C++23" src="https://img.shields.io/badge/C%2B%2B-23-00599C?logo=cplusplus" /></a>
+<a href="https://en.cppreference.com/w/cpp/20"><img alt="C++20" src="https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus" /></a>
 <a href="license/"><img alt="License BSD-3" src="https://img.shields.io/badge/License-BSD--3--Clause-blue" /></a></p>
 <!-- end badges -->
 
-<p>A lightweight, header-only Modern C++23 stopwatch utility for measuring code execution time with optional callbacks.</p>
+<p>A lightweight, header-only Modern C++20 stopwatch utility for measuring code execution time with optional callbacks.</p>
 <h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>RAII-Based Timing</strong>: Automatically measures elapsed time from construction to destruction.</li>
 <li><strong>Optional Callbacks</strong>: Execute a custom callback function with the elapsed duration on scope exit.</li>
-<li><strong>std::format Support</strong>: Native formatter specialization for C++20/C++23 <code>std::format</code>.</li>
+<li><strong>std::format Support</strong>: Native formatter specialization for <code>std::format</code>.</li>
 <li><strong>Source Location Tracking</strong>: Automatically captures where the timer was constructed via <code>std::source_location</code>.</li>
 <li><strong>Stream Output</strong>: Direct output stream integration via <code>operator&lt;&lt;</code>.</li>
-<li><strong>Header-only C++23</strong>: Zero compiled library linkage; clean compilation on MSVC, Clang, and GCC.</li>
+<li><strong>Header-only C++20</strong>: Zero compiled library linkage; clean compilation on MSVC, Clang, and GCC.</li>
 <li><strong>CPM &amp; FetchContent Integration</strong>: Trivial one-line CMake dependency integration.</li>
 <li><strong>Native NuGet Package</strong>: First-class Visual Studio / MSBuild packaging with Natvis visualization.</li>
 </ul>
