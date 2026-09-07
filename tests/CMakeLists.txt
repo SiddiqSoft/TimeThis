@@ -1,61 +1,40 @@
-if(${PROJECT_NAME}_BUILD_TESTS)
-    set(TEST_TARGET ${PROJECT_NAME}_tests)
+#   SiddiqSoft CMakeLists - Tests
+#   Copyright 2024 Abdulkareem Siddiq. All rights reserved.
+#   See LICENSE file
+#
+cmake_minimum_required(VERSION 3.31)
 
-    # Create test executable
-    add_executable(${TEST_TARGET})
+project(timethis_tests
+        VERSION         "${CURRENT_PROJECT_VERSION}"
+        LANGUAGES       CXX
+        DESCRIPTION     "Test suite for timethis")
 
-    # Compile features
-    target_compile_features(${TEST_TARGET} PRIVATE cxx_std_23)
-
-    # Compiler-specific options
-    target_compile_options(${TEST_TARGET}
-        PRIVATE
-        $<$<CXX_COMPILER_ID:MSVC>:/std:c++latest>
-        $<$<CXX_COMPILER_ID:Clang>:-fexperimental-library>)
-
-    # Debug-specific options
-    if(CMAKE_BUILD_TYPE MATCHES "Debug")
-        # Add debug definitions
-        target_compile_definitions(${TEST_TARGET} PRIVATE DEBUG=1 _DEBUG=1)
-    endif()
-
-
-    # Test sources
-    target_sources(${TEST_TARGET}
-        PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/test.cpp)
-
-    # Platform-specific dependencies
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-        # Linux/Unix specific
-        find_package(CURL 8.7 REQUIRED)
-        target_link_libraries(${PROJECT_NAME} INTERFACE CURL::libcurl)
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-        # Windows specific
-        CPMAddPackage("gh:SiddiqSoft/acw32h#2.7.4")
-        target_link_libraries(${PROJECT_NAME} INTERFACE acw32h::acw32h)
-    endif()
-
-    # Google Test dependency
-    CPMAddPackage("gh:google/googletest#v1.17.0")
-    # Common dependencies
-    CPMAddPackage("gh:nlohmann/json#v3.12.0")
-    target_link_libraries(${PROJECT_NAME} INTERFACE nlohmann_json::nlohmann_json)
-
-    # Link libraries
-    target_link_libraries(${TEST_TARGET}
-        PRIVATE
-        GTest::gtest_main
-        ${PROJECT_NAME}::${PROJECT_NAME}
-        nlohmann_json::nlohmann_json
-        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:CURL::libcurl>
-        $<$<CXX_COMPILER_ID:MSVC>:acw32h::acw32h>
-    )
-
-    # Register tests with CTest
-    include(GoogleTest)
-    gtest_discover_tests(${TEST_TARGET} XML_OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/results")
-
-    include(CTest)
-    message(STATUS "${PROJECT_NAME}: Test configuration complete (${TEST_TARGET})")
+if(NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 23)
 endif()
+
+# Fetch GoogleTest via CPM
+if(NOT TARGET GTest::gtest_main)
+    CPMAddPackage("gh:google/googletest#v1.17.0")
+endif()
+
+file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+)
+
+add_executable(${PROJECT_NAME} ${TEST_SOURCES})
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_${CMAKE_CXX_STANDARD})
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+        GTest::gtest_main
+        timethis::timethis
+)
+
+include(GoogleTest)
+gtest_discover_tests(${PROJECT_NAME}
+    TEST_PREFIX "${PROJECT_NAME}."
+    OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/results"
+    OUTPUT_PREFIX "${CMAKE_BUILD_TYPE}_"
+    OUTPUT_SUFFIX ".xml"
+)

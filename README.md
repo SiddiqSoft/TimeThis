@@ -1,55 +1,83 @@
 # TimeThis
 
-A lightweight, header-only C++23 stopwatch utility for measuring code execution time with optional callbacks.
-
+<!-- badges -->
 [![Build Status](https://dev.azure.com/siddiqsoft/siddiqsoft/_apis/build/status/SiddiqSoft.TimeThis?branchName=main)](https://dev.azure.com/siddiqsoft/siddiqsoft/_build/latest?definitionId=11&branchName=main)
-![NuGet](https://img.shields.io/nuget/v/SiddiqSoft.TimeThis)
-![GitHub Tag](https://img.shields.io/github/v/tag/SiddiqSoft/TimeThis)
-![Tests](https://img.shields.io/azure-devops/tests/siddiqsoft/siddiqsoft/11)
-![Coverage](https://img.shields.io/azure-devops/coverage/siddiqsoft/siddiqsoft/11)
+[![NuGet Version](https://img.shields.io/nuget/v/SiddiqSoft.TimeThis?logo=nuget)](https://www.nuget.org/packages/SiddiqSoft.TimeThis/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/SiddiqSoft.TimeThis?logo=nuget)](https://www.nuget.org/packages/SiddiqSoft.TimeThis/)
+[![Tests](https://img.shields.io/azure-devops/tests/siddiqsoft/siddiqsoft/11/main.svg)](https://dev.azure.com/siddiqsoft/siddiqsoft/_build/latest?definitionId=11&branchName=main)
+[![C++23](https://img.shields.io/badge/C%2B%2B-23-00599C?logo=cplusplus)](https://en.cppreference.com/w/cpp/23)
+[![License BSD-3](https://img.shields.io/badge/License-BSD--3--Clause-blue)](LICENSE)
+<!-- end badges -->
+
+**`timethis`** is a lightweight, header-only Modern C++23 stopwatch utility for measuring code execution time with optional callbacks.
+
+---
+
+## Documentation
+
+**[siddiqsoft.github.io/timethis](https://siddiqsoft.github.io/timethis/)**
+
+* [**Quick Start & Integration**](https://siddiqsoft.github.io/timethis/quickstart/)
+* [**API Reference**](https://siddiqsoft.github.io/timethis/api/)
+* [**Maintainer Guide**](https://siddiqsoft.github.io/timethis/maintainers/pipelines/)
+
+---
 
 ## Features
 
-- **RAII-based timing**: Automatically measures elapsed time from construction to destruction
-- **Optional callbacks**: Execute a function with the elapsed duration on scope exit
-- **std::format support**: Format timing information using C++20 `std::format`
-- **Source location tracking**: Automatically captures where the timer was created
-- **Header-only**: No compilation required, just include and use
-- **C++23 ready**: Uses modern C++ features and best practices
-- **No copy/move semantics**: Single ownership prevents accidental misuse
+- **RAII-Based Timing**: Automatically measures elapsed time from construction to destruction.
+- **Optional Callbacks**: Execute a function with the elapsed duration on scope exit.
+- **`std::format` Support**: Native formatter specialization for C++20/C++23 `std::format`.
+- **Source Location Tracking**: Automatically captures where the timer was created via `std::source_location`.
+- **Stream Output**: Direct output stream integration via `operator<<`.
+- **Header-Only C++23**: No library linkage required, just include and use.
+- **Single Ownership**: Deleted copy/move operations prevent accidental misuse.
 
-## Quick Start
+---
 
-### Basic Usage
+## Quick Example
+
+### Basic Timing
 
 ```cpp
+#include <iostream>
 #include "siddiqsoft/timethis.hpp"
 
-// Simple timing without callback
+int main()
 {
     siddiqsoft::timethis timer;
     // ... do work ...
-    auto elapsed = timer.elapsed();
+    std::cout << "Elapsed: " << timer.lap() << " us\n";
+    return 0;
 }
+```
 
-// With callback
+### With Callback
+
+```cpp
+#include <iostream>
+#include <chrono>
+#include "siddiqsoft/timethis.hpp"
+
+void process()
 {
     siddiqsoft::timethis timer([](const auto& duration) {
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
-        std::cout << "Operation took " << ms.count() << "ms\n";
+        std::cout << "Operation took " << ms.count() << " ms\n";
     });
     // ... do work ...
-} // Callback invoked here with elapsed time
+} // Callback invoked on scope exit
 ```
 
-### With std::format
+### With `std::format`
 
 ```cpp
-#include "siddiqsoft/timethis.hpp"
+#include <iostream>
 #include <format>
+#include "siddiqsoft/timethis.hpp"
 
 siddiqsoft::timethis timer;
-std::this_thread::sleep_for(std::chrono::milliseconds(100));
+// ... do work ...
 std::cout << std::format("{}\n", timer);
 ```
 
@@ -57,54 +85,58 @@ std::cout << std::format("{}\n", timer);
 
 ```cpp
 siddiqsoft::timethis timer;
-std::this_thread::sleep_for(std::chrono::milliseconds(100));
-std::cout << timer << std::endl;  // Outputs: function_name took 100000000ns
+// ... do work ...
+std::cout << timer << std::endl;  // Outputs: <function_name> took <elapsed>ns
 ```
+
+---
 
 ## Installation
 
-### NuGet
-```
-Install-Package SiddiqSoft.TimeThis
+### CMake (CPM)
+
+```cmake
+include(CPM.cmake)
+cpmaddpackage("gh:SiddiqSoft/TimeThis#2.5.0")
+target_link_libraries(myapp PRIVATE timethis::timethis)
 ```
 
 ### CMake (FetchContent)
+
 ```cmake
+include(FetchContent)
 FetchContent_Declare(
     timethis
     GIT_REPOSITORY https://github.com/SiddiqSoft/TimeThis.git
-    GIT_TAG main
+    GIT_TAG        v2.5.0
 )
 FetchContent_MakeAvailable(timethis)
-
-target_link_libraries(${PROJECT_NAME} timethis::timethis)
+target_link_libraries(myapp PRIVATE timethis::timethis)
 ```
 
-## Development
+### NuGet (Windows / Visual Studio)
 
-### Build with Tests
-```bash
-cmake --preset Apple-Debug
-cmake --build build/Apple-Debug
+```powershell
+Install-Package SiddiqSoft.TimeThis
 ```
 
-### Run Tests
-```bash
-./build/Apple-Debug/tests/timethis_tests
+---
+
+## Dependencies
+
+```mermaid
+graph TD
+    timethis["timethis::timethis"]
+    subgraph Test["Test Dependencies (Optional)"]
+        GTEST["gtest v1.17.0"]
+    end
+    timethis -. "timethis_BUILD_TESTS=ON" .-> GTEST
 ```
 
-### Available Presets
-- `Apple-Debug` / `Apple-Release` - macOS with LLVM 22+
-- `Linux-Clang-Debug` / `Linux-Clang-Release` - Linux with Clang
-- `Linux-GCC-Debug` / `Linux-GCC-Release` - Linux with GCC
-- `Windows-Debug` / `Windows-Release` - Windows with MSVC
+See [dependencies.md](dependencies.md) for detailed SBOM breakdown.
 
-## Requirements
-
-- C++23 compiler (Clang 18+, GCC 13+, MSVC 2022+)
-- CMake 3.29+
+---
 
 ## License
 
-BSD 3-Clause License - See LICENSE file for details
-
+Licensed under the [BSD 3-Clause License](LICENSE).

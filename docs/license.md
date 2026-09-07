@@ -1,6 +1,9 @@
-BSD 3-Clause License
+# License
 
-Copyright (c) 2003-2020, Abdelkareem Siddiq
+[BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause)
+
+```
+Copyright (c) 2003-2026, Abdulkareem Siddiq
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,3 +30,4 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```

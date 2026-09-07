@@ -153,9 +153,12 @@ _TeamCity*
 .axoCover/*
 !.axoCover/settings.json
 
-# Visual Studio code coverage results
+# Visual Studio and GCC/Clang code coverage results
 *.coverage
 *.coveragexml
+*.gcda
+*.gcno
+*.gcov
 
 # NCrunch
 _NCrunch_*
@@ -369,6 +372,7 @@ MigrationBackup/
 /src/version.h
 out/**
 build/**
+**/build/**
 /src/version.h
 /test/validation_tests/validation_tests.tlog
 /test/validation_tests/vc.nativecodeanalysis.all.xml
@@ -378,3 +382,18 @@ build/**
 /test/validation_tests/CodeAnalysisResultManifest.txt
 /test/validation_tests/test.nativecodeanalysis.xml
 *.filters
+
+# MkDocs site output and virtual environments
+site/
+.venv/
+venv/
+
+# Benchmark generated output files (reports are generated during publication build in Azure Pipelines)
+benchmarks/benchmark_results.json
+benchmarks/benchmark_results.xml
+benchmarks/benchmark_report.html
+docs/assets/benchmark_report.html
+
+
+
+

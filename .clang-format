@@ -1,21 +1,21 @@
-# SiddiqSoft clang-format
-# Version 2, August 2021
+# Visual Studio generated .clang-format file
 
-Language: Cpp
+# The style options in this file are a best effort attempt to replicate the
+# current IDE formatting configuration from Tools > Options. The following
+# style options, however, should be verified:
+# AfterClass, AfterControlStatement, AfterEnum, AfterFunction, AfterNamespace, 
+# AfterStruct, AfterUnion
 
 AccessModifierOffset: -4
 
 AlignAfterOpenBracket: Align # ours is Align
-#AlignArrayOfStructures: Left
-AlignConsecutiveDeclarations: Consecutive
-AlignOperands: AlignAfterOperator
+AlignConsecutiveDeclarations: true
+AlignOperands: true
 AlignTrailingComments: true
-AlignConsecutiveAssignments: AcrossEmptyLines
+AlignConsecutiveAssignments: true
 AlignEscapedNewlines: DontAlign
-AlignConsecutiveMacros: AcrossEmptyLines
 
-AllowAllArgumentsOnNextLine: true
-AllowShortBlocksOnASingleLine: Empty
+AllowShortBlocksOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: false
@@ -23,45 +23,37 @@ AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakBeforeMultilineStrings : false
 AllowAllParametersOfDeclarationOnNextLine : false
 AllowShortCaseLabelsOnASingleLine : true
-AllowShortLambdasOnASingleLine: Inline
-AlwaysBreakTemplateDeclarations: Yes
 
 BinPackArguments : false
 BinPackParameters : false
 
-
-BreakBeforeBraces: Custom
+BasedOnStyle: WebKit
 BraceWrapping:
-  AfterCaseLabel: false
   AfterClass: true    # TODO: verify
-  AfterControlStatement: MultiLine
-  AfterEnum: true    # TODO: verify
+#  AfterControlStatement: true    # TODO: verify
+#  AfterEnum: true    # TODO: verify
   AfterFunction: true    # TODO: verify
-  AfterNamespace: true    # TODO: verify
-  AfterStruct: true    # TODO: verify
-  AfterUnion: true    # TODO: verify
+#  AfterNamespace: true    # TODO: verify
+#  AfterStruct: true    # TODO: verify
+#  AfterUnion: true    # TODO: verify
   BeforeCatch: true
   BeforeElse: true
-  BeforeLambdaBody: false
-  BeforeWhile: false
-  IndentBraces: false
-  SplitEmptyFunction: true
-  SplitEmptyRecord: true
+#  IndentBraces: false
+#  SplitEmptyFunction: true
+#  SplitEmptyRecord: true
 
-BasedOnStyle: WebKit
-#BreakConstructorInitializersStyle: AfterComma
+BreakBeforeBraces: WebKit
+BreakConstructorInitializers: BeforeComma
 BreakBeforeTernaryOperators : true
 BreakBeforeBinaryOperators : None
 BreakInheritanceList : BeforeComma
-BreakBeforeConceptDeclarations: true
 
 ContinuationIndentWidth : 8
 ColumnLimit: 132
 Cpp11BracedListStyle: true
-IndentCaseLabels: true
+IndentCaseLabels: false
 IndentPPDirectives: None
 IndentWidth: 4
-IndentRequires: true
 PointerAlignment: Left
 SpaceAfterCStyleCast: false
 SpaceBeforeAssignmentOperators: true
@@ -73,14 +65,13 @@ MaxEmptyLinesToKeep: 2
 NamespaceIndentation: All
 CompactNamespaces : false
 FixNamespaceComments : true
-Standard: Latest
+Standard: c++20
 TabWidth: 4
-UseTab: ForIndentation
+UseTab: Never #Always
 SortIncludes: false
 SortUsingDeclarations: false
 IncludeBlocks : Preserve
-ReflowComments:  true
-#LambdaBodyIndentation: Signature
+ReflowComments:  false
 
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ConstructorInitializerIndentWidth: 4
