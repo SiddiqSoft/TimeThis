@@ -1,5 +1,5 @@
 site_name: timethis
-site_description: Lightweight, header-only C++23 stopwatch utility with optional callbacks
+site_description: Lightweight, header-only C++20 stopwatch utility with optional callbacks
 site_author: Siddiq Software LLC
 site_url: https://siddiqsoft.github.io/timethis/
 repo_url: https://github.com/SiddiqSoft/TimeThis

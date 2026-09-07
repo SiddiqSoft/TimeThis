@@ -5,9 +5,9 @@
         <id>SiddiqSoft.TimeThis</id>
         <version>$VERSION$</version>
         <authors>Abdulkareem Siddiq</authors>
-        <description>Lightweight, header-only C++23 stopwatch utility for measuring code execution time with optional callbacks</description>
-        <summary>Header-only C++23 stopwatch and execution timer</summary>
-        <tags>stopwatch timer execution-time chrono C++23 header-only native nativepackage</tags>
+        <description>Lightweight, header-only C++20 stopwatch utility for measuring code execution time with optional callbacks</description>
+        <summary>Header-only C++20 stopwatch and execution timer</summary>
+        <tags>stopwatch timer execution-time chrono C++20 header-only native nativepackage</tags>
         <projectUrl>https://github.com/SiddiqSoft/TimeThis</projectUrl>
         <repository type="git" url="https://github.com/SiddiqSoft/TimeThis" />
         <requireLicenseAcceptance>true</requireLicenseAcceptance>

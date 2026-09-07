@@ -80,10 +80,10 @@ project(timethis
         VERSION         "${CURRENT_PROJECT_VERSION}"
         LANGUAGES       CXX
         HOMEPAGE_URL    "https://github.com/SiddiqSoft/TimeThis"
-        DESCRIPTION     "A lightweight, header-only C++23 stopwatch utility for measuring code execution time with optional callbacks")
+        DESCRIPTION     "A lightweight, header-only C++20 stopwatch utility for measuring code execution time with optional callbacks")
 
 if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 23)
+    set(CMAKE_CXX_STANDARD 20)
 endif()
 
 # ____________________________________

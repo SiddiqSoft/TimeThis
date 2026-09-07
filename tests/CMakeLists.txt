@@ -10,7 +10,7 @@ project(timethis_tests
         DESCRIPTION     "Test suite for timethis")
 
 if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 23)
+    set(CMAKE_CXX_STANDARD 20)
 endif()
 
 # Fetch GoogleTest via CPM

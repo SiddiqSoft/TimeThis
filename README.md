@@ -5,11 +5,11 @@
 [![NuGet Version](https://img.shields.io/nuget/v/SiddiqSoft.TimeThis?logo=nuget)](https://www.nuget.org/packages/SiddiqSoft.TimeThis/)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/SiddiqSoft.TimeThis?logo=nuget)](https://www.nuget.org/packages/SiddiqSoft.TimeThis/)
 [![Tests](https://img.shields.io/azure-devops/tests/siddiqsoft/siddiqsoft/11/main.svg)](https://dev.azure.com/siddiqsoft/siddiqsoft/_build/latest?definitionId=11&branchName=main)
-[![C++23](https://img.shields.io/badge/C%2B%2B-23-00599C?logo=cplusplus)](https://en.cppreference.com/w/cpp/23)
+[![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus)](https://en.cppreference.com/w/cpp/20)
 [![License BSD-3](https://img.shields.io/badge/License-BSD--3--Clause-blue)](LICENSE)
 <!-- end badges -->
 
-**`timethis`** is a lightweight, header-only Modern C++23 stopwatch utility for measuring code execution time with optional callbacks.
+**`timethis`** is a lightweight, header-only Modern C++20 stopwatch utility for measuring code execution time with optional callbacks.
 
 ---
 
@@ -27,10 +27,10 @@
 
 - **RAII-Based Timing**: Automatically measures elapsed time from construction to destruction.
 - **Optional Callbacks**: Execute a function with the elapsed duration on scope exit.
-- **`std::format` Support**: Native formatter specialization for C++20/C++23 `std::format`.
+- **`std::format` Support**: Native formatter specialization for `std::format`.
 - **Source Location Tracking**: Automatically captures where the timer was created via `std::source_location`.
 - **Stream Output**: Direct output stream integration via `operator<<`.
-- **Header-Only C++23**: No library linkage required, just include and use.
+- **Header-Only C++20**: No library linkage required, just include and use.
 - **Single Ownership**: Deleted copy/move operations prevent accidental misuse.
 
 ---
