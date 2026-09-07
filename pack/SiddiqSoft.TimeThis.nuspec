@@ -26,8 +26,8 @@ For detailed release notes, visit: https://github.com/SiddiqSoft/TimeThis/releas
     </metadata>
 
     <files>
-        <!-- includes -->
-        <file src="..\include\siddiqsoft\*.hpp" target="build\native\include\siddiqsoft\" />
+        <!-- includes: Use recursive wildcard only (**/*.hpp). Do NOT specify both *.hpp and **/*.hpp
+             as that causes duplicate destinations for root headers and triggers NuGet Error NU5050 -->
         <file src="..\include\siddiqsoft\**\*.hpp" target="build\native\include\siddiqsoft\" />
         <file src="Siddiq-Software-Avatar.png" target="docs\" />
         <file src="..\README.md" target="docs\" />
